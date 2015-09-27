@@ -1,0 +1,19 @@
+{
+  "name": "botarena",
+  "version": "1.0.0",
+  "description": "Bot arena!",
+  "author": "Rui Gonçalves <ruippeixotog@gmail.com>",
+  "license": "MIT",
+
+  "main": "app.js",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "botarena",
+  "version": "1.0.0",
+  "description": "Bot arena!",
+  "author": "Rui Gonçalves <ruippeixotog@gmail.com>",
+  "license": "MIT",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.14.0",
+    "express": "^4.13.3",
+    "underscore": "^1.8.3",
+    "ws": "^0.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^1.5.1"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "lint": "./node_modules/.bin/eslint app.js routes models",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
