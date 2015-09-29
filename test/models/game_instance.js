@@ -4,6 +4,7 @@ var GameInstance = require.main.require("models/game_instance");
 
 function DummyGame() {
   this.ended = false;
+  this.error = false;
   this.winner = null;
   this.nextPlayer = 1;
   this.lastMove = null;
@@ -12,6 +13,7 @@ function DummyGame() {
 }
 
 DummyGame.END_MOVE = 'END_MOVE';
+DummyGame.INVALID_MOVE = 'INVALID_MOVE';
 
 DummyGame.prototype = {
   getPlayerCount: function() { return 2; },
@@ -19,10 +21,11 @@ DummyGame.prototype = {
   isError: function() { return this.error; },
   getWinner: function() { return this.winner; },
   getNextPlayer: function() { return this.nextPlayer; },
-  isValidMove: function(player, move) { this.lastMove = move; },
+  isValidMove: function(player, move) { return move != DummyGame.INVALID_MOVE; },
   move: function(player, move) {
     this.lastMove = move;
-    if(move == DummyGame.END_MOVE) this.ended = true;
+    if(move == DummyGame.INVALID_MOVE) this.error = true;
+    else if(move == DummyGame.END_MOVE) this.ended = true;
   },
   getFullState: function() { return this.state; },
   getVisibleState: function() { return this.visibleState; },
@@ -132,6 +135,24 @@ describe('GameInstance', function() {
     game.connect(2);
     assert.equal(game.move(1, 'p1Move'), true);
     assert.equal(gameLogic.lastMove, 'p1Move');
+  });
+
+  it('should only execute valid moves', function () {
+    registerAll();
+    connectAll();
+
+    assert.equal(game.move(1, 'p1Move'), true);
+    assert.equal(gameLogic.lastMove, 'p1Move');
+    assert.equal(gameLogic.isError(), false);
+
+    assert.equal(game.move(1, DummyGame.INVALID_MOVE), false);
+    assert.equal(gameLogic.lastMove, 'p1Move');
+    assert.equal(gameLogic.isError(), false);
+
+    gameLogic.ended = true;
+    assert.equal(game.move(1, 'p1Move2'), false);
+    assert.equal(gameLogic.lastMove, 'p1Move');
+    assert.equal(gameLogic.isError(), false);
   });
 
   it('should emit "move", "state" and "waitingForMove" events as a move is done', function (done) {

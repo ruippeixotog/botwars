@@ -18,6 +18,6 @@
   "scripts": {
     "start": "node app.js",
     "lint": "./node_modules/.bin/eslint app.js routes models",
-    "test": "mocha test/**/*.js"
+    "test": "mocha --recursive test"
   }
 }

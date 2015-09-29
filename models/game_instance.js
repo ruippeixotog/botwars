@@ -58,7 +58,7 @@ GameInstance.prototype.hasStarted = function() {
 GameInstance.prototype.move = function (player, move) {
   if(!this.started) return null;
 
-  if (this.game.isEnded() && !this.game.isValidMove(player, move))
+  if (this.game.isEnded() || !this.game.isValidMove(player, move))
     return false;
 
   this.game.move(player, move);
