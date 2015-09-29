@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var inherits = require('util').inherits;
 
 var EventEmitter = require('events').EventEmitter;
@@ -7,12 +8,56 @@ function GameInstance(id, game) {
   this.id = id;
   this.game = game;
   this.started = false;
+
+  this.currentPlayerCount = 0;
+  this.connectedPlayerCount = 0;
+  this.playerIdTable = {};
+  this.playerState = {};
 }
 
 inherits(GameInstance, EventEmitter);
 
+GameInstance.prototype.registerNewPlayer = function () {
+  if(this.currentPlayerCount < this.game.getPlayerCount()) {
+    var playerId = crypto.randomBytes(20).toString('hex');
+    var player = ++this.currentPlayerCount;
+
+    this.playerIdTable[playerId] = player;
+    this.playerState[player] = { connectedOnce: false };
+    return playerId;
+  }
+  return null;
+};
+
+GameInstance.prototype.getPlayer = function (playerId) {
+  return this.playerIdTable[playerId];
+};
+
+GameInstance.prototype.connect = function(player) {
+  if(this.playerState[player].connectedOnce) return;
+
+  this.connectedPlayerCount++;
+  this.playerState[player].connectedOnce = true;
+
+  if(!this.started && this.connectedPlayerCount == this.game.getPlayerCount()) {
+    this.started = true;
+    this.emit('start', this.game.getFullState());
+
+    if (!this.game.isEnded()) {
+      this.emit('waitingForMove', this.game.getNextPlayer(), this.game.getPlayerInput());
+    } else {
+      this.emit('end', this.game.getFullState());
+    }
+  }
+};
+
+GameInstance.prototype.hasStarted = function() {
+  return this.started;
+};
+
 GameInstance.prototype.move = function (player, move) {
-  this.ensureStarted();
+  if(!this.started) return null;
+
   if (this.game.isEnded() && !this.game.isValidMove(player, move))
     return false;
 
@@ -30,30 +75,19 @@ GameInstance.prototype.move = function (player, move) {
 };
 
 GameInstance.prototype.getNextPlayer = function() {
-  this.ensureStarted();
-  return this.game.getNextPlayer();
+  return this.started ? this.game.getNextPlayer() : null;
 };
 
 GameInstance.prototype.getFullState = function() {
-  this.ensureStarted();
-  return this.game.getFullState();
+  return this.started ? this.game.getFullState() : null;
 };
 
 GameInstance.prototype.getVisibleState = function(player) {
-  this.ensureStarted();
-  return this.game.getVisibleState(player);
+  return this.started ? this.game.getVisibleState(player) : null;
 };
 
 GameInstance.prototype.getPlayerInput = function() {
-  this.ensureStarted();
-  return this.game.getPlayerInput();
-};
-
-GameInstance.prototype.ensureStarted = function() {
-  if(!this.started) {
-    this.emit('start', this.game.getFullState());
-    this.started = true;
-  }
+  return this.started ? this.game.getPlayerInput() : null;
 };
 
 module.exports = GameInstance;

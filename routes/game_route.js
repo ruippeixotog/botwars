@@ -12,32 +12,45 @@ module.exports = function(Game) {
 
   router.param('gameId', function(req, res, next, gameId) {
     var game = engine.getGameInstance(gameId);
+
     if(!game) res.status(404).send('The requested game does not exist');
     else { req.game = game; next(); }
   });
 
-  router.param('player', function(req, res, next, player) {
-    var playerId = parseInt(player);
-    // TODO validate player number and add authentication
-    if(!playerId) res.status(404).send('Invalid player');
-    else { req.player = playerId; next(); }
+  router.param('playerId', function(req, res, next, playerId) {
+    var player = req.game.getPlayer(playerId);
+
+    if(!player) res.status(404).send('Invalid player');
+    else { req.player = player; next(); }
   });
 
-  router.post('/start', function(req, res) {
-    var params = req.body || {};
-    res.send(engine.createNewGame(params));
+  router.post('/create', function(req, res) {
+    var gameId = engine.createNewGame(req.body);
+
+    if(!gameId) res.status(400).send('Could not create new game');
+    else res.json({ gameId: gameId });
   });
 
-  router.get('/:gameId/register', function(req, res) {
-    res.json(req.game.getFullState());
+  router.post('/:gameId/register', function(req, res) {
+    var playerId = req.game.registerNewPlayer();
+
+    if(!playerId) res.status(400).send('Could not register new player');
+    else res.json({ playerId: playerId });
+  });
+
+  router.get('/:gameId/connect/:playerId', function(req, res) {
+    req.game.connect(req.player);
+    res.send('Connected');
   });
 
   router.get('/:gameId/state', function(req, res) {
-    res.json(req.game.getFullState());
+    if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
+    else res.json(req.game.getFullState());
   });
 
-  router.post('/:gameId/play/:player', function(req, res) {
-    if(req.game.move(req.player, req.body)) res.send("OK");
+  router.post('/:gameId/play/:playerId', function(req, res) {
+    if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
+    else if(req.game.move(req.player, req.body)) res.send("OK");
     else res.status(400).send('Illegal move');
   });
 
@@ -61,10 +74,12 @@ module.exports = function(Game) {
       ws.close();
     });
 
-    ws.sendJSON({ eventType: 'state', state: req.game.getFullState() });
+    if(req.game.hasStarted()) {
+      ws.sendJSON({ eventType: 'state', state: req.game.getFullState() });
+    }
   });
 
-  router.ws('/:gameId/play/:player', function(ws, req) {
+  router.ws('/:gameId/play/:playerId', function(ws, req) {
     ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
 
     req.game.on('waitingForMove', function(nextPlayer, input) {
@@ -81,9 +96,11 @@ module.exports = function(Game) {
       req.game.move(req.player, JSON.parse(msg));
     });
 
-    if (req.player == req.game.getNextPlayer()) {
+    if (req.game.hasStarted() && req.player == req.game.getNextPlayer()) {
       ws.sendJSON({ eventType: 'requestMove', input: req.game.getPlayerInput() });
     }
+
+    req.game.connect(req.player);
   });
 
   return router;
