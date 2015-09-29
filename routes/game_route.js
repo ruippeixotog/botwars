@@ -12,16 +12,16 @@ module.exports = function(Game) {
 
   router.param('gameId', function(req, res, next, gameId) {
     var game = engine.getGameInstance(gameId);
+    if(!game) { res.status(404).send('The requested game does not exist'); return; }
+    req.game = game;
 
-    if(!game) res.status(404).send('The requested game does not exist');
-    else { req.game = game; next(); }
-  });
+    if(req.query.playerId) {
+      var player = game.getPlayer(req.query.playerId);
+      if(!player) { res.status(404).send('Invalid player'); return; }
+      req.player = player;
+    }
 
-  router.param('playerId', function(req, res, next, playerId) {
-    var player = req.game.getPlayer(playerId);
-
-    if(!player) res.status(404).send('Invalid player');
-    else { req.player = player; next(); }
+    next();
   });
 
   router.post('/create', function(req, res) {
@@ -38,7 +38,7 @@ module.exports = function(Game) {
     else res.json({ playerId: playerId });
   });
 
-  router.get('/:gameId/connect/:playerId', function(req, res) {
+  router.get('/:gameId/connect', function(req, res) {
     req.game.connect(req.player);
     res.send('Connected');
   });
@@ -48,13 +48,13 @@ module.exports = function(Game) {
     else res.json(req.game.getFullState());
   });
 
-  router.post('/:gameId/play/:playerId', function(req, res) {
+  router.post('/:gameId/move', function(req, res) {
     if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
     else if(req.game.move(req.player, req.body)) res.send("OK");
     else res.status(400).send('Illegal move');
   });
 
-  router.ws('/:gameId/spectate', function(ws, req) {
+  router.ws('/:gameId/stream', function(ws, req) {
     ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
 
     req.game.on('start', function(state) {
@@ -77,30 +77,23 @@ module.exports = function(Game) {
     if(req.game.hasStarted()) {
       ws.sendJSON({ eventType: 'state', state: req.game.getFullState() });
     }
-  });
 
-  router.ws('/:gameId/play/:playerId', function(ws, req) {
-    ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
+    if(req.player) {
+      req.game.on('waitingForMove', function(nextPlayer, input) {
+        if(nextPlayer == req.player)
+          ws.sendJSON({ eventType: 'requestMove', input: input });
+      });
 
-    req.game.on('waitingForMove', function(nextPlayer, input) {
-      if(nextPlayer == req.player)
-        ws.sendJSON({ eventType: 'requestMove', input: input });
-    });
+      ws.on('message', function(msg) {
+        req.game.move(req.player, JSON.parse(msg));
+      });
 
-    req.game.on('end', function(state) {
-      ws.sendJSON({ eventType: 'end', state: state });
-      ws.close();
-    });
+      if (req.game.hasStarted() && req.player == req.game.getNextPlayer()) {
+        ws.sendJSON({ eventType: 'requestMove', input: req.game.getPlayerInput() });
+      }
 
-    ws.on('message', function(msg) {
-      req.game.move(req.player, JSON.parse(msg));
-    });
-
-    if (req.game.hasStarted() && req.player == req.game.getNextPlayer()) {
-      ws.sendJSON({ eventType: 'requestMove', input: req.game.getPlayerInput() });
+      req.game.connect(req.player);
     }
-
-    req.game.connect(req.player);
   });
 
   return router;

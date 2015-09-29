@@ -1,10 +1,13 @@
 var http = require('http');
+var url = require('url');
 
 var ServerResponse = http.ServerResponse;
 var WebSocketServer = require('ws').Server;
 
 var wsHandledPath = function(path) {
-  return path + '/__websocket__';
+  var urlObj = url.parse(path);
+  urlObj.pathname += '/__websocket__';
+  return url.format(urlObj);
 };
 
 var prepareApp = function(app) {
