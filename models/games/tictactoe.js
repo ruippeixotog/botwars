@@ -27,6 +27,7 @@ var checkDiag = function(grid, row, col) {
 };
 
 function TicTacToe(params) {
+  params = params || {};
   TicTacToe.super_.call(this, params);
 
   this.rowCount = params.rowCount || 3;
@@ -48,7 +49,7 @@ inherits(TicTacToe, Game);
 TicTacToe.prototype.getPlayerCount = function() { return 2; };
 
 TicTacToe.prototype.isEnded = function() {
-  return this.error || this.winner || this.gridFull;
+  return this.error || this.winner != null || this.gridFull;
 };
 
 TicTacToe.prototype.isError = function() { return this.error; };

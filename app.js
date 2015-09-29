@@ -8,7 +8,7 @@ var app = expressWs(express());
 
 app.use('/tictactoe', gameRoute(TicTacToe));
 
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   console.error(err.stack);
   res.status(500).send('An internal error occurred');
 });

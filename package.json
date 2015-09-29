@@ -12,11 +12,12 @@
     "ws": "^0.8.0"
   },
   "devDependencies": {
-    "eslint": "^1.5.1"
+    "eslint": "^1.5.1",
+    "mocha": "^2.3.3"
   },
   "scripts": {
     "start": "node app.js",
     "lint": "./node_modules/.bin/eslint app.js routes models",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/**/*.js"
   }
 }
