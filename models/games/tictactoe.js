@@ -45,6 +45,8 @@ function TicTacToe(params) {
 
 inherits(TicTacToe, Game);
 
+TicTacToe.prototype.getPlayerCount = function() { return 2; };
+
 TicTacToe.prototype.isEnded = function() {
   return this.error || this.winner || this.gridFull;
 };

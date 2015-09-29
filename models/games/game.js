@@ -5,6 +5,10 @@ function Game() {
 }
 
 Game.prototype = {
+  getPlayerCount: function() {
+    throw new Error(this.constructor + ".getPlayerCount not implemented");
+  },
+
   isEnded: function() {
     throw new Error(this.constructor + ".isEnded not implemented");
   },
