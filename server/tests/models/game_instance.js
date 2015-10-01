@@ -1,6 +1,6 @@
 var assert = require("assert");
 
-var GameInstance = require.main.require("models/game_instance");
+var GameInstance = require.main.require("server/models/game_instance");
 
 function DummyGame() {
   this.ended = false;

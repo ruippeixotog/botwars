@@ -1,6 +1,6 @@
 var assert = require("assert");
 
-var TicTacToe = require.main.require("models/games/tictactoe");
+var TicTacToe = require.main.require("server/models/games/tictactoe");
 
 describe('TicTacToe', function() {
   var game;

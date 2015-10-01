@@ -17,8 +17,8 @@
     "mocha": "^2.3.3"
   },
   "scripts": {
-    "start": "node app.js",
-    "lint": "eslint app.js routes models",
-    "test": "mocha --recursive test"
+    "start": "node server/app.js",
+    "lint": "eslint server/{app.js,models,routes}",
+    "test": "mocha --recursive server/tests"
   }
 }
