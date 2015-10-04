@@ -4,18 +4,11 @@ import {History} from "react-router";
 var Game = React.createClass({
   mixins: [History],
 
-  getInitialState: function() {
-    return { gameId: this.props.params.gameId };
-  },
-
-  onGameIdChange: function(e) {
-    this.setState({ gameId: e.target.value });
-  },
-
-  goToGame: function(e) {
-    var game = this.props.route.game;
+  handleGameIdSubmit: function(e) {
     e.preventDefault();
-    this.history.pushState(null, `${game.href}/${this.state.gameId}`);
+    var game = this.props.route.game;
+    var nextGameId = React.findDOMNode(this.refs.nextGameId).value;
+    this.history.pushState(null, `${game.href}/${nextGameId}`);
   },
 
   render: function () {
@@ -30,9 +23,9 @@ var Game = React.createClass({
               <h1 className="page-header">{game.name}</h1>
             </div>
           </div>
-          <form className="form-inline" onSubmit={this.goToGame}>
+          <form className="form-inline" onSubmit={this.handleGameIdSubmit}>
             <label>Watch another game:</label>
-            <input className="form-control" onChange={this.onGameIdChange} value={this.state.gameId} />
+            <input className="form-control" ref="nextGameId" defaultValue={gameId} />
             <button className="btn btn-default">Go</button>
           </form>
           <GameComponent gameId={gameId} />

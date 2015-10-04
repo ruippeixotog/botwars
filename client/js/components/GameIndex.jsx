@@ -8,18 +8,11 @@ var GameIndex = React.createClass({
     children: React.PropTypes.element
   },
 
-  getInitialState: function() {
-    return { gameId: "" };
-  },
-
-  onGameIdChange: function(e) {
-    this.setState({ gameId: e.target.value });
-  },
-
-  goToGame: function(e) {
-    var game = this.props.route.game;
+  handleGameIdSubmit: function(e) {
     e.preventDefault();
-    this.history.pushState(null, `${game.href}/${this.state.gameId}`);
+    var game = this.props.route.game;
+    var nextGameId = React.findDOMNode(this.refs.nextGameId).value;
+    this.history.pushState(null, `${game.href}/${nextGameId}`);
   },
 
   render: function () {
@@ -32,9 +25,9 @@ var GameIndex = React.createClass({
               <h1 className="page-header">{game.name}</h1>
             </div>
           </div>
-          <form className="form-inline" onSubmit={this.goToGame}>
+          <form className="form-inline" onSubmit={this.handleGameIdSubmit}>
             <label>Enter the ID of the game to start:</label>
-            <input className="form-control" onChange={this.onGameIdChange} value={this.state.gameId} />
+            <input className="form-control" ref="nextGameId" />
             <button className="btn btn-default">Go</button>
           </form>
           {this.props.children}
