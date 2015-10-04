@@ -55,6 +55,10 @@ GameInstance.prototype.hasStarted = function() {
   return this.started;
 };
 
+GameInstance.prototype.isEnded = function() {
+  return this.started ? this.game.isEnded() : null;
+};
+
 GameInstance.prototype.move = function (player, move) {
   if(!this.started) return null;
 

@@ -3,14 +3,17 @@ import React from "react";
 var TicTacToe = React.createClass({
 
   propTypes: {
-    gameId: React.PropTypes.string.required
+    gameId: React.PropTypes.string.isRequired
   },
 
   render: function () {
+    var gameRepr = JSON.stringify(this.props.gameState, null, 2);
+
     return (
         <div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Tic_tac_toe.svg" />
-          <div>(game: {this.props.gameId})</div>
+          <div>Game ID: {this.props.gameId}</div>
+          <div>State:</div>
+          <pre>{gameRepr}</pre>
         </div>
     );
   }

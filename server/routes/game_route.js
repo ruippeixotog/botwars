@@ -75,7 +75,9 @@ module.exports = function(Game) {
     });
 
     if(req.game.hasStarted()) {
-      ws.sendJSON({ eventType: 'state', state: req.game.getFullState() });
+      var isEnded = req.game.isEnded();
+      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: req.game.getFullState() });
+      if(isEnded) ws.close();
     }
 
     if(req.player) {
