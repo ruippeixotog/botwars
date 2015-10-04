@@ -7,8 +7,10 @@
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "bootstrap": "^3.3.5",
     "express": "^4.13.3",
     "flux": "^2.1.1",
+    "font-awesome": "^4.4.0",
     "history": "^1.11.1",
     "morgan": "^1.6.1",
     "react": "^0.13.3",

@@ -16,6 +16,7 @@ var dirs = {
   js: "./client/js",
   styles: "./client/css",
   fonts: "./client/fonts",
+  extraFonts: ["./node_modules/font-awesome/fonts"],
   img: "./client/img",
   dist: "./dist",
   imgDist: "./img",
@@ -78,7 +79,9 @@ gulp.task("eslint", function () {
 gulp.task("sass", function () {
   return gulp.src(dirs.styles + "/" + files.mainSass)
       .pipe(isDev ? sourcemaps.init() : gutil.noop())
-      .pipe(sass().on("error", sass.logError))
+      .pipe(sass({
+        includePaths: [dirs.styles, dirs.node_modules]
+      }).on("error", sass.logError))
       .pipe(autoprefixer())
       .pipe(isDev ? sourcemaps.write(".") : gutil.noop())
       .pipe(gulp.dest(dirs.dist));
@@ -102,7 +105,11 @@ gulp.task("images", function () {
 });
 
 gulp.task("fonts", function () {
-  return gulp.src(dirs.fonts + "/**/*.*")
+  var fontGlobs = dirs.extraFonts
+      .map(function(dir) { return dir + "/**/*.*" })
+      .concat([dirs.fonts + "/**/*.*"]);
+
+  return gulp.src(fontGlobs)
       .pipe(gulp.dest(dirs.dist + "/" + dirs.fontsDist));
 });
 
