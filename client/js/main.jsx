@@ -4,13 +4,27 @@ import createBrowserHistory from "history/lib/createBrowserHistory";
 
 import App from "./components/App";
 import Index from "./components/Index";
-import TicTacToe from "./components/TicTacToe";
+import GameIndex from "./components/GameIndex";
+import Game from "./components/Game";
 import PageNotFound from "./components/PageNotFound";
 
+import TicTacToe from "./components/games/TicTacToe";
+
+var games = [
+  { name: "TicTacToe", href: "/tictactoe", component: TicTacToe }
+];
+
+var gameRoutes = games.map(game =>
+    <Route path={game.href}>
+      <IndexRoute component={GameIndex} game={game} />
+      <Route path=":gameId" component={Game} game={game} />
+    </Route>
+);
+
 var routes = (
-    <Route path="/" component={App}>
+    <Route path="/" component={App} games={games}>
       <IndexRoute component={Index} />
-      <Route path="tictactoe" component={TicTacToe} />
+      {gameRoutes}
       <Route path="*" component={PageNotFound} />
     </Route>
 );

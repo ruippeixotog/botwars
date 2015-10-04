@@ -1,4 +1,5 @@
 import React from "react";
+import Nav from "./Nav";
 
 var App = React.createClass({
 
@@ -7,11 +8,12 @@ var App = React.createClass({
   },
 
   render: function () {
+    var games = this.props.route.games;
+
     return (
-        <div>
-          <div id="header"></div>
-          <h1>Bot arena</h1>
-          <div>
+        <div style={{ height: '100%' }}>
+          <Nav games={games} />
+          <div id="page-wrapper">
             {this.props.children}
           </div>
         </div>

@@ -1,17 +1,16 @@
 import React from "react";
-import {Link} from "react-router";
 
 var Index = React.createClass({
 
   render: function () {
     return (
         <div>
-          <div>Games:</div>
-          <ul>
-            <li>
-              <Link to="/tictactoe">TicTacToe</Link>
-            </li>
-          </ul>
+          <div className="row">
+            <div className="col-lg-12">
+              <h1 className="page-header">BotArena</h1>
+            </div>
+          </div>
+          <div>This is BotArena. Choose a game to watch on the left side and enjoy!</div>
         </div>
     );
   }

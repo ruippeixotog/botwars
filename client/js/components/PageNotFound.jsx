@@ -7,14 +7,14 @@ var PageNotFound = React.createClass({
   },
 
   render: function () {
-    var path = this.props.location.pathname;
-    var message = `The requested game does not exist: ${path}`;
     return (
-        <div className="centered-content">
-          <div>
-            <h3 className="h3">Page Not Found</h3>
-            <p className="text-muted">{message}</p>
+        <div>
+          <div className="row">
+            <div className="col-lg-12">
+              <h1 className="page-header">Page not found</h1>
+            </div>
           </div>
+          <img src="/img/404.png" width="300" height="300" />
         </div>
     );
   }
