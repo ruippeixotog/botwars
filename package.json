@@ -39,6 +39,6 @@
   "scripts": {
     "start": "gulp server",
     "lint": "eslint server/{app.js,models,routes} && gulp eslint",
-    "test": "mocha --recursive server/tests"
+    "test": "mocha --require babel/register --recursive server/tests"
   }
 }

@@ -1,10 +1,10 @@
-var bodyParser = require('body-parser');
-var express = require('express');
-var expressWs = require('../models/utils/express-ws');
+import bodyParser from "body-parser";
+import express from "express";
+import expressWs from "../models/utils/express-ws";
 
-var GameRegistry = require('../models/game_registry');
+import GameRegistry from "../models/game_registry";
 
-module.exports = function(Game) {
+export default function(Game) {
   var engine = new GameRegistry(Game);
 
   var router = expressWs(new express.Router());
@@ -99,4 +99,4 @@ module.exports = function(Game) {
   });
 
   return router;
-};
+}

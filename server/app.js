@@ -1,9 +1,9 @@
-var express = require('express');
-var expressWs = require('./models/utils/express-ws');
-var morgan = require('morgan');
+import express from "express";
+import expressWs from "./models/utils/express-ws";
+import morgan from "morgan";
 
-var gameRoute = require('./routes/game_route');
-var TicTacToe = require('./models/games/tictactoe');
+import gameRoute from "./routes/game_route";
+import TicTacToe from "./models/games/tictactoe";
 
 var app = expressWs(express());
 

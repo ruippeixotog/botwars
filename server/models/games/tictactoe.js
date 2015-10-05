@@ -1,104 +1,99 @@
-var _ = require('underscore');
-var deepcopy = require('../utils/deepcopy');
-var inherits = require("util").inherits;
+import _ from "underscore";
+import deepcopy from "../utils/deepcopy";
 
-var Game = require("./game");
+import Game from "./game";
 
-var checkCells = function(cells) {
-  var winner = cells[0];
-  return winner > 0 && _(cells).every(function(e) { return e == winner; }) ? winner : null;
-};
+class TicTacToe extends Game {
+  constructor(params) {
+    params = params || {};
+    super(params);
 
-var checkRow = function(grid, row) {
-  return checkCells(grid[row]);
-};
+    this.rowCount = params.rowCount || 3;
+    this.colCount = params.colCount || 3;
 
-var checkColumn = function(grid, col) {
-  return checkCells(_(grid).pluck(col));
-};
+    this.nextPlayer = 1;
+    this.grid = _.times(this.rowCount, () =>
+        _.times(this.colCount, _.constant(0))
+    );
+    this.error = false;
+    this.winner = null;
+    this.gridFull = false;
 
-var checkDiag = function(grid, row, col) {
-  var colCount = grid[0].length;
+    this.moveCount = 0;
+  }
 
-  return row == col &&
-      checkCells(_(grid).map(function(r, i) { return r[i]; })) ||
-    row == colCount - col - 1 &&
-      checkCells(_(grid).map(function(r, i) { return r[colCount - i - 1]; }));
-};
+  getPlayerCount() { return 2; }
+  isEnded() { return this.error || this.winner != null || this.gridFull; }
+  isError() { return this.error; }
+  getWinner() { return this.winner; }
+  getNextPlayer() { return this.nextPlayer; }
 
-function TicTacToe(params) {
-  params = params || {};
-  TicTacToe.super_.call(this, params);
+  isValidMove(player, move) {
+    return player == this.nextPlayer && this._isValidPlacement(move);
+  }
 
-  this.rowCount = params.rowCount || 3;
-  this.colCount = params.colCount || 3;
+  move(player, move) {
+    if(!this.isValidMove(player, move)) {
+      this.error = true;
+    } else {
+      this.nextPlayer = 3 - player; // newState.nextPlayer == 1 ? 2 - 1;
+      this.grid[move.row][move.col] = player;
 
-  this.nextPlayer = 1;
-  this.grid = _.times(this.rowCount, function() {
-    return _.times(this.colCount, _.constant(0));
-  }.bind(this));
-  this.error = false;
-  this.winner = null;
-  this.gridFull = false;
+      if(this._checkRow(move.row) ||
+          this._checkColumn(move.col) ||
+          this._checkDiag(move.row, move.col)) {
+        this.winner = player;
+      }
 
-  this.moveCount = 0;
+      if(++this.moveCount == this.rowCount * this.colCount)
+        this.gridFull = true;
+    }
+  }
+
+  getFullState() {
+    return {
+      nextPlayer: this.isEnded() ? null : this.nextPlayer,
+      grid: deepcopy(this.grid),
+      winner: this.winner,
+      isError: this.error
+    };
+  }
+
+  getVisibleState() {
+    return this.getFullState();
+  }
+
+  getPlayerInput() {
+    return deepcopy(this.grid);
+  }
+
+  _isValidPlacement(move) {
+    return move.row >= 0 && move.row < this.rowCount &&
+        move.col >= 0 && move.col < this.colCount &&
+        this.grid[move.row][move.col] == 0;
+  }
+
+  _checkRow(row) {
+    return this._checkCells(this.grid[row]);
+  }
+
+  _checkColumn(col) {
+    return this._checkCells(_(this.grid).pluck(col));
+  }
+
+  _checkDiag(row, col) {
+    var colCount = this.grid[0].length;
+
+    return row == col &&
+        this._checkCells(_(this.grid).map((r, i) => r[i])) ||
+        row == colCount - col - 1 &&
+        this._checkCells(_(this.grid).map((r, i) => r[colCount - i - 1]));
+  }
+
+  _checkCells(cells) {
+    var winner = cells[0];
+    return winner > 0 && _(cells).every(e => e == winner) ? winner : null;
+  }
 }
 
-inherits(TicTacToe, Game);
-
-TicTacToe.prototype.getPlayerCount = function() { return 2; };
-
-TicTacToe.prototype.isEnded = function() {
-  return this.error || this.winner != null || this.gridFull;
-};
-
-TicTacToe.prototype.isError = function() { return this.error; };
-TicTacToe.prototype.getWinner = function() { return this.winner; };
-TicTacToe.prototype.getNextPlayer = function() { return this.nextPlayer; };
-
-TicTacToe.prototype.isValidMove = function(player, move) {
-  return player == this.nextPlayer && this.isValidPlacement(move);
-};
-
-TicTacToe.prototype.move = function(player, move) {
-  if(!this.isValidMove(player, move)) {
-    this.error = true;
-  } else {
-    this.nextPlayer = 3 - player; // newState.nextPlayer == 1 ? 2 - 1;
-    this.grid[move.row][move.col] = player;
-
-    if(checkRow(this.grid, move.row) ||
-        checkColumn(this.grid, move.col) ||
-        checkDiag(this.grid, move.row, move.col)) {
-      this.winner = player;
-    }
-
-    if(++this.moveCount == this.rowCount * this.colCount)
-      this.gridFull = true;
-  }
-};
-
-TicTacToe.prototype.getFullState = function() {
-  return {
-    nextPlayer: this.isEnded() ? null : this.nextPlayer,
-    grid: deepcopy(this.grid),
-    winner: this.winner,
-    isError: this.error
-  };
-};
-
-TicTacToe.prototype.getVisibleState = function() {
-  return this.getFullState();
-};
-
-TicTacToe.prototype.getPlayerInput = function() {
-  return deepcopy(this.grid);
-};
-
-TicTacToe.prototype.isValidPlacement = function(move) {
-  return move.row >= 0 && move.row < this.rowCount &&
-      move.col >= 0 && move.col < this.colCount &&
-      this.grid[move.row][move.col] == 0;
-};
-
-module.exports = TicTacToe;
+export default TicTacToe;
