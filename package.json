@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "app.js",
   "dependencies": {
+    "babel": "^5.8.23",
     "body-parser": "^1.14.1",
     "bootstrap": "^3.3.5",
     "express": "^4.13.3",
@@ -38,7 +39,7 @@
     "webpack": "^1.12.2"
   },
   "scripts": {
-    "start": "gulp server",
+    "start": "GULP_ENV=development gulp server",
     "lint": "eslint --ext .js,.jsx server client",
     "test": "mocha --require babel/register --recursive server/tests"
   }
