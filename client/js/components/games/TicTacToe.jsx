@@ -18,7 +18,7 @@ var CellO = React.createClass({
     var dx = this.props.i * 200 + 100;
     var dy = this.props.j * 200 + 100;
     return (
-        <circle cx={dx} cy={dy} r="80" style={{ strokeWidth: 7, stroke: 'green', fill: 'none'}} />
+        <circle cx={dx} cy={dy} r="80" style={{ strokeWidth: 7, stroke: 'green', fill: 'none' }} />
     );
   }
 });
