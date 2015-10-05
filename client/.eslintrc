@@ -1,0 +1,15 @@
+{
+  "extends": "../.eslintrc",
+
+  "env": {
+    "browser": true
+  },
+
+  "plugins": [
+    "react"
+  ],
+
+  "ecmaFeatures": {
+    "jsx": true
+  }
+}
