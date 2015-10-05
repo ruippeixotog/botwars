@@ -129,7 +129,7 @@ gulp.task("client:watch", function () {
 gulp.task('server:run', ["client:build"], function () {
   var monitor = nodemon({
     nodeArgs: ["-r", "babel/register"],
-    script: 'server/app.js',
+    script: 'server/main.js',
     ext: 'js',
     ignore: ['*'],
     env: { NODE_ENV: process.env.GULP_ENV }
