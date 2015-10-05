@@ -1,10 +1,16 @@
 {
   "name": "botarena",
-  "version": "1.0.0",
-  "description": "Bot arena!",
+  "version": "0.1.0",
+  "description": "A framework and server for competitions of turn-based game bots",
+  "keywords": [
+    "game",
+    "bot",
+    "competiton"
+  ],
+  "repository": "https://github.com/ruippeixotog/botarena.git",
   "author": "Rui Gonçalves <ruippeixotog@gmail.com>",
   "license": "MIT",
-  "main": "app.js",
+  "main": "server/main.js",
   "dependencies": {
     "babel": "^5.8.23",
     "body-parser": "^1.14.1",
