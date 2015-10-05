@@ -1,7 +1,7 @@
 {
   "name": "botarena",
   "version": "0.1.0",
-  "description": "A framework and server for competitions of turn-based game bots",
+  "description": "A framework and server for competitions of game bots",
   "keywords": [
     "game",
     "bot",

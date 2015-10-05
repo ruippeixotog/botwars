@@ -1,6 +1,6 @@
 # BotArena
 
-A framework and server for competitions of turn-based game bots with real-time visualization.
+A framework and server for competitions of game bots with real-time visualization.
 
 More documentation soon.
 
