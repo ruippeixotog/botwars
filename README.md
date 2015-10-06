@@ -1,4 +1,4 @@
-# BotArena
+# BotWars
 
 A framework and server for competitions of game bots with real-time visualization.
 

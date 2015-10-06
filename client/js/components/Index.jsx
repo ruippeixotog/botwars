@@ -7,10 +7,10 @@ var Index = React.createClass({
         <div>
           <div className="row">
             <div className="col-lg-12">
-              <h1 className="page-header">BotArena</h1>
+              <h1 className="page-header">BotWars</h1>
             </div>
           </div>
-          <div>This is BotArena. Choose a game to watch on the left side and enjoy!</div>
+          <div>This is BotWars. Choose a game to watch on the left side and enjoy!</div>
         </div>
     );
   }

@@ -1,5 +1,5 @@
 {
-  "name": "botarena",
+  "name": "botwars",
   "version": "0.1.0",
   "description": "A framework and server for competitions of game bots",
   "keywords": [
@@ -7,7 +7,7 @@
     "bot",
     "competiton"
   ],
-  "repository": "https://github.com/ruippeixotog/botarena.git",
+  "repository": "https://github.com/ruippeixotog/botwars.git",
   "author": "Rui Gonçalves <ruippeixotog@gmail.com>",
   "license": "MIT",
   "main": "server/main.js",

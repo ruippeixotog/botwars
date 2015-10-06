@@ -7,7 +7,7 @@ var HeaderNav = React.createClass({
     return (
         <div>
           <div className="navbar-header">
-            <Link to="/" className="navbar-brand">BotArena</Link>
+            <Link to="/" className="navbar-brand">BotWars</Link>
           </div>
 
           <ul className="nav navbar-top-links navbar-right">
