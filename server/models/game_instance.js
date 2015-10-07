@@ -22,7 +22,7 @@ class GameInstance extends EventEmitter {
 
       this.playerIdTable[playerId] = player;
       this.playerState[player] = { connectedOnce: false };
-      return playerId;
+      return { player: player, playerId: playerId };
     }
     return null;
   }

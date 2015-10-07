@@ -32,10 +32,10 @@ export default function(Game) {
   });
 
   router.post('/:gameId/register', function(req, res) {
-    var playerId = req.game.registerNewPlayer();
+    var playerRes = req.game.registerNewPlayer();
 
-    if(!playerId) res.status(400).send('Could not register new player');
-    else res.json({ playerId: playerId });
+    if(!playerRes) res.status(400).send('Could not register new player');
+    else res.json(playerRes);
   });
 
   router.get('/:gameId/connect', function(req, res) {
