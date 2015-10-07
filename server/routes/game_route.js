@@ -81,9 +81,9 @@ export default function(Game) {
     }
 
     if(req.player) {
-      req.game.on('waitingForMove', function(nextPlayer, input) {
+      req.game.on('waitingForMove', function(nextPlayer, state) {
         if(nextPlayer == req.player)
-          ws.sendJSON({ eventType: 'requestMove', input: input });
+          ws.sendJSON({ eventType: 'requestMove', state: state });
       });
 
       ws.on('message', function(msg) {

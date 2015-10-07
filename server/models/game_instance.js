@@ -42,7 +42,7 @@ class GameInstance extends EventEmitter {
       this.emit("start", this.game.getFullState());
 
       if (!this.game.isEnded()) {
-        this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getPlayerInput());
+        this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getFullState());
       } else {
         this.emit("end", this.game.getFullState());
       }
@@ -69,7 +69,7 @@ class GameInstance extends EventEmitter {
     var currentState = this.game.getFullState();
     if (!this.game.isEnded()) {
       this.emit("state", currentState);
-      this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getPlayerInput());
+      this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getFullState());
     } else {
       this.emit("end", currentState);
     }
