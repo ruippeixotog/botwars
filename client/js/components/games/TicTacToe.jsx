@@ -2,8 +2,8 @@ import React from "react";
 
 var CellX = React.createClass({
   render: function() {
-    var dx = this.props.i * 200;
-    var dy = this.props.j * 200;
+    var dx = this.props.col * 200;
+    var dy = this.props.row * 200;
     return (
         <g transform={`translate(${dx},${dy})`}>
           <line x1="20" x2="180" y1="20" y2="180" style={{ strokeWidth: 8, stroke: 'red', strokeLinecap: 'round' }} />
@@ -15,8 +15,8 @@ var CellX = React.createClass({
 
 var CellO = React.createClass({
   render: function() {
-    var dx = this.props.i * 200 + 100;
-    var dy = this.props.j * 200 + 100;
+    var dx = this.props.col * 200 + 100;
+    var dy = this.props.row * 200 + 100;
     return (
         <circle cx={dx} cy={dy} r="80" style={{ strokeWidth: 7, stroke: 'green', fill: 'none' }} />
     );
@@ -30,11 +30,11 @@ var Grid = React.createClass({
     var grid = this.props.grid;
     var cells = [];
 
-    for(let i = 0; i < 3; i++) {
-      for(let j = 0; j < 3; j++) {
-        if(grid[i][j] > 0) {
-          var Cell = cellComponents[grid[i][j] - 1];
-          cells.push(<Cell i={i} j={j} />);
+    for(let row = 0; row < 3; row++) {
+      for(let col = 0; col < 3; col++) {
+        if(grid[row][col] > 0) {
+          var Cell = cellComponents[grid[row][col] - 1];
+          cells.push(<Cell row={row} col={col} />);
         }
       }
     }
