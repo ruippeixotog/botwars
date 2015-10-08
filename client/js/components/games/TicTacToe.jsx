@@ -34,7 +34,7 @@ var Grid = React.createClass({
       for(let col = 0; col < 3; col++) {
         if(grid[row][col] > 0) {
           var Cell = cellComponents[grid[row][col] - 1];
-          cells.push(<Cell row={row} col={col} />);
+          cells.push(<Cell row={row} col={col} key={[row, col]} />);
         }
       }
     }

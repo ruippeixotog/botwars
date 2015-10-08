@@ -9,7 +9,7 @@ var SideNav = React.createClass({
 
   render: function () {
     var gameLinks = this.props.games.map(game =>
-      <li>
+      <li key={game.href}>
         <Link to={game.href}><i className="fa fa-gamepad fa-fw" /> {game.name}</Link>
       </li>
     );

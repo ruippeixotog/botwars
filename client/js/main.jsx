@@ -15,7 +15,7 @@ var games = [
 ];
 
 var gameRoutes = games.map(game =>
-    <Route path={game.href}>
+    <Route path={game.href} key={game.href}>
       <IndexRoute component={GameIndex} game={game} />
       <Route path=":gameId" component={Game} game={game} />
     </Route>
