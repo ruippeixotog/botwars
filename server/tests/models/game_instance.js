@@ -9,7 +9,6 @@ function DummyGame() {
   this.nextPlayer = 1;
   this.lastMove = null;
   this.state = 0;
-  this.visibleState = 0;
 }
 
 DummyGame.END_MOVE = 'END_MOVE';
@@ -27,9 +26,7 @@ DummyGame.prototype = {
     if(move == DummyGame.INVALID_MOVE) this.error = true;
     else if(move == DummyGame.END_MOVE) this.ended = true;
   },
-  getFullState: function() { return this.state; },
-  getVisibleState: function() { return this.visibleState; },
-  getPlayerInput: function() { return {}; }
+  getState: function(player) { return { n: this.state, visibleTo: player }; }
 };
 
 describe('GameInstance', function() {
@@ -82,7 +79,7 @@ describe('GameInstance', function() {
 
     game.on('start', function() {
       if(!allConnected) throw new Error('"start" sent before all players connected');
-      assert.equal(game.getFullState(), 0);
+      assert.deepEqual(game.getState(1), { n: 0, visibleTo: 1 });
       done();
     });
 
@@ -99,7 +96,7 @@ describe('GameInstance', function() {
     game.on('waitingForMove', function(player) {
       if(!allConnected) throw new Error('"waitingForMove" sent before all players connected');
       assert.equal(player, 1);
-      assert.deepEqual(game.getFullState(), 0);
+      assert.deepEqual(game.getState(1), { n: 0, visibleTo: 1 });
       done();
     });
 
@@ -113,16 +110,14 @@ describe('GameInstance', function() {
   it('should only allow querying the state after the game is started', function () {
     registerAll();
     assert.equal(game.getNextPlayer(), null);
-    assert.equal(game.getFullState(), null);
-    assert.equal(game.getVisibleState(1), null);
-    assert.equal(game.getPlayerInput(), null);
+    assert.deepEqual(game.getState(1), null);
+    assert.deepEqual(game.getState(2), null);
 
     game.connect(1);
     game.connect(2);
     assert.equal(game.getNextPlayer(), 1);
-    assert.equal(game.getFullState(), 0);
-    assert.equal(game.getVisibleState(1), 0);
-    assert.deepEqual(game.getPlayerInput(), {});
+    assert.deepEqual(game.getState(1), { n: 0, visibleTo: 1 });
+    assert.deepEqual(game.getState(2), { n: 0, visibleTo: 2 });
   });
 
   it('should allow moves only after the game is started', function () {
@@ -168,14 +163,14 @@ describe('GameInstance', function() {
     });
 
     game.on('stateChange', function() {
-      assert.equal(game.getFullState(), 0);
+      assert.deepEqual(game.getState(2), { n: 0, visibleTo: 2 });
       if(!received['move']) throw new Error('"stateChange" event emitted before "move"');
       received['state'] = true;
     });
 
     game.on('waitingForMove', function(player) {
       assert.equal(player, 1);
-      assert.deepEqual(game.getFullState(), 0);
+      assert.deepEqual(game.getState(2), { n: 0, visibleTo: 2 });
       if(!received['state']) throw new Error('"waitingForMove" event emitted before "state"');
       done();
     });
@@ -188,7 +183,7 @@ describe('GameInstance', function() {
     connectAll();
 
     game.on('end', function() {
-      assert.equal(game.getFullState(), 0);
+      assert.deepEqual(game.getState(1), { n: 0, visibleTo: 1 });
       done();
     });
 

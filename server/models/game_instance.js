@@ -79,16 +79,8 @@ class GameInstance extends EventEmitter {
     return this.started ? this.game.getNextPlayer() : null;
   }
 
-  getFullState() {
-    return this.started ? this.game.getFullState() : null;
-  }
-
-  getVisibleState(player) {
-    return this.started ? this.game.getVisibleState(player) : null;
-  }
-
-  getPlayerInput() {
-    return this.started ? this.game.getPlayerInput() : null;
+  getState(player) {
+    return this.started ? this.game.getState(player) : null;
   }
 }
 

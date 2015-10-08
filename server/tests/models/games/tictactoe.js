@@ -26,7 +26,7 @@ describe('TicTacToe', function() {
     assert.equal(game.isError(), false);
     assert.equal(game.getWinner(), null);
     assert.equal(game.getNextPlayer(), 1);
-    assert.deepEqual(game.getFullState(), {
+    assert.deepEqual(game.getState(), {
       nextPlayer: 1,
       grid: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
       winner: null,
@@ -37,11 +37,11 @@ describe('TicTacToe', function() {
   it('should update correctly the state with valid moves', function () {
     game.move(1, { row: 0, col: 0 });
     assert.equal(game.isError(), false);
-    assert.deepEqual(game.getFullState().grid, [[1, 0, 0], [0, 0, 0], [0, 0, 0]]);
+    assert.deepEqual(game.getState().grid, [[1, 0, 0], [0, 0, 0], [0, 0, 0]]);
 
     game.move(2, { row: 0, col: 1 });
     assert.equal(game.isError(), false);
-    assert.deepEqual(game.getFullState().grid, [[1, 2, 0], [0, 0, 0], [0, 0, 0]]);
+    assert.deepEqual(game.getState().grid, [[1, 2, 0], [0, 0, 0], [0, 0, 0]]);
   });
 
   it('should set the state as error when an invalid move is made', function () {

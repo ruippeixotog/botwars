@@ -45,7 +45,7 @@ export default function(Game) {
 
   router.get('/:gameId/state', function(req, res) {
     if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
-    else res.json(req.game.getFullState());
+    else res.json(req.game.getState(player));
   });
 
   router.post('/:gameId/move', function(req, res) {
@@ -59,11 +59,11 @@ export default function(Game) {
     var {game, player} = req;
 
     game.on('start', function() {
-      ws.sendJSON({ eventType: 'start', state: game.getFullState() });
+      ws.sendJSON({ eventType: 'start', state: game.getState(player) });
     });
 
     game.on('stateChange', function() {
-      ws.sendJSON({ eventType: 'state', state: game.getFullState() });
+      ws.sendJSON({ eventType: 'state', state: game.getState(player) });
     });
 
     game.on('move', function(player, move) {
@@ -71,20 +71,20 @@ export default function(Game) {
     });
 
     game.on('end', function() {
-      ws.sendJSON({ eventType: 'end', state: game.getFullState() });
+      ws.sendJSON({ eventType: 'end', state: game.getState(player) });
       ws.close();
     });
 
     if(game.hasStarted()) {
       var isEnded = game.isEnded();
-      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: game.getFullState() });
+      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: game.getState(player) });
       if(isEnded) ws.close();
     }
 
     if(player) {
       game.on('waitingForMove', function(nextPlayer) {
         if(nextPlayer == player)
-          ws.sendJSON({ eventType: 'requestMove', state: game.getFullState() });
+          ws.sendJSON({ eventType: 'requestMove', state: game.getState(player) });
       });
 
       ws.on('message', function(msg) {
@@ -92,7 +92,7 @@ export default function(Game) {
       });
 
       if (game.hasStarted() && player == game.getNextPlayer()) {
-        ws.sendJSON({ eventType: 'requestMove', state: game.getFullState() });
+        ws.sendJSON({ eventType: 'requestMove', state: game.getState(player) });
       }
 
       game.connect(player);
