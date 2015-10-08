@@ -45,7 +45,7 @@ export default function(Game) {
 
   router.get('/:gameId/state', function(req, res) {
     if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
-    else res.json(req.game.getState(player));
+    else res.json(req.game.getState(req.player));
   });
 
   router.post('/:gameId/move', function(req, res) {

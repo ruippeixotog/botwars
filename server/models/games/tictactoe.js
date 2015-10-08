@@ -49,7 +49,7 @@ class TicTacToe extends Game {
     }
   }
 
-  getState(player) {
+  getState() {
     return {
       nextPlayer: this.isEnded() ? null : this.nextPlayer,
       grid: this.grid,
