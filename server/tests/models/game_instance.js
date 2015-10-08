@@ -80,9 +80,9 @@ describe('GameInstance', function() {
   it('should emit a "start" event on start', function (done) {
     var allConnected = false;
 
-    game.on('start', function(state) {
+    game.on('start', function() {
       if(!allConnected) throw new Error('"start" sent before all players connected');
-      assert.equal(state, 0);
+      assert.equal(game.getFullState(), 0);
       done();
     });
 
@@ -96,10 +96,10 @@ describe('GameInstance', function() {
   it('should emit a "waitingForMove" event on start', function (done) {
     var allConnected = false;
 
-    game.on('waitingForMove', function(player, state) {
+    game.on('waitingForMove', function(player) {
       if(!allConnected) throw new Error('"waitingForMove" sent before all players connected');
       assert.equal(player, 1);
-      assert.deepEqual(state, 0);
+      assert.deepEqual(game.getFullState(), 0);
       done();
     });
 
@@ -155,7 +155,7 @@ describe('GameInstance', function() {
     assert.equal(gameLogic.isError(), false);
   });
 
-  it('should emit "move", "state" and "waitingForMove" events as a move is done', function (done) {
+  it('should emit "move", "stateChange" and "waitingForMove" events as a move is done', function (done) {
     registerAll();
     connectAll();
 
@@ -167,15 +167,15 @@ describe('GameInstance', function() {
       received['move'] = true;
     });
 
-    game.on('state', function(state) {
-      assert.equal(state, 0);
-      if(!received['move']) throw new Error('"state" event emitted before "move"');
+    game.on('stateChange', function() {
+      assert.equal(game.getFullState(), 0);
+      if(!received['move']) throw new Error('"stateChange" event emitted before "move"');
       received['state'] = true;
     });
 
-    game.on('waitingForMove', function(player, state) {
+    game.on('waitingForMove', function(player) {
       assert.equal(player, 1);
-      assert.deepEqual(state, 0);
+      assert.deepEqual(game.getFullState(), 0);
       if(!received['state']) throw new Error('"waitingForMove" event emitted before "state"');
       done();
     });
@@ -187,8 +187,8 @@ describe('GameInstance', function() {
     registerAll();
     connectAll();
 
-    game.on('end', function(state) {
-      assert.equal(state, 0);
+    game.on('end', function() {
+      assert.equal(game.getFullState(), 0);
       done();
     });
 

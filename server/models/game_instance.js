@@ -39,12 +39,12 @@ class GameInstance extends EventEmitter {
 
     if(!this.started && this.connectedPlayerCount == this.game.getPlayerCount()) {
       this.started = true;
-      this.emit("start", this.game.getFullState());
+      this.emit("start");
 
       if (!this.game.isEnded()) {
-        this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getFullState());
+        this.emit("waitingForMove", this.game.getNextPlayer());
       } else {
-        this.emit("end", this.game.getFullState());
+        this.emit("end");
       }
     }
   }
@@ -66,12 +66,11 @@ class GameInstance extends EventEmitter {
     this.game.move(player, move);
     this.emit("move", player, move);
 
-    var currentState = this.game.getFullState();
     if (!this.game.isEnded()) {
-      this.emit("state", currentState);
-      this.emit("waitingForMove", this.game.getNextPlayer(), this.game.getFullState());
+      this.emit("stateChange");
+      this.emit("waitingForMove", this.game.getNextPlayer());
     } else {
-      this.emit("end", currentState);
+      this.emit("end");
     }
     return true;
   }

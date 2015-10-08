@@ -56,45 +56,46 @@ export default function(Game) {
 
   router.ws('/:gameId/stream', function(ws, req) {
     ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
+    var {game, player} = req;
 
-    req.game.on('start', function(state) {
-      ws.sendJSON({ eventType: 'start', state: state });
+    game.on('start', function() {
+      ws.sendJSON({ eventType: 'start', state: game.getFullState() });
     });
 
-    req.game.on('state', function(state) {
-      ws.sendJSON({ eventType: 'state', state: state });
+    game.on('stateChange', function() {
+      ws.sendJSON({ eventType: 'state', state: game.getFullState() });
     });
 
-    req.game.on('move', function(player, move) {
+    game.on('move', function(player, move) {
       ws.sendJSON({ eventType: 'move', player: player, move: move });
     });
 
-    req.game.on('end', function(state) {
-      ws.sendJSON({ eventType: 'end', state: state });
+    game.on('end', function() {
+      ws.sendJSON({ eventType: 'end', state: game.getFullState() });
       ws.close();
     });
 
-    if(req.game.hasStarted()) {
-      var isEnded = req.game.isEnded();
-      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: req.game.getFullState() });
+    if(game.hasStarted()) {
+      var isEnded = game.isEnded();
+      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: game.getFullState() });
       if(isEnded) ws.close();
     }
 
-    if(req.player) {
-      req.game.on('waitingForMove', function(nextPlayer, state) {
-        if(nextPlayer == req.player)
-          ws.sendJSON({ eventType: 'requestMove', state: state });
+    if(player) {
+      game.on('waitingForMove', function(nextPlayer) {
+        if(nextPlayer == player)
+          ws.sendJSON({ eventType: 'requestMove', state: game.getFullState() });
       });
 
       ws.on('message', function(msg) {
-        req.game.move(req.player, JSON.parse(msg));
+        game.move(player, JSON.parse(msg));
       });
 
-      if (req.game.hasStarted() && req.player == req.game.getNextPlayer()) {
-        ws.sendJSON({ eventType: 'requestMove', input: req.game.getPlayerInput() });
+      if (game.hasStarted() && player == game.getNextPlayer()) {
+        ws.sendJSON({ eventType: 'requestMove', state: game.getFullState() });
       }
 
-      req.game.connect(req.player);
+      game.connect(player);
     }
   });
 
