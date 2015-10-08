@@ -95,7 +95,7 @@ var Game = React.createClass({
 
   handleGameIdSubmit: function(e) {
     e.preventDefault();
-    var nextGameId = React.findDOMNode(this.refs.nextGameId).value;
+    var nextGameId = this.refs.nextGameId.value;
     this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
   },
 

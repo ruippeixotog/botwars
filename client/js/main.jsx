@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import {Route, Router, IndexRoute} from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
 
@@ -29,6 +30,6 @@ var routes = (
     </Route>
 );
 
-React.render(
+ReactDOM.render(
     <Router routes={routes} history={createBrowserHistory()} />,
     document.getElementById("main"));

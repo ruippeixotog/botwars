@@ -11,7 +11,7 @@ var GameIndex = React.createClass({
   handleGameIdSubmit: function(e) {
     e.preventDefault();
     var game = this.props.route.game;
-    var nextGameId = React.findDOMNode(this.refs.nextGameId).value;
+    var nextGameId = this.refs.nextGameId.value;
     this.history.pushState(null, `${game.href}/${nextGameId}`);
   },
 
