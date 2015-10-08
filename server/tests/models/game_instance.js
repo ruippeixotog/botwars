@@ -60,8 +60,8 @@ describe('GameInstance', function() {
     assert(p2 != null);
     assert.equal(game.registerNewPlayer(), null);
 
-    assert.equal(game.getPlayer(p1), 1);
-    assert.equal(game.getPlayer(p2), 2);
+    assert.equal(game.getPlayer(p1.playerId), 1);
+    assert.equal(game.getPlayer(p2.playerId), 2);
     assert.equal(game.getPlayer('nonExistingPlayerId'), null);
   });
 
@@ -96,10 +96,10 @@ describe('GameInstance', function() {
   it('should emit a "waitingForMove" event on start', function (done) {
     var allConnected = false;
 
-    game.on('waitingForMove', function(player, input) {
+    game.on('waitingForMove', function(player, state) {
       if(!allConnected) throw new Error('"waitingForMove" sent before all players connected');
       assert.equal(player, 1);
-      assert.deepEqual(input, {});
+      assert.deepEqual(state, 0);
       done();
     });
 
@@ -173,9 +173,9 @@ describe('GameInstance', function() {
       received['state'] = true;
     });
 
-    game.on('waitingForMove', function(player, input) {
+    game.on('waitingForMove', function(player, state) {
       assert.equal(player, 1);
-      assert.deepEqual(input, {});
+      assert.deepEqual(state, 0);
       if(!received['state']) throw new Error('"waitingForMove" event emitted before "state"');
       done();
     });
