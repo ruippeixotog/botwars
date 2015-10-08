@@ -1,5 +1,4 @@
 import _ from "underscore";
-import deepcopy from "../utils/deepcopy";
 
 import Game from "./game";
 
@@ -53,7 +52,7 @@ class TicTacToe extends Game {
   getState(player) {
     return {
       nextPlayer: this.isEnded() ? null : this.nextPlayer,
-      grid: deepcopy(this.grid),
+      grid: this.grid,
       winner: this.winner,
       isError: this.error
     };
