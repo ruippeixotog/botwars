@@ -36,9 +36,18 @@ class Game {
     throw new Error(this.constructor + ".move not implemented");
   }
 
+  getFullState() {
+    throw new Error(this.constructor + ".getFullState not implemented");
+  }
+
+  // getStateView(fullState, player)
+  getStateView() {
+    throw new Error(this.constructor + ".getStateView not implemented");
+  }
+
   // getState(player)
-  getState() {
-    throw new Error(this.constructor + ".getState not implemented");
+  getState(player) {
+    return this.getStateView(this.getFullState(), player);
   }
 }
 

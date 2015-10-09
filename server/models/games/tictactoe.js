@@ -49,13 +49,17 @@ class TicTacToe extends Game {
     }
   }
 
-  getState() {
+  getFullState() {
     return {
       nextPlayer: this.isEnded() ? null : this.nextPlayer,
       grid: this.grid,
       winner: this.winner,
       isError: this.error
     };
+  }
+
+  getStateView(fullState) {
+    return fullState;
   }
 
   _isValidPlacement(move) {

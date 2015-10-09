@@ -1,33 +1,35 @@
 var assert = require("assert");
 
 var GameInstance = require.main.require("server/models/game_instance");
+var Game = require.main.require("server/models/games/game");
 
-function DummyGame() {
-  this.ended = false;
-  this.error = false;
-  this.winner = null;
-  this.nextPlayer = 1;
-  this.lastMove = null;
-  this.state = 0;
+class DummyGame extends Game {
+  constructor() {
+    super();
+    this.ended = false;
+    this.error = false;
+    this.winner = null;
+    this.nextPlayer = 1;
+    this.lastMove = null;
+    this.state = 0;
+  }
+  getPlayerCount() { return 2; }
+  isEnded() { return this.ended; }
+  isError() { return this.error; }
+  getWinner() { return this.winner; }
+  getNextPlayer() { return this.nextPlayer; }
+  isValidMove(player, move) { return move != DummyGame.INVALID_MOVE; }
+  move(player, move) {
+    this.lastMove = move;
+    if(move == DummyGame.INVALID_MOVE) this.error = true;
+    else if(move == DummyGame.END_MOVE) this.ended = true;
+  }
+  getFullState() { return this.state; }
+  getStateView(fullState, player) { return { n: fullState, visibleTo: player }; }
 }
 
 DummyGame.END_MOVE = 'END_MOVE';
 DummyGame.INVALID_MOVE = 'INVALID_MOVE';
-
-DummyGame.prototype = {
-  getPlayerCount: function() { return 2; },
-  isEnded: function() { return this.ended; },
-  isError: function() { return this.error; },
-  getWinner: function() { return this.winner; },
-  getNextPlayer: function() { return this.nextPlayer; },
-  isValidMove: function(player, move) { return move != DummyGame.INVALID_MOVE; },
-  move: function(player, move) {
-    this.lastMove = move;
-    if(move == DummyGame.INVALID_MOVE) this.error = true;
-    else if(move == DummyGame.END_MOVE) this.ended = true;
-  },
-  getState: function(player) { return { n: this.state, visibleTo: player }; }
-};
 
 describe('GameInstance', function() {
   var gameLogic, game;
