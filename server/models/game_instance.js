@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import deepcopy from "./utils/deepcopy";
 
 import {EventEmitter} from "events";
 
@@ -8,11 +9,22 @@ class GameInstance extends EventEmitter {
     this.id = id;
     this.game = game;
     this.started = false;
+    this.history = [];
 
     this.currentPlayerCount = 0;
     this.connectedPlayerCount = 0;
     this.playerIdTable = {};
     this.playerState = {};
+
+    for(let event of ["start", "stateChange", "end"]) {
+      this.on(event, function() {
+        this.history.push({ type: "state", fullState: deepcopy(this.game.getFullState()) });
+      });
+    }
+
+    this.on("move", function(player, move) {
+      this.history.push({ type: "move", player, move });
+    });
   }
 
   registerNewPlayer() {
@@ -81,6 +93,14 @@ class GameInstance extends EventEmitter {
 
   getState(player) {
     return this.started ? this.game.getState(player) : null;
+  }
+
+  getHistory(player) {
+    console.log(this.history);
+    return this.history.map(histEvent =>
+        histEvent.type == "move" ? histEvent :
+          { type: "state", state: this.game.getStateView(histEvent.fullState, player) }
+    );
   }
 }
 

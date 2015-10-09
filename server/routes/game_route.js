@@ -54,6 +54,10 @@ export default function(Game) {
     else res.status(400).send('Illegal move');
   });
 
+  router.get('/:gameId/history', function(req, res) {
+    res.json(req.game.getHistory(req.player));
+  });
+
   router.ws('/:gameId/stream', function(ws, req) {
     ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
     var {game, player} = req;
