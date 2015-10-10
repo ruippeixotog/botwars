@@ -30,14 +30,20 @@ var Game = React.createClass({
   },
 
   getInitialState: function() {
-    return { connState: ConnStates.NOT_CONNECTED, gameState: null };
+    return {
+      connState: ConnStates.NOT_CONNECTED,
+      gameState: null,
+      gameStateCount: 0,
+      gameStateIndex: null,
+      followCurrentState: true
+    };
   },
 
   componentWillMount: function () {
     GamesStore.on(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.on(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
     GamesStore.on(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
-    GamesStore.on(GamesEvents.STATE_CHANGE, this.onGameStateChange);
+    GamesStore.on(GamesEvents.NEW_STATE, this.onNewGameState);
   },
 
   componentDidMount: function() {
@@ -58,7 +64,7 @@ var Game = React.createClass({
     GamesStore.removeListener(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.removeListener(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
     GamesStore.removeListener(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
-    GamesStore.removeListener(GamesEvents.STATE_CHANGE, this.onGameStateChange);
+    GamesStore.removeListener(GamesEvents.NEW_STATE, this.onNewGameState);
     GamesActions.closeGameStream(this.getGame().href, this.getGameId());
   },
 
@@ -87,9 +93,19 @@ var Game = React.createClass({
     GamesActions.requestGameStream(this.getGame().href, this.getGameId());
   },
 
-  onGameStateChange: function(gameHref, gameId) {
+  onNewGameState: function(gameHref, gameId) {
     if(this.isThisGame(gameHref, gameId)) {
-      this.setState({ gameState: GamesStore.getGameState(gameHref, gameId) });
+      var gameStore = GamesStore.getGame(gameHref, gameId);
+
+      var newStateCount = gameStore.getStateCount();
+      this.setState({ gameStateCount: newStateCount });
+
+      if(this.state.followCurrentState) {
+        this.setState({
+          gameStateIndex: newStateCount - 1,
+          gameState: gameStore.getCurrentState()
+        });
+      }
     }
   },
 
@@ -97,6 +113,32 @@ var Game = React.createClass({
     e.preventDefault();
     var nextGameId = this.refs.nextGameId.value;
     this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
+  },
+
+  handleStateBack: function(e) {
+    e.preventDefault();
+    if(this.state.gameStateIndex > 0) {
+      var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
+
+      this.setState({
+        gameState: gameStore.getState(this.state.gameStateIndex - 1),
+        gameStateIndex: this.state.gameStateIndex - 1,
+        followCurrentState: false
+      });
+    }
+  },
+
+  handleStateFwd: function(e) {
+    e.preventDefault();
+    if(this.state.gameStateIndex < this.state.gameStateCount - 1) {
+      var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
+
+      this.setState({
+        gameState: gameStore.getState(this.state.gameStateIndex + 1),
+        gameStateIndex: this.state.gameStateIndex + 1,
+        followCurrentState: this.state.gameStateIndex == this.state.gameStateCount - 2
+      });
+    }
   },
 
   render: function () {
@@ -122,11 +164,21 @@ var Game = React.createClass({
             </div>
           </div>
           {alert}
-          <form className="form-inline" onSubmit={this.handleGameIdSubmit}>
-            <label>Watch another game:</label>
-            <input className="form-control" ref="nextGameId" defaultValue={gameId} />
-            <button className="btn btn-default">Go</button>
-          </form>
+          <div className="game-toolbar">
+            <form className="form-inline game-chooser" onSubmit={this.handleGameIdSubmit}>
+              <label>Watch another game:</label>
+              <input className="form-control" ref="nextGameId" defaultValue={gameId} />
+              <button className="btn btn-default">Go</button>
+            </form>
+            <ul className="pagination game-state-nav">
+              <li>
+                <a onClick={this.handleStateBack}>&laquo;</a>
+              </li>
+              <li>
+                <a onClick={this.handleStateFwd}>&raquo;</a>
+              </li>
+            </ul>
+          </div>
           <GameComponent gameId={gameId} gameState={this.state.gameState} />
         </div>
     );

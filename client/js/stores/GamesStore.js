@@ -1,33 +1,44 @@
+import lazy from "lazy.js";
+
 import {EventEmitter} from "events";
 import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
 
-var GamesStore = new EventEmitter();
+class GameStore {
+  constructor() { this.states = []; }
+  getState(i) { return this.states[i]; }
+  getCurrentState() { return this.states[this.states.length - 1]; }
+  getAllStates() { return this.states; }
+  getStateCount() { return this.states.length; }
 
-GamesStore.games = {};
+  _pushState(state) { this.states.push(state); }
+  _setAllStates(states) { this.states = states; }
+}
 
-GamesStore.getGameState = function(gameHref, gameId) {
-  return (this.games[gameHref] || {})[gameId];
-};
+const GamesStore = lazy(EventEmitter.prototype).extend({
+  games: {},
 
-GamesStore.setGameState = function(gameHref, gameId, state) {
-  this.games[gameHref] = this.games[gameHref] || {};
-  this.games[gameHref][gameId] = state;
-};
+  getGame: function(gameHref, gameId) {
+    var games = this.games[gameHref] = this.games[gameHref] || {};
+    return games[gameId] = games[gameId] || new GameStore();
+  }
+}).value();
 
 AppDispatcher.register(function (action) {
+  const {gameHref, gameId} = action;
+
   switch (action.actionType) {
     case GamesEvents.START:
     case GamesEvents.STATE:
     case GamesEvents.END:
-      GamesStore.setGameState(action.gameHref, action.gameId, action.data);
-      GamesStore.emit(GamesEvents.STATE_CHANGE, action.gameHref, action.gameId);
+      GamesStore.getGame(gameHref, gameId)._pushState(action.data);
+      GamesStore.emit(GamesEvents.NEW_STATE, gameHref, gameId);
       break;
 
     case GamesEvents.CONNECTION_OPENED:
     case GamesEvents.CONNECTION_CLOSED:
     case GamesEvents.CONNECTION_ERROR:
-      GamesStore.emit(action.actionType, action.gameHref, action.gameId);
+      GamesStore.emit(action.actionType, gameHref, gameId);
       break;
   }
 });

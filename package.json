@@ -19,6 +19,7 @@
     "flux": "^2.1.1",
     "font-awesome": "^4.4.0",
     "history": "^1.12.3",
+    "lazy.js": "^0.4.2",
     "morgan": "^1.6.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",

@@ -367,3 +367,16 @@ table.dataTable thead .sorting:after {
     }
   }
 }
+
+.game-toolbar {
+  .game-state-nav {
+    margin: 0;
+  }
+  .game-chooser {
+    float: right;
+  }
+
+  &:after {
+    clear: both;
+  }
+}
