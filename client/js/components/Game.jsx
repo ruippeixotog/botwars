@@ -160,7 +160,7 @@ var Game = React.createClass({
           </Alert>
           <Row>
             <Col lg={6}>
-              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
+              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true} ellipsis={false}
                           items={this.state.gameStateCount} activePage={this.state.gameStateIndex + 1}
                           onSelect={this.handleGameStateSelect} />
             </Col>
