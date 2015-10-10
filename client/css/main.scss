@@ -368,15 +368,13 @@ table.dataTable thead .sorting:after {
   }
 }
 
-.game-toolbar {
-  .game-state-nav {
-    margin: 0;
-  }
-  .game-chooser {
-    float: right;
-  }
+.game-state-nav {
+  margin-top: 0;
+  margin-bottom: 0;
+}
 
-  &:after {
-    clear: both;
+.form-inline {
+  .form-group, .form-control, label {
+    margin: 0 2px;
   }
 }

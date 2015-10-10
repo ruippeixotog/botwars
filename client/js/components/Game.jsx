@@ -1,11 +1,11 @@
 import React from "react";
 import {History} from "react-router";
+import {Row, Col, Pagination, Input, Button, Alert, PageHeader} from "react-bootstrap";
+import classNames from "classnames";
 
 import GamesActions from "../actions/GamesActions";
 import GamesStore from "../stores/GamesStore";
 import GamesEvents from "../events/GamesEvents";
-
-import Alert from "./Alert";
 
 const ConnStates = Object.freeze({
   NOT_CONNECTED: "NOT_CONNECTED",
@@ -112,32 +112,19 @@ var Game = React.createClass({
 
   handleGameIdSubmit: function(e) {
     e.preventDefault();
-    var nextGameId = this.refs.nextGameId.value;
+    var nextGameId = this.refs.nextGameId.getValue();
     this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
   },
 
-  handleStateBack: function(e) {
+  handleGameStateSelect: function(e, {eventKey}) {
     e.preventDefault();
-    if(this.state.gameStateIndex > 0) {
+    if(eventKey != this.state.gameStateIndex + 1) {
       var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
 
       this.setState({
-        gameState: gameStore.getState(this.state.gameStateIndex - 1),
-        gameStateIndex: this.state.gameStateIndex - 1,
-        followCurrentState: false
-      });
-    }
-  },
-
-  handleStateFwd: function(e) {
-    e.preventDefault();
-    if(this.state.gameStateIndex < this.state.gameStateCount - 1) {
-      var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
-
-      this.setState({
-        gameState: gameStore.getState(this.state.gameStateIndex + 1),
-        gameStateIndex: this.state.gameStateIndex + 1,
-        followCurrentState: this.state.gameStateIndex == this.state.gameStateCount - 2
+        gameState: gameStore.getState(eventKey - 1),
+        gameStateIndex: eventKey - 1,
+        followCurrentState: eventKey == this.state.gameStateCount - 1
       });
     }
   },
@@ -147,39 +134,43 @@ var Game = React.createClass({
     var game = this.getGame();
     var GameComponent = game.component;
 
-    var alert = <div></div>;
+    var alertText = "";
     switch(this.state.connState) {
       case ConnStates.NOT_CONNECTED:
-        alert = <Alert level="warn">Connecting to server...</Alert>;
+        alertText = "Connecting to server...";
         break;
       case ConnStates.CONNECTION_DOWN:
-        alert = <Alert level="warn">Connection is down. Trying to reconnect...</Alert>;
+        alertText = "Connection is down. Trying to reconnect...";
         break;
     }
 
+    var alertClassNames = classNames({
+      "hidden": alertText == ""
+    });
+
     return (
         <div>
-          <div className="row">
-            <div className="col-lg-12">
-              <h1 className="page-header">{game.name}</h1>
-            </div>
-          </div>
-          {alert}
-          <div className="game-toolbar">
-            <form className="form-inline game-chooser" onSubmit={this.handleGameIdSubmit}>
-              <label>Watch another game:</label>
-              <input className="form-control" ref="nextGameId" defaultValue={gameId} />
-              <button className="btn btn-default">Go</button>
-            </form>
-            <ul className="pagination game-state-nav">
-              <li>
-                <a onClick={this.handleStateBack}>&laquo;</a>
-              </li>
-              <li>
-                <a onClick={this.handleStateFwd}>&raquo;</a>
-              </li>
-            </ul>
-          </div>
+          <Row>
+            <Col lg={12}>
+              <PageHeader>{game.name}</PageHeader>
+            </Col>
+          </Row>
+          <Alert className={alertClassNames} bsStyle="warning">
+            <i className="fa fa-exclamation-circle fa-fw" />{alertText}
+          </Alert>
+          <Row>
+            <Col lg={6}>
+              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
+                          items={this.state.gameStateCount} activePage={this.state.gameStateIndex + 1}
+                          onSelect={this.handleGameStateSelect} />
+            </Col>
+            <Col lg={6}>
+              <form className="form-inline game-chooser pull-right" onSubmit={this.handleGameIdSubmit}>
+                <Input type="text" label="Watch another game:" defaultValue={gameId} ref="nextGameId" />
+                <Button>Go</Button>
+              </form>
+            </Col>
+          </Row>
           <GameComponent gameId={gameId} gameState={this.state.gameState} />
         </div>
     );
