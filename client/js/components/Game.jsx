@@ -96,15 +96,16 @@ var Game = React.createClass({
   onNewGameState: function(gameHref, gameId) {
     if(this.isThisGame(gameHref, gameId)) {
       var gameStore = GamesStore.getGame(gameHref, gameId);
-
       var newStateCount = gameStore.getStateCount();
-      this.setState({ gameStateCount: newStateCount });
 
       if(this.state.followCurrentState) {
         this.setState({
-          gameStateIndex: newStateCount - 1,
-          gameState: gameStore.getCurrentState()
+          gameState: gameStore.getCurrentState(),
+          gameStateCount: newStateCount,
+          gameStateIndex: newStateCount - 1
         });
+      } else {
+        this.setState({ gameStateCount: newStateCount });
       }
     }
   },
