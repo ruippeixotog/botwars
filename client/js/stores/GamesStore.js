@@ -36,6 +36,10 @@ AppDispatcher.register(function (action) {
       break;
 
     case GamesEvents.CONNECTION_OPENED:
+      GamesStore.getGame(gameHref, gameId)._setAllStates([]);
+      GamesStore.emit(action.actionType, gameHref, gameId);
+      break;
+
     case GamesEvents.CONNECTION_CLOSED:
     case GamesEvents.CONNECTION_ERROR:
       GamesStore.emit(action.actionType, gameHref, gameId);
