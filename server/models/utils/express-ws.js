@@ -1,56 +1,48 @@
-var http = require('http');
-var url = require('url');
+import http from "http";
 
-var ServerResponse = http.ServerResponse;
-var WebSocketServer = require('ws').Server;
+import {Server as WebSocketServer} from "ws";
+import {EventEmitter} from "events";
 
-var wsHandledPath = function(path) {
-  var urlObj = url.parse(path);
-  urlObj.pathname += '/__websocket__';
-  return url.format(urlObj);
-};
+function prepareApp(app) {
+  var oldListen = app.listen.bind(app);
 
-var prepareApp = function(app) {
-  var server = http.createServer(app);
-  app.listen = function() {
-    return server.listen.apply(server, arguments);
-  };
+  app.listen = function(...args) {
+    var server = oldListen(...args);
 
-  app.wsServer = new WebSocketServer({ server: server });
+    var proxyServer = new EventEmitter();
+    app.wsServer = new WebSocketServer({ server: proxyServer });
 
-  app.wsServer.on('connection', function(ws) {
-    var res = new ServerResponse(ws.upgradeReq);
-    res.writeHead = function (statusCode) {
-      if (statusCode > 200) ws.close();
-    };
+    server.on('upgrade', function(req, socket, head) {
+      var res = new http.ServerResponse(req);
+      res.assignSocket(socket);
 
-    ws.upgradeReq.ws = ws;
-    ws.upgradeReq.url = wsHandledPath(ws.upgradeReq.url);
+      res.upgradeWs = function(handler) {
+        req._wsHandler = handler;
+        proxyServer.emit('upgrade', req, socket, head);
+      };
 
-    app.handle(ws.upgradeReq, res, function() {
-      if (!ws.upgradeReq.wsHandled) {
-        ws.close();
-      }
+      app.handle(req, res);
     });
-  });
-};
 
-module.exports = function (router) {
+    app.wsServer.on('connection', function(ws) {
+      ws.upgradeReq._wsHandler(ws);
+    });
+
+    return server;
+  };
+}
+
+export default function (router) {
   if(router.mountpath) { // if(router is the app object)
     prepareApp(router);
   }
 
   router.ws = function(path, middleware) {
-    router.get(wsHandledPath(path), function(req, res, next) {
-      if (req.ws) {
-        req.wsHandled = true;
-        middleware(req.ws, req, next);
-      } else {
-        next();
-      }
+    return router.get(path, function(req, res, next) {
+      res.upgradeWs(function(ws) {
+        middleware(ws, req, next);
+      });
     });
-
-    return router;
   };
 
   return router;
