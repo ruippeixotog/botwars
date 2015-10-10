@@ -28,7 +28,7 @@ export default function(Game) {
     var gameId = engine.createNewGame(req.body);
 
     if(!gameId) res.status(400).send('Could not create new game');
-    else res.json({ gameId: gameId });
+    else res.json({ gameId });
   });
 
   router.post('/:gameId/register', function(req, res) {
@@ -71,7 +71,7 @@ export default function(Game) {
     });
 
     game.on('move', function(player, move) {
-      ws.sendJSON({ eventType: 'move', player: player, move: move });
+      ws.sendJSON({ eventType: 'move', player, move });
     });
 
     game.on('end', function() {

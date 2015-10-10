@@ -1,6 +1,6 @@
-var assert = require("assert");
+import assert from "assert";
 
-var TicTacToe = require.main.require("server/models/games/tictactoe");
+const TicTacToe = require.main.require("server/models/games/tictactoe");
 
 describe('TicTacToe', function() {
   var game;
@@ -10,7 +10,7 @@ describe('TicTacToe', function() {
   };
 
   var quickPlay = function(moves) {
-    for(var i = 0; i < moves.length; i++) {
+    for(let i = 0; i < moves.length; i++) {
       game.move(game.getNextPlayer(), { row: moves[i][0], col: moves[i][1] });
     }
   };

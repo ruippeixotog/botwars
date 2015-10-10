@@ -1,7 +1,7 @@
-var assert = require("assert");
+import assert from "assert";
 
-var GameInstance = require.main.require("server/models/game_instance");
-var Game = require.main.require("server/models/games/game");
+const GameInstance = require.main.require("server/models/game_instance");
+const Game = require.main.require("server/models/games/game");
 
 class DummyGame extends Game {
   constructor() {
@@ -40,12 +40,12 @@ describe('GameInstance', function() {
   };
 
   var registerAll = function() {
-    for(var i = 0; i < gameLogic.getPlayerCount(); i++)
+    for(let i = 0; i < gameLogic.getPlayerCount(); i++)
       game.registerNewPlayer();
   };
 
   var connectAll = function() {
-    for(var i = 0; i < gameLogic.getPlayerCount(); i++) {
+    for(let i = 0; i < gameLogic.getPlayerCount(); i++) {
       game.connect(i + 1);
     }
   };
