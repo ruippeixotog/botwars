@@ -59,22 +59,27 @@ export default function(Game) {
   });
 
   router.ws('/:gameId/stream', function(ws, req) {
-    ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
     var {game, player} = req;
 
-    game.on('start', function() {
+    ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
+    function onGameEvent(event, callback) {
+      game.on(event, callback);
+      ws.on('close', () => { game.removeListener(event, callback); });
+    }
+
+    onGameEvent('start', function() {
       ws.sendJSON({ eventType: 'start', state: game.getState(player) });
     });
 
-    game.on('stateChange', function() {
+    onGameEvent('stateChange', function() {
       ws.sendJSON({ eventType: 'state', state: game.getState(player) });
     });
 
-    game.on('move', function(player, move) {
+    onGameEvent('move', function(player, move) {
       ws.sendJSON({ eventType: 'move', player, move });
     });
 
-    game.on('end', function() {
+    onGameEvent('end', function() {
       ws.sendJSON({ eventType: 'end', state: game.getState(player) });
       ws.close();
     });
@@ -86,7 +91,7 @@ export default function(Game) {
     }
 
     if(player) {
-      game.on('waitingForMove', function(nextPlayer) {
+      onGameEvent('waitingForMove', function(nextPlayer) {
         if(nextPlayer == player)
           ws.sendJSON({ eventType: 'requestMove', state: game.getState(player) });
       });
