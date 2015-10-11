@@ -26,7 +26,7 @@ class GameInstance extends EventEmitter {
     }
 
     this.on("move", function(player, move) {
-      if(this.history.next) {
+      if(this.history.next !== null) {
         this.history.events.push({ eventType: "state", fullState: this.history.next });
         this.history.next = null;
       }

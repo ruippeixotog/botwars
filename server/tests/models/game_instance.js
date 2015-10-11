@@ -194,33 +194,33 @@ describe('GameInstance', function() {
 
   it('should record and provide a history of the game moves and states', function() {
     assert.deepEqual(game.getHistory(2), []);
+    assert.equal(game.getState(2), null);
 
     registerAll();
     connectAll();
 
-    assert.deepEqual(game.getHistory(1), [
-      { type: "state", state: { n: 0, visibleTo: 1 } }
-    ]);
+    assert.deepEqual(game.getHistory(1), []);
+    assert.deepEqual(game.getState(1), { n: 0, visibleTo: 1 });
 
     gameLogic.state = [];
     game.move(1, 32);
 
     assert.deepEqual(game.getHistory(2), [
-      { type: "state", state: { n: 0, visibleTo: 2 } },
-      { type: "move", player: 1, move: 32 },
-      { type: "state", state: { n: [], visibleTo: 2 } }
+      { eventType: "state", state: { n: 0, visibleTo: 2 } },
+      { eventType: "move", player: 1, move: 32 }
     ]);
+    assert.deepEqual(game.getState(2), { n: [], visibleTo: 2 });
 
     game.nextPlayer = 2;
     gameLogic.state.push(2);
     game.move(2, DummyGame.END_MOVE);
 
     assert.deepEqual(game.getHistory(1), [
-      { type: "state", state: { n: 0, visibleTo: 1 } },
-      { type: "move", player: 1, move: 32 },
-      { type: "state", state: { n: [], visibleTo: 1 } },
-      { type: "move", player: 2, move: DummyGame.END_MOVE },
-      { type: "state", state: { n: [2], visibleTo: 1 } }
+      { eventType: "state", state: { n: 0, visibleTo: 1 } },
+      { eventType: "move", player: 1, move: 32 },
+      { eventType: "state", state: { n: [], visibleTo: 1 } },
+      { eventType: "move", player: 2, move: DummyGame.END_MOVE }
     ]);
+    assert.deepEqual(game.getState(1), { n: [2], visibleTo: 1 });
   });
 });
