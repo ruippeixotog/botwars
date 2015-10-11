@@ -25,24 +25,29 @@ const GamesStore = lazy(EventEmitter.prototype).extend({
 }).value();
 
 AppDispatcher.register(function (action) {
-  const {gameHref, gameId} = action;
+  const {actionType, gameHref, gameId, data} = action;
 
-  switch (action.actionType) {
+  switch (actionType) {
+    case GamesEvents.HISTORY:
+      GamesStore.getGame(gameHref, gameId)._setAllStates(
+          lazy(data).filter(e => e.eventType == "state").map(e => e.state).value());
+      break;
+
     case GamesEvents.START:
     case GamesEvents.STATE:
     case GamesEvents.END:
-      GamesStore.getGame(gameHref, gameId)._pushState(action.data);
+      GamesStore.getGame(gameHref, gameId)._pushState(data);
       GamesStore.emit(GamesEvents.NEW_STATE, gameHref, gameId);
       break;
 
     case GamesEvents.CONNECTION_OPENED:
       GamesStore.getGame(gameHref, gameId)._setAllStates([]);
-      GamesStore.emit(action.actionType, gameHref, gameId);
+      GamesStore.emit(actionType, gameHref, gameId);
       break;
 
     case GamesEvents.CONNECTION_CLOSED:
     case GamesEvents.CONNECTION_ERROR:
-      GamesStore.emit(action.actionType, gameHref, gameId);
+      GamesStore.emit(actionType, gameHref, gameId);
       break;
   }
 });

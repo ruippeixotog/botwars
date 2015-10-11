@@ -2,6 +2,7 @@ import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
 
 var gameEvents = {
+  history: [GamesEvents.HISTORY, e => e.history],
   start: [GamesEvents.START, e => e.state],
   state: [GamesEvents.STATE, e => e.state],
   move: [GamesEvents.MOVE, e => ({ player: e.player, move: e.move })],
@@ -15,7 +16,7 @@ var GamesActions = {
   requestGameStream: function (gameHref, gameId) {
     if((streams[gameHref] || {})[gameId]) return;
 
-    var ws = new WebSocket(`ws://${window.location.host}\/api${gameHref}\/${gameId}/stream`);
+    var ws = new WebSocket(`ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?history=true`);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;
 
