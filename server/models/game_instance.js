@@ -9,21 +9,28 @@ class GameInstance extends EventEmitter {
     this.id = id;
     this.game = game;
     this.started = false;
-    this.history = [];
+    this.history = { events: [], next: null };
 
     this.currentPlayerCount = 0;
     this.connectedPlayerCount = 0;
     this.playerIdTable = {};
     this.playerState = {};
 
-    for(let event of ["start", "stateChange", "end"]) {
+    for(let event of ["start", "stateChange"]) {
       this.on(event, function() {
-        this.history.push({ type: "state", fullState: deepcopy(this.game.getFullState()) });
+        if(this.history.next) {
+          this.history.events.push({ eventType: "state", fullState: this.history.next });
+        }
+        this.history.next = deepcopy(this.game.getFullState());
       });
     }
 
     this.on("move", function(player, move) {
-      this.history.push({ type: "move", player, move });
+      if(this.history.next) {
+        this.history.events.push({ eventType: "state", fullState: this.history.next });
+        this.history.next = null;
+      }
+      this.history.events.push({ eventType: "move", player, move });
     });
   }
 
@@ -96,10 +103,9 @@ class GameInstance extends EventEmitter {
   }
 
   getHistory(player) {
-    console.log(this.history);
-    return this.history.map(histEvent =>
-        histEvent.type == "move" ? histEvent :
-          { type: "state", state: this.game.getStateView(histEvent.fullState, player) }
+    return this.history.events.map(histEvent =>
+      histEvent.eventType == "move" ? histEvent :
+        { eventType: "state", state: this.game.getStateView(histEvent.fullState, player) }
     );
   }
 }
