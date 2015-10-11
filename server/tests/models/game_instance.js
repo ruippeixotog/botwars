@@ -11,6 +11,7 @@ class DummyGame extends Game {
     this.winner = null;
     this.nextPlayer = 1;
     this.lastMove = null;
+    this.didTimeout = false;
     this.state = 0;
   }
   getPlayerCount() { return 2; }
@@ -24,6 +25,7 @@ class DummyGame extends Game {
     if(move == DummyGame.INVALID_MOVE) this.error = true;
     else if(move == DummyGame.END_MOVE) this.ended = true;
   }
+  onMoveTimeout() { this.didTimeout = true; return true; }
   getFullState() { return this.state; }
   getStateView(fullState, player) { return { n: fullState, visibleTo: player }; }
 }
@@ -178,6 +180,25 @@ describe('GameInstance', function() {
     });
 
     game.move(1, 'myMove');
+  });
+
+  it('should handle correctly move timeouts', function (done) {
+    this.slow(600);
+
+    gameLogic._moveTimeLimit = 200;
+    registerAll();
+    connectAll();
+
+    game.move(1, 'p1Move');
+    assert.equal(gameLogic.lastMove, 'p1Move');
+    assert.equal(gameLogic.didTimeout, false);
+
+    game.on('stateChange', function() {
+      assert.equal(gameLogic.didTimeout, true);
+      done();
+    });
+
+    setTimeout(() => { assert.fail(null, null, "Move timeout didn't occur"); }, 400);
   });
 
   it('should emit an "end" event when the game is ended', function (done) {

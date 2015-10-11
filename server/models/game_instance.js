@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import deepcopy from "./utils/deepcopy";
+import Timer from "./utils/timer";
 
 import {EventEmitter} from "events";
 
@@ -9,6 +10,7 @@ class GameInstance extends EventEmitter {
     this.id = id;
     this.game = game;
     this.started = false;
+    this.moveTimer = new Timer();
     this.history = { events: [], next: null };
 
     this.currentPlayerCount = 0;
@@ -59,12 +61,7 @@ class GameInstance extends EventEmitter {
     if(!this.started && this.connectedPlayerCount == this.game.getPlayerCount()) {
       this.started = true;
       this.emit("start");
-
-      if (!this.game.isEnded()) {
-        this.emit("waitingForMove", this.game.getNextPlayer());
-      } else {
-        this.emit("end");
-      }
+      this._onStateChange({ announceState: false });
     }
   }
 
@@ -82,15 +79,11 @@ class GameInstance extends EventEmitter {
     if (this.game.isEnded() || !this.game.isValidMove(player, move))
       return false;
 
-    this.game.move(player, move);
+    var moveTime = this.moveTimer.stop();
+    this.game.move(player, move, moveTime);
     this.emit("move", player, move);
 
-    if (!this.game.isEnded()) {
-      this.emit("stateChange");
-      this.emit("waitingForMove", this.game.getNextPlayer());
-    } else {
-      this.emit("end");
-    }
+    this._onStateChange();
     return true;
   }
 
@@ -107,6 +100,24 @@ class GameInstance extends EventEmitter {
       histEvent.eventType == "move" ? histEvent :
         { eventType: "state", state: this.game.getStateView(histEvent.fullState, player) }
     );
+  }
+
+  _onStateChange({ announceState = true, announceMove = true } = {}) {
+    if (!this.game.isEnded()) {
+      if(announceState) this.emit("stateChange");
+      if(announceMove) this.emit("waitingForMove", this.game.getNextPlayer());
+
+      this.moveTimer.start(this._onMoveTimeout.bind(this), this.game.getMoveTimeLimit());
+    } else {
+      this.emit("end");
+    }
+  }
+
+  _onMoveTimeout() {
+    var oldNextPlayer = this.game.getNextPlayer();
+    if(this.game.onMoveTimeout()) {
+      this._onStateChange({ announceMove: this.game.getNextPlayer() != oldNextPlayer });
+    }
   }
 }
 

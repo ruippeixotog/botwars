@@ -70,6 +70,18 @@ describe('TicTacToe', function() {
     assert.equal(game.isValidMove(2, { row: 0, col: 0 }), false); // position already taken
   });
 
+  it('should consider the opponent the winner when a move timeout occurs', function () {
+    assert.equal(game.onMoveTimeout(), true);
+    assert.equal(game.getNextPlayer(), null);
+    assert.equal(game.getWinner(), 2);
+
+    startNewGame();
+    game.move(1, { row: 0, col: 0 });
+    assert.equal(game.onMoveTimeout(), true);
+    assert.equal(game.getNextPlayer(), null);
+    assert.equal(game.getWinner(), 1);
+  });
+
   it('should signal correctly the ending of a game and its winner', function () {
     quickPlay([[0, 0], [0, 1], [1, 0], [1, 1]]);
 

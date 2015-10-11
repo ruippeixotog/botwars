@@ -62,6 +62,12 @@ class TicTacToe extends Game {
     return fullState;
   }
 
+  onMoveTimeout() {
+    this.winner = 3 - this.nextPlayer;
+    this.nextPlayer = null;
+    return true;
+  }
+
   _isValidPlacement(move) {
     return move.row >= 0 && move.row < this.rowCount &&
         move.col >= 0 && move.col < this.colCount &&

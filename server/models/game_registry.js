@@ -6,7 +6,7 @@ class GameRegistry {
   constructor(Game) {
     this.Game = Game;
     this.instances = {
-      "0": new GameInstance('0', new Game({}))
+      '0': new GameInstance('0', new Game({ moveTimeLimit: 1000 }))
     };
   }
 
