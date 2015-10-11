@@ -1,40 +1,41 @@
 import React from "react";
+import {Col, Row} from "react-bootstrap";
 
-var CellX = React.createClass({
+const CellX = React.createClass({
   render: function() {
     var dx = this.props.col * 200;
     var dy = this.props.row * 200;
     return (
         <g transform={`translate(${dx},${dy})`}>
-          <line x1="20" x2="180" y1="20" y2="180" style={{ strokeWidth: 8, stroke: 'red', strokeLinecap: 'round' }} />
-          <line x1="20" x2="180" y1="180" y2="20" style={{ strokeWidth: 8, stroke: 'red', strokeLinecap: 'round' }} />
+          <line x1="30" x2="170" y1="30" y2="170" style={{ strokeWidth: 10, stroke: 'red', strokeLinecap: 'round' }} />
+          <line x1="30" x2="170" y1="170" y2="30" style={{ strokeWidth: 10, stroke: 'red', strokeLinecap: 'round' }} />
         </g>
     );
   }
 });
 
-var CellO = React.createClass({
+const CellO = React.createClass({
   render: function() {
     var dx = this.props.col * 200 + 100;
     var dy = this.props.row * 200 + 100;
     return (
-        <circle cx={dx} cy={dy} r="80" style={{ strokeWidth: 7, stroke: 'green', fill: 'none' }} />
+        <circle cx={dx} cy={dy} r="72" style={{ strokeWidth: 10, stroke: 'green', fill: 'none' }} />
     );
   }
 });
 
-var cellComponents = [CellO, CellX];
-
-var Grid = React.createClass({
+const Grid = React.createClass({
   render: function () {
     var grid = this.props.grid;
     var cells = [];
 
-    for(let row = 0; row < 3; row++) {
-      for(let col = 0; col < 3; col++) {
-        if(grid[row][col] > 0) {
-          var Cell = cellComponents[grid[row][col] - 1];
-          cells.push(<Cell row={row} col={col} key={[row, col]} />);
+    if(grid) {
+      for(let row = 0; row < 3; row++) {
+        for(let col = 0; col < 3; col++) {
+          if(grid[row][col] > 0) {
+            var Cell = grid[row][col] == 1 ? CellO : CellX;
+            cells.push(<Cell row={row} col={col} key={[row, col]} />);
+          }
         }
       }
     }
@@ -51,16 +52,38 @@ var Grid = React.createClass({
   }
 });
 
+const PlayerTextRepr = ({player}) => (
+    player == 1 ?
+        <span style={{ color: "green", fontWeight: "bold" }}>O</span> :
+        <span style={{ color: "red", fontWeight: "bold" }}>X</span>
+);
+
+const GameStatusMessage = ({gameState}) => {
+  if(!gameState) return <span>Waiting for the game to start...</span>;
+
+  var {nextPlayer, winner, isError} = gameState;
+  if (nextPlayer !== null) return <span>Player {nextPlayer} (<PlayerTextRepr player={nextPlayer} />) to play</span>;
+  if (winner !== null) return <span>Player {winner} (<PlayerTextRepr player={winner} />) wins!</span>;
+  if (isError) return <span>An error occurred</span>;
+  return <span>It's a draw!</span>;
+};
+
 var TicTacToe = React.createClass({
 
   render: function () {
     var gameState = this.props.gameState;
-    if(!gameState) return (<div>Waiting for the game to start...</div>);
 
     return (
-        <div>
-          <Grid grid={gameState.grid} />
-        </div>
+        <Row>
+          <Col lg={6}>
+            <Grid grid={gameState ? gameState.grid : null} />
+          </Col>
+          <Col lg={6}>
+            <h3>
+              <GameStatusMessage gameState={gameState} />
+            </h3>
+          </Col>
+        </Row>
     );
   }
 });
