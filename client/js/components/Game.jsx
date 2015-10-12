@@ -167,7 +167,7 @@ var Game = React.createClass({
             <Col lg={6}>
               <form className="form-inline game-chooser pull-right" onSubmit={this.handleGameIdSubmit}>
                 <Input type="text" label="Watch another game:" defaultValue={gameId} ref="nextGameId" />
-                <Button>Go</Button>
+                <Button type="submit">Go</Button>
               </form>
             </Col>
           </Row>

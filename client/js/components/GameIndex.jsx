@@ -30,7 +30,7 @@ var GameIndex = React.createClass({
             <Col lg={12}>
               <form className="form-inline" onSubmit={this.handleGameIdSubmit}>
                 <Input type="text" label="Enter the ID of the game to start:" ref="nextGameId" />
-                <Button>Go</Button>
+                <Button type="submit">Go</Button>
               </form>
             </Col>
           </Row>
