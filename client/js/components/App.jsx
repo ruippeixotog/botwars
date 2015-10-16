@@ -11,9 +11,9 @@ var App = React.createClass({
     var games = this.props.route.games;
 
     return (
-        <div style={{ height: '100%' }}>
+        <div className="fill flex">
           <Nav games={games} />
-          <div id="page-wrapper">
+          <div id="page-wrapper" className="flex">
             {this.props.children}
           </div>
         </div>

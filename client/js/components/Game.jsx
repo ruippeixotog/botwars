@@ -149,7 +149,7 @@ var Game = React.createClass({
     });
 
     return (
-        <div>
+        <div className="flex">
           <Row>
             <Col lg={12}>
               <PageHeader>{game.name}</PageHeader>
