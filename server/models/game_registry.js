@@ -12,7 +12,7 @@ class GameRegistry {
 
   createNewGame(params) {
     var id = crypto.randomBytes(8).toString('hex');
-    this.instances[id] = new GameInstance(id, new this.Game(params));
+    this.instances[id] = new GameInstance(id, new this.Game(params || {}));
     return id;
   }
 

@@ -6,7 +6,7 @@ describe('TicTacToe', function() {
   var game;
 
   var startNewGame = function() {
-    game = new TicTacToe();
+    game = new TicTacToe({});
   };
 
   var quickPlay = function(moves) {

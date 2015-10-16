@@ -4,12 +4,14 @@ import morgan from "morgan";
 
 import gameRoute from "./routes/game_route";
 import TicTacToe from "./models/games/tictactoe";
+import Sueca from "./models/games/sueca";
 
 var app = expressWs(express());
 
 app.use(morgan('dev'));
 
 app.use('/api/tictactoe', gameRoute(TicTacToe));
+app.use('/api/sueca', gameRoute(Sueca));
 
 app.use(express.static('dist'));
 

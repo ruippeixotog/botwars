@@ -3,8 +3,7 @@ import _ from "underscore";
 import Game from "./game";
 
 class TicTacToe extends Game {
-  constructor(params) {
-    params = params || {};
+  constructor(params = {}) {
     super(params);
 
     this.rowCount = params.rowCount || 3;
