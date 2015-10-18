@@ -386,6 +386,15 @@ table.dataTable thead .sorting:after {
 .game-state-nav {
   margin-top: 0;
   margin-bottom: 0;
+
+  & > li > a {
+    width: 42px;
+    text-align: center;
+  }
+
+  & > li:last-child > a, & > li:first-child > a {
+    width: 30px;
+  }
 }
 
 .form-inline {
