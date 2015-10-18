@@ -132,7 +132,7 @@ class Sueca extends Game {
 
   static generateDeck() {
     return _.chain(['clubs', 'diamonds', 'hearts', 'spades']).map(suit =>
-        _(cardData).keys().map((value, i) => ({ suit, value }))
+        _(cardData).keys().map(value => ({ suit, value }))
     ).flatten().shuffle().value();
   }
 
@@ -143,7 +143,7 @@ class Sueca extends Game {
   static getTeam(player) { return (player - 1) % 2 + 1; }
 
   static cardEquals(card) {
-    if(!card) return c => false;
+    if(!card) return () => false;
     return c => c && c.suit == card.suit && c.value == card.value;
   }
 }
