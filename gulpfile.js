@@ -50,6 +50,11 @@ var webpackConfig = {
         test: /\.(js|jsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /\.json$/,
+        loader: "json-loader",
+        exclude: /node_modules/
       }
     ]
   },
@@ -127,6 +132,7 @@ gulp.task("index", function () {
 });
 
 gulp.task("client:watch", function () {
+  gulp.watch("./config.json", ["eslint", "webpack"]);
   gulp.watch(dirs.styles + "/**/*", ["sass"]);
   gulp.watch(dirs.js + "/**/*.?(js|jsx)", ["eslint", "webpack"]);
   gulp.watch(dirs.img[0][0] + "/**/*.*", ["images"]);

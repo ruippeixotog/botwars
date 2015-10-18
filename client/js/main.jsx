@@ -1,7 +1,10 @@
+/*global require */
+
 import React from "react";
 import ReactDOM from "react-dom";
 import {Route, Router, IndexRoute} from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
+import _ from "underscore";
 
 import App from "./components/App";
 import Index from "./components/Index";
@@ -9,13 +12,12 @@ import GameIndex from "./components/GameIndex";
 import Game from "./components/Game";
 import PageNotFound from "./components/PageNotFound";
 
-import TicTacToe from "./components/games/TicTacToe";
-import Sueca from "./components/games/Sueca";
+import config from "../../config.json";
 
-var games = [
-  { name: "TicTacToe", href: "/tictactoe", component: TicTacToe },
-  { name: "Sueca", href: "/sueca", component: Sueca }
-];
+var games = _.map(config.games, (gameInfo, gameId) => {
+  var GameComponent = require(gameInfo.clientComponent);
+  return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
+});
 
 var gameRoutes = games.map(game =>
     <Route path={game.href} key={game.href}>

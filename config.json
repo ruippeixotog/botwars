@@ -1,0 +1,14 @@
+{
+  "games": {
+    "tictactoe": {
+      "name": "TicTacToe",
+      "serverModule": "./models/games/tictactoe",
+      "clientComponent": "./components/games/TicTacToe"
+    },
+    "sueca": {
+      "name": "Sueca",
+      "serverModule": "./models/games/sueca",
+      "clientComponent": "./components/games/Sueca"
+    }
+  }
+}
