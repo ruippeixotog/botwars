@@ -10,9 +10,11 @@ import Game from "./components/Game";
 import PageNotFound from "./components/PageNotFound";
 
 import TicTacToe from "./components/games/TicTacToe";
+import Sueca from "./components/games/Sueca";
 
 var games = [
-  { name: "TicTacToe", href: "/tictactoe", component: TicTacToe }
+  { name: "TicTacToe", href: "/tictactoe", component: TicTacToe },
+  { name: "Sueca", href: "/sueca", component: Sueca }
 ];
 
 var gameRoutes = games.map(game =>

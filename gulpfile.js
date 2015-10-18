@@ -2,6 +2,7 @@ var autoprefixer = require("gulp-autoprefixer");
 var eslint = require("gulp-eslint");
 var gulp = require("gulp");
 var gutil = require("gulp-util");
+var merge = require('merge-stream');
 var minifyCss = require("gulp-minify-css");
 var nodemon = require("gulp-nodemon");
 var sass = require("gulp-sass");
@@ -15,9 +16,14 @@ var dirs = {
   src: "./client",
   js: "./client/js",
   styles: "./client/css",
-  fonts: "./client/fonts",
-  extraFonts: ["./node_modules/font-awesome/fonts"],
-  img: "./client/img",
+  fonts: [
+    ["./client/fonts", ""],
+    ["./node_modules/font-awesome/fonts", ""]
+  ],
+  img: [
+    ["./client/img", ""],
+    ["./node_modules/deck-of-cards/example/faces", "cards"]
+  ],
   dist: "./dist",
   imgDist: "./img",
   fontsDist: "./fonts",
@@ -100,17 +106,19 @@ gulp.task("minify-js", ["webpack"], function () {
 });
 
 gulp.task("images", function () {
-  return gulp.src(dirs.img + "/**/*.*")
-      .pipe(gulp.dest(dirs.dist + "/" + dirs.imgDist));
+  var streams = dirs.img.map(function(entry) {
+    return gulp.src(entry[0] + "/**/*.*")
+        .pipe(gulp.dest(dirs.dist + "/" + dirs.imgDist + "/" + entry[1]));
+  });
+  return merge(streams);
 });
 
 gulp.task("fonts", function () {
-  var fontGlobs = dirs.extraFonts
-      .map(function(dir) { return dir + "/**/*.*" })
-      .concat([dirs.fonts + "/**/*.*"]);
-
-  return gulp.src(fontGlobs)
-      .pipe(gulp.dest(dirs.dist + "/" + dirs.fontsDist));
+  var streams = dirs.fonts.map(function(entry) {
+    return gulp.src(entry[0] + "/**/*.*")
+        .pipe(gulp.dest(dirs.dist + "/" + dirs.fontsDist + "/" + entry[1]));
+  });
+  return merge(streams);
 });
 
 gulp.task("index", function () {
@@ -121,8 +129,8 @@ gulp.task("index", function () {
 gulp.task("client:watch", function () {
   gulp.watch(dirs.styles + "/**/*", ["sass"]);
   gulp.watch(dirs.js + "/**/*.?(js|jsx)", ["eslint", "webpack"]);
-  gulp.watch(dirs.img + "/**/*.*", ["images"]);
-  gulp.watch(dirs.fonts + "/**/*.*", ["fonts"]);
+  gulp.watch(dirs.img[0][0] + "/**/*.*", ["images"]);
+  gulp.watch(dirs.fonts[0][0] + "/**/*.*", ["fonts"]);
   gulp.watch(dirs.src + "/" + files.index, ["index"]);
 });
 
