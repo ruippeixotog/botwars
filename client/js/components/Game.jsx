@@ -1,6 +1,6 @@
 import React from "react";
 import {History} from "react-router";
-import {Row, Col, Pagination, Input, Button, Alert, PageHeader} from "react-bootstrap";
+import {Row, Col, Pagination, Alert, PageHeader} from "react-bootstrap";
 import classNames from "classnames";
 
 import GamesActions from "../actions/GamesActions";
@@ -25,6 +25,10 @@ var Game = React.createClass({
     return this.props.route.game;
   },
 
+  getPlayerToken: function() {
+    return this.props.location.query.playerToken;
+  },
+
   isThisGame: function(gameHref, gameId) {
     return gameHref == this.getGame().href && gameId == this.getGameId();
   },
@@ -47,7 +51,7 @@ var Game = React.createClass({
   },
 
   componentDidMount: function() {
-    GamesActions.requestGameStream(this.getGame().href, this.getGameId());
+    GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -90,7 +94,7 @@ var Game = React.createClass({
   },
 
   retryConnection: function() {
-    GamesActions.requestGameStream(this.getGame().href, this.getGameId());
+    GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
   },
 
   onNewGameState: function(gameHref, gameId) {
@@ -108,6 +112,10 @@ var Game = React.createClass({
         this.setState({ gameStateCount: newStateCount });
       }
     }
+  },
+
+  handleMove: function(move) {
+    GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
   },
 
   handleGameIdSubmit: function(e) {
@@ -164,14 +172,8 @@ var Game = React.createClass({
                           items={this.state.gameStateCount} activePage={this.state.gameStateIndex + 1}
                           onSelect={this.handleGameStateSelect} />
             </Col>
-            <Col lg={6}>
-              <form className="form-inline game-chooser pull-right" onSubmit={this.handleGameIdSubmit}>
-                <Input type="text" label="Watch another game:" defaultValue={gameId} ref="nextGameId" />
-                <Button type="submit">Go</Button>
-              </form>
-            </Col>
           </Row>
-          <GameComponent gameId={gameId} gameState={this.state.gameState} />
+          <GameComponent gameId={gameId} gameState={this.state.gameState} onMove={this.handleMove} />
         </div>
     );
   }

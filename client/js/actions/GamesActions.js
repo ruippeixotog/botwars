@@ -6,6 +6,7 @@ var gameEvents = {
   start: [GamesEvents.START, e => e.state],
   state: [GamesEvents.STATE, e => e.state],
   move: [GamesEvents.MOVE, e => ({ player: e.player, move: e.move })],
+  requestMove: [GamesEvents.REQUEST_MOVE, e => e.state],
   end: [GamesEvents.END, e => e.state]
 };
 
@@ -13,10 +14,13 @@ var streams = {};
 
 var GamesActions = {
 
-  requestGameStream: function (gameHref, gameId) {
+  requestGameStream: function (gameHref, gameId, playerToken) {
     if((streams[gameHref] || {})[gameId]) return;
 
-    var ws = new WebSocket(`ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?history=true`);
+    var query = "history=true";
+    if(playerToken) query += `&playerId=${playerToken}`;
+
+    var ws = new WebSocket(`ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;
 
@@ -51,6 +55,11 @@ var GamesActions = {
     };
 
     ws.onerror = ws.onclose;
+  },
+
+  sendMove: function (gameHref, gameId, move) {
+    if(!(streams[gameHref] || {})[gameId]) return;
+    streams[gameHref][gameId].send(JSON.stringify(move));
   },
 
   closeGameStream: function (gameHref, gameId) {

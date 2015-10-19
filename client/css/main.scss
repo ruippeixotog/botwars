@@ -278,3 +278,14 @@ body {
     margin: 0 2px;
   }
 }
+
+.player-token-form-group {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 0.5em;
+  margin-top: -0.3em;
+
+  input[type=text] {
+    width: 100%;
+  }
+}
