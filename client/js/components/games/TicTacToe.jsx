@@ -25,6 +25,17 @@ const CellO = React.createClass({
 });
 
 const Grid = React.createClass({
+
+  handleClick: function(evt) {
+    var uupos = evt.target.createSVGPoint();
+    uupos.x = evt.clientX;
+    uupos.y = evt.clientY;
+    var ctm = evt.target.getScreenCTM().inverse();
+    if (ctm) uupos = uupos.matrixTransform(ctm);
+
+    this.props.onMove({ row: Math.floor(uupos.y / 200), col: Math.floor(uupos.x / 200) });
+  },
+
   render: function () {
     var grid = this.props.grid;
     var cells = [];
@@ -41,7 +52,7 @@ const Grid = React.createClass({
     }
 
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" id="tictactoe">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" id="tictactoe" onClick={this.handleClick}>
           <line x1="0" x2="600" y1="200" y2="200" style={{ strokeWidth: 5, stroke: 'black' }} />
           <line x1="0" x2="600" y1="400" y2="400" style={{ strokeWidth: 5, stroke: 'black' }} />
           <line x1="200" x2="200" y1="0" y2="600" style={{ strokeWidth: 5, stroke: 'black' }} />
@@ -76,7 +87,7 @@ var TicTacToe = React.createClass({
     return (
         <Row>
           <Col lg={6}>
-            <Grid grid={gameState ? gameState.grid : null} />
+            <Grid grid={gameState ? gameState.grid : null} onMove={this.props.onMove} />
           </Col>
           <Col lg={6}>
             <h3>
