@@ -1,6 +1,8 @@
 class Timer {
 
   start(code, delay) {
+    if(!delay) return;
+
     this.timeoutObj = setTimeout(function() {
       this.timeoutObj = null;
       code();
