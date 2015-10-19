@@ -22,10 +22,11 @@ class Card extends React.Component {
   }
 
   render() {
-    var {card, top, left, zIndex, ...props} = this.props;
+    var {card, top, left, zIndex, onClick, ...props} = this.props;
     var cardClasses = "card " + (card ? ` ${card.suit} ${this.getRankClass(card.value)}` : "");
     return (
-        <div className={cardClasses} style={{ top: `${top}%`, left: `${left}%`, zIndex }} {...props}>
+        <div className={cardClasses} style={{ top: `${top}%`, left: `${left}%`, zIndex }}
+             onClick={onClick ? () => onClick(card) : null} {...props}>
           <div className={ card ? "face" : "back" }></div>
         </div>
     );
@@ -52,32 +53,55 @@ const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
   );
 };
 
-const Hand = ({ player, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 2 }) => {
+const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick }) => {
   var info = playerInfo[player - 1];
   var x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
   var y = 50 + info.y * deltaY - info.x * deltaCy * 4.5;
 
-  var cards = [];
+  function cardIndex(card) {
+    switch(card.value) {
+      case "A": return 10;
+      case "7": return 9;
+      case "K": return 8;
+      case "J": return 7;
+      case "Q": return 6;
+      default: return parseInt(card.value) - 1;
+    }
+  }
+
+  function cardCompare(card1, card2) {
+    if(card1.suit != card2.suit) return card1.suit < card2.suit ? -1 : 1;
+    return cardIndex(card1) - cardIndex(card2);
+  }
+
+  cards = cards ? cards.sort(cardCompare) : {};
+
+  var cardElems = [];
   for(let i = 0; i < cardCount; i++) {
-    cards.push(<Card top={y} left={x} zIndex={i} key={`card${i}`} />);
+    cardElems.push(<Card card={cards[i]} top={y} left={x} zIndex={i} key={`card${i}`} onClick={onCardClick} />);
     x += info.y * deltaCx;
     y += info.x * deltaCy;
   }
 
   return (
       <div className="hand">
-        {cards}
+        {cardElems}
       </div>
   );
 };
 
-const Hands = ({tricksDone, currentTrick}) => {
+const Hands = ({ player, handCards, tricksDone, currentTrick, onCardClick }) => {
   if(!currentTrick) return <div className="hands" />;
 
   var hands = [];
   for(let i = 0; i < 4; i++) {
-    var cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
-    hands.push(<Hand player={i + 1} cardCount={cardCount} key={`hand${i}`} />);
+    if(i == player - 1) {
+      hands.push(<Hand player={i + 1} cards={handCards} cardCount={handCards.length} key={`hand${i}`}
+                       onCardClick={onCardClick ? card => onCardClick(card, i) : null} />)
+    } else {
+      var cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
+      hands.push(<Hand player={i + 1} cardCount={cardCount} key={`hand${i}`} />);
+    }
   }
 
   return (
@@ -120,8 +144,8 @@ const Points = ({points}) => (
     </div>
 );
 
-const Sueca = ({gameState = {}}) => {
-  var {currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
+const Sueca = ({gameState, onMove}) => {
+  var {nextPlayer, hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
 
   return (
       <Row className="flex">
@@ -129,7 +153,8 @@ const Sueca = ({gameState = {}}) => {
           <div id="sueca" className="flex">
             <div className="deck flex">
               <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} />
-              <Hands tricksDone={tricksDone} currentTrick={currentTrick} />
+              <Hands player={nextPlayer} handCards={hand} tricksDone={tricksDone} currentTrick={currentTrick}
+                     onCardClick={onMove} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} />
               <Points points={points} />
