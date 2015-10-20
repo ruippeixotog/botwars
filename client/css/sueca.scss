@@ -11,10 +11,15 @@
     color: white;
   }
 
+  .hands .player-hand .card:hover {
+    transform: translate(-50%, -65%);
+    box-shadow: 0 0 12px 12px rgba(220, 158, 69, 0.6);
+  }
+
   .card {
     transform: translate(-50%, -50%);
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.44);
     font-size: 20px;
+    transition: all 0.1s ease-in-out;
   }
 
   .trump {

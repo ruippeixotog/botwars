@@ -74,17 +74,17 @@ const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2,
     return cardIndex(card1) - cardIndex(card2);
   }
 
-  cards = cards ? cards.sort(cardCompare) : {};
+  var sortedCards = cards ? cards.sort(cardCompare) : {};
 
   var cardElems = [];
   for(let i = 0; i < cardCount; i++) {
-    cardElems.push(<Card card={cards[i]} top={y} left={x} zIndex={i} key={`card${i}`} onClick={onCardClick} />);
+    cardElems.push(<Card card={sortedCards[i]} top={y} left={x} zIndex={i} key={`card${i}`} onClick={onCardClick} />);
     x += info.y * deltaCx;
     y += info.x * deltaCy;
   }
 
   return (
-      <div className="hand">
+      <div className={`hand ${cards ? "player-hand" : ""}`}>
         {cardElems}
       </div>
   );
