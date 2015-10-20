@@ -144,8 +144,8 @@ const Points = ({points}) => (
     </div>
 );
 
-const Sueca = ({gameState, onMove}) => {
-  var {nextPlayer, hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
+const Sueca = ({gameState, player, onMove}) => {
+  var {hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
 
   return (
       <Row className="flex">
@@ -153,7 +153,7 @@ const Sueca = ({gameState, onMove}) => {
           <div id="sueca" className="flex">
             <div className="deck flex">
               <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} />
-              <Hands player={nextPlayer} handCards={hand} tricksDone={tricksDone} currentTrick={currentTrick}
+              <Hands player={player} handCards={hand} tricksDone={tricksDone} currentTrick={currentTrick}
                      onCardClick={onMove} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} />

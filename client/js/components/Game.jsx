@@ -25,6 +25,10 @@ var Game = React.createClass({
     return this.props.route.game;
   },
 
+  getPlayerNumber: function() {
+    return this.props.location.query.playerNumber;
+  },
+
   getPlayerToken: function() {
     return this.props.location.query.playerToken;
   },
@@ -173,7 +177,8 @@ var Game = React.createClass({
                           onSelect={this.handleGameStateSelect} />
             </Col>
           </Row>
-          <GameComponent gameId={gameId} gameState={this.state.gameState} onMove={this.handleMove} />
+          <GameComponent gameId={gameId} player={this.getPlayerNumber()}
+                         gameState={this.state.gameState} onMove={this.handleMove} />
         </div>
     );
   }

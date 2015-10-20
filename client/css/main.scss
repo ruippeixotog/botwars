@@ -282,8 +282,7 @@ body {
 .player-token-form-group {
   display: inline-block;
   vertical-align: top;
-  margin-left: 0.5em;
-  margin-top: -0.3em;
+  margin: -0.3em 0.5em 0;
 
   input[type=text] {
     width: 100%;
