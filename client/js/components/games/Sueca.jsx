@@ -53,6 +53,12 @@ const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
   );
 };
 
+const PlayerLabel = ({player, top, left }) => (
+    <div className="player-label" style={{ top: `${top}%`, left: `${left}%` }}>
+      Player <span className="player-number">{player}</span>
+    </div>
+);
+
 const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick }) => {
   var info = playerInfo[player - 1];
   var x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
@@ -83,8 +89,18 @@ const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2,
     y += info.x * deltaCy;
   }
 
+  var labelTop, labelLeft;
+  if(player % 2) {
+    labelTop = 50 + info.y * (50 * 4 + deltaY) / 5;
+    labelLeft = 50;
+  } else {
+    labelTop = 50 + info.y * deltaY + info.x * deltaCy * 8.5;
+    labelLeft = 50 + info.x * deltaX + info.y * deltaCx * 7.6;
+  }
+
   return (
       <div className={`hand ${onCardClick ? "playable-hand" : ""}`}>
+        <PlayerLabel player={player} top={labelTop} left={labelLeft} />
         {cardElems}
       </div>
   );

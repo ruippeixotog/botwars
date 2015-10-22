@@ -16,6 +16,17 @@
     box-shadow: 0 0 12px 12px rgba(220, 158, 69, 0.6);
   }
 
+  .player-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: left;
+    color: #62C562;
+
+    .player-number {
+      font-size: 150%;
+    }
+  }
+
   .card {
     transform: translate(-50%, -50%);
     font-size: 20px;
