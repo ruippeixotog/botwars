@@ -26,14 +26,8 @@ var GameIndex = React.createClass({
     var game = this.props.route.game;
     var nextGameId = this.refs.nextGameId.getValue();
 
-    var playerToken = null, playerNumber = null;
-    if(this.state.joinMode == JoinModes.PLAY) {
-      playerNumber = this.refs.playerNumber.getValue();
-      playerToken = this.refs.playerToken.getValue();
-    }
-
     var query = this.state.joinMode == JoinModes.PLAY ?
-        `?playerNumber=${playerNumber}&playerToken=${playerToken}` :
+        `?playerToken=${this.refs.playerToken.getValue()}` :
         "";
 
     this.history.pushState(null, `${game.href}/${nextGameId}${query}`);
@@ -71,10 +65,7 @@ var GameIndex = React.createClass({
                         <input name="action" type="radio" label="play the game as the player with token"
                                checked={this.state.joinMode == JoinModes.PLAY}
                                onChange={() => this.setState({ joinMode: JoinModes.PLAY })} />
-                        <span>play the game as player</span>
-                        <Input type="text" ref="playerNumber" bsSize="small" groupClassName="player-token-form-group"
-                               disabled={this.state.joinMode != JoinModes.PLAY} placeholder="playerNumber" />
-                        <span>with token</span>
+                        <span>play the game as the player with token</span>
                         <Input type="text" ref="playerToken" bsSize="small" groupClassName="player-token-form-group"
                                disabled={this.state.joinMode != JoinModes.PLAY} placeholder="playerToken" />
                       </label>

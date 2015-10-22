@@ -84,6 +84,8 @@ export default function(Game) {
       ws.close();
     });
 
+    ws.sendJSON({ eventType: 'info', player });
+
     if(req.query.history == "true") {
       ws.sendJSON({ eventType: 'history', history: game.getHistory(player) });
     }

@@ -25,10 +25,6 @@ var Game = React.createClass({
     return this.props.route.game;
   },
 
-  getPlayerNumber: function() {
-    return this.props.location.query.playerNumber;
-  },
-
   getPlayerToken: function() {
     return this.props.location.query.playerToken;
   },
@@ -40,6 +36,7 @@ var Game = React.createClass({
   getInitialState: function() {
     return {
       connState: ConnStates.NOT_CONNECTED,
+      player: null,
       gameState: null,
       gameStateCount: 0,
       gameStateIndex: null,
@@ -51,6 +48,7 @@ var Game = React.createClass({
     GamesStore.on(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.on(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
     GamesStore.on(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
+    GamesStore.on(GamesEvents.INFO, this.onGameInfoReceived);
     GamesStore.on(GamesEvents.NEW_STATE, this.onNewGameState);
   },
 
@@ -72,6 +70,7 @@ var Game = React.createClass({
     GamesStore.removeListener(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.removeListener(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
     GamesStore.removeListener(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
+    GamesStore.removeListener(GamesEvents.INFO, this.onGameInfoReceived);
     GamesStore.removeListener(GamesEvents.NEW_STATE, this.onNewGameState);
     GamesActions.closeGameStream(this.getGame().href, this.getGameId());
   },
@@ -99,6 +98,13 @@ var Game = React.createClass({
 
   retryConnection: function() {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
+  },
+
+  onGameInfoReceived: function(gameHref, gameId) {
+    if(this.isThisGame(gameHref, gameId)) {
+      var gameStore = GamesStore.getGame(gameHref, gameId);
+      this.setState({ player: gameStore.getPlayer() });
+    }
   },
 
   onNewGameState: function(gameHref, gameId) {
@@ -177,7 +183,7 @@ var Game = React.createClass({
                           onSelect={this.handleGameStateSelect} />
             </Col>
           </Row>
-          <GameComponent gameId={gameId} player={this.getPlayerNumber()}
+          <GameComponent gameId={gameId} player={this.state.player}
                          gameState={this.state.gameState} onMove={this.handleMove} />
         </div>
     );

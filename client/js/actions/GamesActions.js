@@ -2,6 +2,7 @@ import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
 
 var gameEvents = {
+  info: [GamesEvents.INFO, e => ({ player: e.player })],
   history: [GamesEvents.HISTORY, e => e.history],
   start: [GamesEvents.START, e => e.state],
   state: [GamesEvents.STATE, e => e.state],
