@@ -166,6 +166,8 @@ var Game = React.createClass({
       "hidden": alertText == ""
     });
 
+    var isLastState = this.state.gameStateIndex == this.state.gameStateCount - 1;
+
     return (
         <div className="flex">
           <Row>
@@ -183,8 +185,8 @@ var Game = React.createClass({
                           onSelect={this.handleGameStateSelect} />
             </Col>
           </Row>
-          <GameComponent gameId={gameId} player={this.state.player}
-                         gameState={this.state.gameState} onMove={this.handleMove} />
+          <GameComponent gameId={gameId} player={this.state.player} onMove={this.handleMove}
+                         gameState={this.state.gameState} isLastState={isLastState} />
         </div>
     );
   }

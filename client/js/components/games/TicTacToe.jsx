@@ -83,11 +83,12 @@ var TicTacToe = React.createClass({
 
   render: function () {
     var gameState = this.props.gameState;
+    var onMove = this.props.isLastState ? this.props.onMove : () => {};
 
     return (
         <Row>
           <Col lg={6}>
-            <Grid grid={gameState ? gameState.grid : null} onMove={this.props.onMove} />
+            <Grid grid={gameState ? gameState.grid : null} onMove={onMove} />
           </Col>
           <Col lg={6}>
             <h3>

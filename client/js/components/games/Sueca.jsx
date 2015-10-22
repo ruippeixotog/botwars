@@ -84,7 +84,7 @@ const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2,
   }
 
   return (
-      <div className={`hand ${cards ? "player-hand" : ""}`}>
+      <div className={`hand ${onCardClick ? "playable-hand" : ""}`}>
         {cardElems}
       </div>
   );
@@ -144,7 +144,7 @@ const Points = ({points}) => (
     </div>
 );
 
-const Sueca = ({gameState, player, onMove}) => {
+const Sueca = ({player, gameState, isLastState, onMove}) => {
   var {hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
 
   return (
@@ -154,7 +154,7 @@ const Sueca = ({gameState, player, onMove}) => {
             <div className="deck flex">
               <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} />
               <Hands player={player} handCards={hand} tricksDone={tricksDone} currentTrick={currentTrick}
-                     onCardClick={onMove} />
+                     onCardClick={isLastState ? onMove : null} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} />
               <Points points={points} />
