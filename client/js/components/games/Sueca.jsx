@@ -4,10 +4,10 @@ import {Col, Row} from "react-bootstrap";
 import _ from "underscore";
 
 const playerInfo = [
-  { x: 0, y: 1 },
-  { x: 1, y: 0 },
-  { x: 0, y: -1 },
-  { x: -1, y: 0 }
+  { x: 0, y: 1, labelTop: 90, labelLeft: 32 },
+  { x: 1, y: 0, labelTop: 70, labelLeft: 82 },
+  { x: 0, y: -1, labelTop: 7.5, labelLeft: 68 },
+  { x: -1, y: 0, labelTop: 30, labelLeft: 18 }
 ];
 
 class Card extends React.Component {
@@ -54,9 +54,7 @@ const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
 };
 
 const PlayerLabel = ({player, top, left }) => (
-    <div className="player-label" style={{ top: `${top}%`, left: `${left}%` }}>
-      Player <span className="player-number">{player}</span>
-    </div>
+    <div className="player-label" style={{ top: `${top}%`, left: `${left}%` }}>{player}</div>
 );
 
 const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick }) => {
@@ -89,18 +87,9 @@ const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2,
     y += info.x * deltaCy;
   }
 
-  var labelTop, labelLeft;
-  if(player % 2) {
-    labelTop = 50 + info.y * (50 * 4 + deltaY) / 5;
-    labelLeft = 50;
-  } else {
-    labelTop = 50 + info.y * deltaY + info.x * deltaCy * 8.5;
-    labelLeft = 50 + info.x * deltaX + info.y * deltaCx * 7.6;
-  }
-
   return (
       <div className={`hand ${onCardClick ? "playable-hand" : ""}`}>
-        <PlayerLabel player={player} top={labelTop} left={labelLeft} />
+        <PlayerLabel player={player} top={info.labelTop} left={info.labelLeft} />
         {cardElems}
       </div>
   );
