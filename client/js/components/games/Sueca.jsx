@@ -33,7 +33,7 @@ class Card extends React.Component {
   }
 }
 
-const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
+const CurrentTrick = ({cards, lastTrickCards, delta = 10, rot}) => {
   if(!cards) return <div className="curr-trick" />;
 
   if(_(cards).every(c => c == null) && lastTrickCards)
@@ -42,8 +42,9 @@ const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
   var cardElems = [];
   for(let i = 0; i < 4; i++) {
     if(!cards[i]) continue;
+    let pi = (i + rot) % 4;
     cardElems.push(<Card card={cards[i]} key={`trick${i}`} zIndex={10 + i}
-                         top={50 + playerInfo[i].y * delta} left={50 + playerInfo[i].x * delta} />);
+                         top={50 + playerInfo[pi].y * delta} left={50 + playerInfo[pi].x * delta} />);
   }
 
   return (
@@ -58,8 +59,8 @@ const PlayerLabel = ({player, top, left }) => (
          style={{ top: `${top}%`, left: `${left}%` }}>{player}</div>
 );
 
-const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick }) => {
-  var info = playerInfo[player - 1];
+const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick, rot }) => {
+  var info = playerInfo[((player - 1) + rot) % 4];
   var x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
   var y = 50 + info.y * deltaY - info.x * deltaCy * 4.5;
 
@@ -96,17 +97,17 @@ const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2,
   );
 };
 
-const Hands = ({ player, handCards, tricksDone, currentTrick, onCardClick }) => {
+const Hands = ({ player, handCards, tricksDone, currentTrick, onCardClick, rot }) => {
   if(!currentTrick) return <div className="hands" />;
 
   var hands = [];
   for(let i = 0; i < 4; i++) {
     if(i == player - 1) {
       hands.push(<Hand player={i + 1} cards={handCards} cardCount={handCards.length} key={`hand${i}`}
-                       onCardClick={onCardClick ? card => onCardClick(card, i) : null} />)
+                       onCardClick={onCardClick ? card => onCardClick(card, i) : null} rot={rot} />)
     } else {
       var cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
-      hands.push(<Hand player={i + 1} cardCount={cardCount} key={`hand${i}`} />);
+      hands.push(<Hand player={i + 1} cardCount={cardCount} key={`hand${i}`} rot={rot} />);
     }
   }
 
@@ -128,12 +129,14 @@ const Trump = ({card, player}) => {
   );
 };
 
-const LastTrick = ({cards, x = 10, y = 85, delta = 5}) => {
+const LastTrick = ({cards, x = 10, y = 85, delta = 5, rot}) => {
   if(!cards) cards = [];
 
-  var cardElems = cards.map((c, i) =>
-      <Card card={c} key={`trick${i}`} zIndex={10 + i}
-            top={y + playerInfo[i].y * delta} left={x + playerInfo[i].x * delta} />);
+  var cardElems = cards.map((c, i) => {
+    let pi = (i + rot) % 4;
+    return <Card card={c} key={`trick${i}`} zIndex={10 + i}
+                 top={y + playerInfo[pi].y * delta} left={x + playerInfo[pi].x * delta} />;
+  });
 
   return (
       <div className="last-trick">
@@ -152,17 +155,18 @@ const Points = ({points}) => (
 
 const Sueca = ({player, gameState, isLastState, onMove}) => {
   var {hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points} = gameState || {};
+  var rot = player ? (5 - player) % 4 : 0;
 
   return (
       <Row className="flex">
         <Col lg={12} className="flex">
           <div id="sueca" className="flex">
             <div className="deck flex">
-              <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} />
+              <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} rot={rot} />
               <Hands player={player} handCards={hand} tricksDone={tricksDone} currentTrick={currentTrick}
-                     onCardClick={isLastState ? onMove : null} />
+                     onCardClick={isLastState ? onMove : null} rot={rot} />
               <Trump card={trump} player={trumpPlayer} />
-              <LastTrick cards={lastTrick} />
+              <LastTrick cards={lastTrick} rot={rot} />
               <Points points={points} />
             </div>
           </div>
