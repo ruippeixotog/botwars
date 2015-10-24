@@ -1,6 +1,7 @@
 $table-color: #45a173;
 $highlight-color: rgba(220, 158, 69, 0.6);
-$chip-color: #fc4225; // #faa7b1;
+$team1-color: #fc4225;
+$team2-color: #0029ef;
 
 #sueca {
   margin: 15px 5px 25px;
@@ -21,7 +22,7 @@ $chip-color: #fc4225; // #faa7b1;
     box-shadow: 0 0 12px 12px $highlight-color;
   }
 
-  .player-label {
+  .player-chip {
     position: absolute;
     width: 1.5em;
     height: 1.5em;
@@ -32,9 +33,27 @@ $chip-color: #fc4225; // #faa7b1;
     background-color: white;
     border-radius: 50%;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.44), -1px 0 1px rgba(0, 0, 0, 0.12);
-    border: 3px dashed $chip-color;
-    color: $chip-color;
+    border: 3px dashed;
     text-align: center;
+
+    &.team1 {
+      color: $team1-color;
+      border-color: $team1-color;
+    }
+
+    &.team2 {
+      color: $team2-color;
+      border-color: $team2-color;
+    }
+
+    &.inline {
+      display: inline-block;
+      position: inherit;
+      transform: translate(0, 0);
+      font-size: 75%;
+      margin-right: 4px;
+      vertical-align: text-bottom;
+    }
   }
 
   .card {

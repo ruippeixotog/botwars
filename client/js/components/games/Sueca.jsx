@@ -54,7 +54,8 @@ const CurrentTrick = ({cards, lastTrickCards, delta = 10}) => {
 };
 
 const PlayerLabel = ({player, top, left }) => (
-    <div className="player-label" style={{ top: `${top}%`, left: `${left}%` }}>{player}</div>
+    <div className={`player-chip team${player % 2 ? 1 : 2}`}
+         style={{ top: `${top}%`, left: `${left}%` }}>{player}</div>
 );
 
 const Hand = ({ player, cards, cardCount, deltaX = 40, deltaY = 35, deltaCx = 2, deltaCy = 3, onCardClick }) => {
@@ -144,8 +145,8 @@ const LastTrick = ({cards, x = 10, y = 85, delta = 5}) => {
 const Points = ({points}) => (
     <div className="points">
       <span>Points</span><br />
-      <span>Team 1: {points ? points[0] : '-'}</span><br />
-      <span>Team 2: {points ? points[1] : '-'}</span>
+      <span><span className="player-chip inline team1" />Team 1: {points ? points[0] : '-'}</span><br />
+      <span><span className="player-chip inline team2" />Team 2: {points ? points[1] : '-'}</span>
     </div>
 );
 
