@@ -161,8 +161,11 @@ const Scoreboard = ({ score }) => (
 );
 
 const Sueca = ({ player, gameState, isLastState, onMove }) => {
-  var { hand, currentTrick, lastTrick, tricksDone, trump, trumpPlayer, points } = gameState || {};
+  var { nextPlayer, hand, currentTrick, lastTrick, tricksDone,
+      trump, trumpPlayer, points } = gameState || {};
+
   var rot = player ? (5 - player) % 4 : 0;
+  var onCardClick = isLastState && player === nextPlayer ? onMove : null;
 
   return (
       <Row className="flex">
@@ -171,8 +174,7 @@ const Sueca = ({ player, gameState, isLastState, onMove }) => {
             <div className="deck flex">
               <CurrentTrick cards={currentTrick} lastTrickCards={lastTrick} rot={rot} />
               <Hands player={player} handCards={hand} tricksDone={tricksDone}
-                     currentTrick={currentTrick} rot={rot}
-                     onCardClick={isLastState ? onMove : null} />
+                     currentTrick={currentTrick} rot={rot} onCardClick={onCardClick} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} rot={rot} />
               <Scoreboard points={points} />
