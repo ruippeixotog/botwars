@@ -162,7 +162,7 @@ const Scoreboard = ({ score }) => (
 
 const Sueca = ({ player, gameState, isLastState, onMove }) => {
   var { nextPlayer, hand, currentTrick, lastTrick, tricksDone,
-      trump, trumpPlayer, points } = gameState || {};
+      trump, trumpPlayer, score } = gameState || {};
 
   var rot = player ? (5 - player) % 4 : 0;
   var onCardClick = isLastState && player === nextPlayer ? onMove : null;
@@ -177,7 +177,7 @@ const Sueca = ({ player, gameState, isLastState, onMove }) => {
                      currentTrick={currentTrick} rot={rot} onCardClick={onCardClick} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} rot={rot} />
-              <Scoreboard points={points} />
+              <Scoreboard score={score} />
             </div>
           </div>
         </Col>
