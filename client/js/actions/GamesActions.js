@@ -33,7 +33,7 @@ var GamesActions = {
     if ((streams[gameHref] || {})[gameId]) return;
 
     var query = "history=true";
-    if (playerToken) query += `&playerId=${playerToken}`;
+    if (playerToken) query += `&playerToken=${playerToken}`;
 
     var wsUri = `ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`;
     var ws = new WebSocket(wsUri);

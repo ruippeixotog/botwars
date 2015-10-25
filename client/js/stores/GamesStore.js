@@ -43,7 +43,7 @@ AppDispatcher.register(function (action) {
 
   switch (actionType) {
     case GamesEvents.REGISTER_SUCCESS:
-      GamesStore.emit(actionType, gameHref, gameId, data.playerId);
+      GamesStore.emit(actionType, gameHref, gameId, data.playerToken);
       break;
 
     case GamesEvents.REGISTER_ERROR:

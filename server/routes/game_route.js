@@ -15,8 +15,8 @@ export default function (Game) {
     if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
-    if (req.query.playerId) {
-      var player = game.getPlayer(req.query.playerId);
+    if (req.query.playerToken) {
+      var player = game.getPlayer(req.query.playerToken);
       if (!player) { res.status(404).send("Invalid player"); return; }
       req.player = player;
     }

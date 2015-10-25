@@ -15,7 +15,7 @@ class GameInstance extends EventEmitter {
 
     this.currentPlayerCount = 0;
     this.connectedPlayerCount = 0;
-    this.playerIdTable = {};
+    this.playerTokenTable = {};
     this.playerState = {};
 
     for (let event of ["start", "stateChange"]) {
@@ -38,18 +38,18 @@ class GameInstance extends EventEmitter {
 
   registerNewPlayer() {
     if (this.currentPlayerCount < this.game.getPlayerCount()) {
-      var playerId = crypto.randomBytes(20).toString("hex");
+      var playerToken = crypto.randomBytes(20).toString("hex");
       var player = ++this.currentPlayerCount;
 
-      this.playerIdTable[playerId] = player;
+      this.playerTokenTable[playerToken] = player;
       this.playerState[player] = { connectedOnce: false };
-      return { player: player, playerId: playerId };
+      return { player, playerToken };
     }
     return null;
   }
 
-  getPlayer(playerId) {
-    return this.playerIdTable[playerId];
+  getPlayer(playerToken) {
+    return this.playerTokenTable[playerToken];
   }
 
   connect(player) {

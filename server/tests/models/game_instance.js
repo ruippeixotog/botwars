@@ -61,9 +61,9 @@ describe("GameInstance", function () {
     assert(p2 != null);
     assert.equal(game.registerNewPlayer(), null);
 
-    assert.equal(game.getPlayer(p1.playerId), 1);
-    assert.equal(game.getPlayer(p2.playerId), 2);
-    assert.equal(game.getPlayer("nonExistingPlayerId"), null);
+    assert.equal(game.getPlayer(p1.playerToken), 1);
+    assert.equal(game.getPlayer(p2.playerToken), 2);
+    assert.equal(game.getPlayer("nonExistingPlayerToken"), null);
   });
 
   it("should start the game only after all players connect", function () {
