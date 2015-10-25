@@ -4,8 +4,8 @@ const GameInstance = require.main.require("server/models/game_instance");
 const Game = require.main.require("server/models/games/game");
 
 class DummyGame extends Game {
-  constructor() {
-    super();
+  constructor(params) {
+    super(params);
     this.ended = false;
     this.error = false;
     this.winner = null;
@@ -36,8 +36,8 @@ DummyGame.INVALID_MOVE = "INVALID_MOVE";
 describe("GameInstance", function () {
   var gameLogic, game;
 
-  var startNewGame = function () {
-    gameLogic = new DummyGame();
+  var startNewGame = function (params = {}) {
+    gameLogic = new DummyGame(params);
     game = new GameInstance("testId", gameLogic);
   };
 
@@ -187,7 +187,7 @@ describe("GameInstance", function () {
   it("should handle correctly move timeouts", function (done) {
     this.slow(600);
 
-    gameLogic._moveTimeLimit = 200;
+    gameLogic.params.moveTimeLimit = 200;
     registerAll();
     connectAll();
 
@@ -213,6 +213,25 @@ describe("GameInstance", function () {
     });
 
     game.move(1, DummyGame.END_MOVE);
+  });
+
+  it("should provide up-to-date info about a game", function () {
+    startNewGame({ a: 1 });
+    assert.deepEqual(game.getInfo(), {
+      id: "testId",
+      params: { a: 1 },
+      status: "not_started"
+    });
+
+    registerAll();
+    connectAll();
+    assert.equal(game.getInfo().status, "started");
+
+    game.move(1, 32);
+    assert.equal(game.getInfo().status, "started");
+
+    game.move(1, DummyGame.END_MOVE);
+    assert.equal(game.getInfo().status, "ended");
   });
 
   it("should record and provide a history of the game moves and states", function () {

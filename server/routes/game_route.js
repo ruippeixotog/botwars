@@ -31,6 +31,10 @@ export default function (Game) {
     else res.json({ gameId });
   });
 
+  router.get("/:gameId", function (req, res) {
+    res.json(req.game.getInfo());
+  });
+
   router.post("/:gameId/register", function (req, res) {
     var playerRes = req.game.registerNewPlayer();
 

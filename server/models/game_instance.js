@@ -4,12 +4,18 @@ import Timer from "./utils/timer";
 
 import { EventEmitter } from "events";
 
+const GameStatus = Object.freeze({
+  NOT_STARTED: "not_started",
+  STARTED: "started",
+  ENDED: "ended"
+});
+
 class GameInstance extends EventEmitter {
   constructor(id, game) {
     super();
     this.id = id;
     this.game = game;
-    this.started = false;
+    this.status = GameStatus.NOT_STARTED;
     this.moveTimer = new Timer();
     this.history = { events: [], next: null };
 
@@ -36,6 +42,14 @@ class GameInstance extends EventEmitter {
     });
   }
 
+  getInfo() {
+    return {
+      id: this.id,
+      status: this.status,
+      params: this.game.getParams()
+    }
+  }
+
   registerNewPlayer() {
     if (this.currentPlayerCount < this.game.getPlayerCount()) {
       var playerToken = crypto.randomBytes(20).toString("hex");
@@ -58,23 +72,23 @@ class GameInstance extends EventEmitter {
     this.connectedPlayerCount++;
     this.playerState[player].connectedOnce = true;
 
-    if (!this.started && this.connectedPlayerCount === this.game.getPlayerCount()) {
-      this.started = true;
+    if (!this.hasStarted() && this.connectedPlayerCount === this.game.getPlayerCount()) {
+      this.status = GameStatus.STARTED;
       this.emit("start");
       this._onStateChange({ announceState: false });
     }
   }
 
   hasStarted() {
-    return this.started;
+    return this.status !== GameStatus.NOT_STARTED;
   }
 
   isEnded() {
-    return this.started ? this.game.isEnded() : null;
+    return this.hasStarted() ? this.game.isEnded() : null;
   }
 
   move(player, move) {
-    if (!this.started) return null;
+    if (!this.hasStarted()) return null;
 
     if (this.game.isEnded() || !this.game.isValidMove(player, move))
       return false;
@@ -88,11 +102,11 @@ class GameInstance extends EventEmitter {
   }
 
   getNextPlayer() {
-    return this.started ? this.game.getNextPlayer() : null;
+    return this.hasStarted() ? this.game.getNextPlayer() : null;
   }
 
   getState(player) {
-    return this.started ? this.game.getState(player) : null;
+    return this.hasStarted() ? this.game.getState(player) : null;
   }
 
   getHistory(player) {
@@ -109,6 +123,7 @@ class GameInstance extends EventEmitter {
 
       this.moveTimer.start(this._onMoveTimeout.bind(this), this.game.getMoveTimeLimit());
     } else {
+      this.status = GameStatus.ENDED;
       this.emit("end");
     }
   }

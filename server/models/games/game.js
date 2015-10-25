@@ -1,10 +1,14 @@
 class Game {
   // constructor(params)
-  constructor({ moveTimeLimit } = {}) {
+  constructor(params = {}) {
     if (this.constructor === Game) {
       throw new TypeError("Cannot construct Game instances directly");
     }
-    this._moveTimeLimit = moveTimeLimit;
+    this.params = params;
+  }
+
+  getParams() {
+    return this.params;
   }
 
   getPlayerCount() {
@@ -38,7 +42,7 @@ class Game {
   }
 
   getMoveTimeLimit() {
-    return this._moveTimeLimit;
+    return this.params.moveTimeLimit;
   }
 
   onMoveTimeout() {
