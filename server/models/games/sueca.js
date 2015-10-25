@@ -29,7 +29,7 @@ class Sueca extends Game {
     this.trump = this.hands[this.trumpPlayer - 1][0];
 
     this.nextPlayer = Sueca.getPlayerAfter(this.trumpPlayer);
-    this.points = [0, 0];
+    this.score = [0, 0];
     this.winner = null;
     this.error = false;
 
@@ -73,7 +73,7 @@ class Sueca extends Game {
       currentTrick: this.currentTrick,
       trickSuit: this.trickSuit,
       tricksDone: this.tricksDone,
-      points: this.points,
+      score: this.score,
       winner: this.winner,
       isError: this.error
     };
@@ -113,7 +113,7 @@ class Sueca extends Game {
     }
 
     var winnerPlayer = this.currentTrick.findIndex(Sueca.cardEquals(winnerCard)) + 1;
-    this.points[Sueca.getTeam(winnerPlayer) - 1] +=
+    this.score[Sueca.getTeam(winnerPlayer) - 1] +=
         _(this.currentTrick).reduce((acc, c) => acc + cardData[c.value].points, 0);
 
     this.trickSuit = null;
@@ -122,8 +122,8 @@ class Sueca extends Game {
 
     if (++this.tricksDone === 10) {
       this.nextPlayer = null;
-      if (this.points[0] !== this.points[1]) {
-        this.winner = this.points[0] > this.points[1] ? 1 : 2;
+      if (this.score[0] !== this.score[1]) {
+        this.winner = this.score[0] > this.score[1] ? 1 : 2;
       }
     } else {
       this.nextPlayer = winnerPlayer;

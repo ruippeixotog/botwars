@@ -150,13 +150,13 @@ const LastTrick = ({ cards, x = 10, y = 85, delta = 5, rot }) => {
   );
 };
 
-const Points = ({ points }) => (
-    <div className="points">
-      <span>Points</span>
+const Scoreboard = ({ score }) => (
+    <div className="scoreboard">
+      <span>Score</span>
       <br />
-      <span><span className="player-chip inline team1" />Team 1: {points ? points[0] : "-"}</span>
+      <span><span className="player-chip inline team1" />Team 1: {score ? score[0] : "-"}</span>
       <br />
-      <span><span className="player-chip inline team2" />Team 2: {points ? points[1] : "-"}</span>
+      <span><span className="player-chip inline team2" />Team 2: {score ? score[1] : "-"}</span>
     </div>
 );
 
@@ -175,7 +175,7 @@ const Sueca = ({ player, gameState, isLastState, onMove }) => {
                      onCardClick={isLastState ? onMove : null} />
               <Trump card={trump} player={trumpPlayer} />
               <LastTrick cards={lastTrick} rot={rot} />
-              <Points points={points} />
+              <Scoreboard points={points} />
             </div>
           </div>
         </Col>

@@ -72,7 +72,7 @@ describe("Sueca", function () {
     assert.equal(initialState.trickSuit, null);
     assert.equal(initialState.tricksDone, 0);
 
-    assert.deepEqual(initialState.points, [0, 0]);
+    assert.deepEqual(initialState.score, [0, 0]);
 
     for (let i = 1; i <= 4; i++) {
       assert.deepEqual(game.getState(i).hand, initialState.hands[i - 1]);
@@ -105,7 +105,7 @@ describe("Sueca", function () {
     assert.equal(game.getNextPlayer(), null);
 
     var finalState = game.getFullState();
-    var isDraw = finalState.points[0] === finalState.points[1];
+    var isDraw = finalState.score[0] === finalState.score[1];
     assert.equal(game.getWinner() == null, isDraw);
   });
 
@@ -154,7 +154,7 @@ describe("Sueca", function () {
     assert.equal(game.getWinner(), player % 2 ? 1 : 2);
   });
 
-  it("count correctly the points of a move", function () {
+  it("update correctly the score after a move", function () {
     quickPlay(4);
 
     var trickPoints = _(game.getFullState().lastTrick).reduce((sum, c) => {
@@ -169,11 +169,11 @@ describe("Sueca", function () {
     }, 0);
 
     var state = game.getFullState();
-    assert(state.points[0] === 0 && state.points[1] === trickPoints ||
-        state.points[1] === 0 && state.points[0] === trickPoints);
+    assert(state.score[0] === 0 && state.score[1] === trickPoints ||
+        state.score[1] === 0 && state.score[0] === trickPoints);
 
     quickPlay(36);
     state = game.getFullState();
-    assert.equal(state.points[0] + state.points[1], 120);
+    assert.equal(state.score[0] + state.score[1], 120);
   });
 });
