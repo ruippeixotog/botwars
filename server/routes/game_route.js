@@ -24,6 +24,10 @@ export default function (Game) {
     next();
   });
 
+  router.get("/", function (req, res) {
+    res.json(engine.getAllGamesInfo());
+  });
+
   router.post("/create", function (req, res) {
     var gameId = engine.createNewGame(req.body);
 

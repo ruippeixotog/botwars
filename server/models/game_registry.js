@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import _ from "underscore";
 
 import GameInstance from "./game_instance";
 
@@ -18,6 +19,10 @@ class GameRegistry {
 
   getGameInstance(id) {
     return this.instances[id];
+  }
+
+  getAllGamesInfo() {
+    return _(this.instances).map(game => game.getInfo());
   }
 }
 
