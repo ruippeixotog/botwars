@@ -2,7 +2,7 @@ import crypto from "crypto";
 import deepcopy from "./utils/deepcopy";
 import Timer from "./utils/timer";
 
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 class GameInstance extends EventEmitter {
   constructor(id, game) {
@@ -18,17 +18,17 @@ class GameInstance extends EventEmitter {
     this.playerIdTable = {};
     this.playerState = {};
 
-    for(let event of ["start", "stateChange"]) {
-      this.on(event, function() {
-        if(this.history.next) {
+    for (let event of ["start", "stateChange"]) {
+      this.on(event, function () {
+        if (this.history.next) {
           this.history.events.push({ eventType: "state", fullState: this.history.next });
         }
         this.history.next = deepcopy(this.game.getFullState());
       });
     }
 
-    this.on("move", function(player, move) {
-      if(this.history.next !== null) {
+    this.on("move", function (player, move) {
+      if (this.history.next !== null) {
         this.history.events.push({ eventType: "state", fullState: this.history.next });
         this.history.next = null;
       }
@@ -37,7 +37,7 @@ class GameInstance extends EventEmitter {
   }
 
   registerNewPlayer() {
-    if(this.currentPlayerCount < this.game.getPlayerCount()) {
+    if (this.currentPlayerCount < this.game.getPlayerCount()) {
       var playerId = crypto.randomBytes(20).toString("hex");
       var player = ++this.currentPlayerCount;
 
@@ -53,12 +53,12 @@ class GameInstance extends EventEmitter {
   }
 
   connect(player) {
-    if(this.playerState[player].connectedOnce) return;
+    if (this.playerState[player].connectedOnce) return;
 
     this.connectedPlayerCount++;
     this.playerState[player].connectedOnce = true;
 
-    if(!this.started && this.connectedPlayerCount == this.game.getPlayerCount()) {
+    if (!this.started && this.connectedPlayerCount === this.game.getPlayerCount()) {
       this.started = true;
       this.emit("start");
       this._onStateChange({ announceState: false });
@@ -74,7 +74,7 @@ class GameInstance extends EventEmitter {
   }
 
   move(player, move) {
-    if(!this.started) return null;
+    if (!this.started) return null;
 
     if (this.game.isEnded() || !this.game.isValidMove(player, move))
       return false;
@@ -97,15 +97,15 @@ class GameInstance extends EventEmitter {
 
   getHistory(player) {
     return this.history.events.map(histEvent =>
-      histEvent.eventType == "move" ? histEvent :
+      histEvent.eventType === "move" ? histEvent :
         { eventType: "state", state: this.game.getStateView(histEvent.fullState, player) }
     );
   }
 
   _onStateChange({ announceState = true, announceMove = true } = {}) {
     if (!this.game.isEnded()) {
-      if(announceState) this.emit("stateChange");
-      if(announceMove) this.emit("waitingForMove", this.game.getNextPlayer());
+      if (announceState) this.emit("stateChange");
+      if (announceMove) this.emit("waitingForMove", this.game.getNextPlayer());
 
       this.moveTimer.start(this._onMoveTimeout.bind(this), this.game.getMoveTimeLimit());
     } else {
@@ -115,8 +115,8 @@ class GameInstance extends EventEmitter {
 
   _onMoveTimeout() {
     var oldNextPlayer = this.game.getNextPlayer();
-    if(this.game.onMoveTimeout()) {
-      this._onStateChange({ announceMove: this.game.getNextPlayer() != oldNextPlayer });
+    if (this.game.onMoveTimeout()) {
+      this._onStateChange({ announceMove: this.game.getNextPlayer() !== oldNextPlayer });
     }
   }
 }

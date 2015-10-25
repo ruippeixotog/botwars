@@ -2,7 +2,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import {Route, Router, IndexRoute} from "react-router";
+import { Route, Router, IndexRoute } from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
 import _ from "underscore";
 

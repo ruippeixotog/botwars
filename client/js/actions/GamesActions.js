@@ -16,12 +16,13 @@ var streams = {};
 var GamesActions = {
 
   requestGameStream: function (gameHref, gameId, playerToken) {
-    if((streams[gameHref] || {})[gameId]) return;
+    if ((streams[gameHref] || {})[gameId]) return;
 
     var query = "history=true";
-    if(playerToken) query += `&playerId=${playerToken}`;
+    if (playerToken) query += `&playerId=${playerToken}`;
 
-    var ws = new WebSocket(`ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`);
+    var wsHost = `ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`;
+    var ws = new WebSocket(wsHost);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;
 
@@ -36,20 +37,20 @@ var GamesActions = {
       });
     }
 
-    ws.onopen = function() {
+    ws.onopen = function () {
       dispatchEvent(GamesEvents.CONNECTION_OPENED);
     };
 
-    ws.onmessage = function(ev) {
+    ws.onmessage = function (ev) {
       var event = JSON.parse(ev.data);
-      if(event.eventType == "end") {
+      if (event.eventType === "end") {
         hasEnded = true;
       }
       var [actionType, getData] = gameEvents[event.eventType];
       dispatchEvent(actionType, getData(event));
     };
 
-    ws.onclose = function() {
+    ws.onclose = function () {
       dispatchEvent(hasEnded || ws.closeRequested ?
           GamesEvents.CONNECTION_CLOSED : GamesEvents.CONNECTION_ERROR);
       delete streams[gameHref][gameId];
@@ -59,12 +60,12 @@ var GamesActions = {
   },
 
   sendMove: function (gameHref, gameId, move) {
-    if(!(streams[gameHref] || {})[gameId]) return;
+    if (!(streams[gameHref] || {})[gameId]) return;
     streams[gameHref][gameId].send(JSON.stringify(move));
   },
 
   closeGameStream: function (gameHref, gameId) {
-    if(!(streams[gameHref] || {})[gameId]) return;
+    if (!(streams[gameHref] || {})[gameId]) return;
     streams[gameHref][gameId].closeRequested = true;
     streams[gameHref][gameId].close();
   }

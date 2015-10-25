@@ -4,110 +4,110 @@ import expressWs from "../models/utils/express-ws";
 
 import GameRegistry from "../models/game_registry";
 
-export default function(Game) {
+export default function (Game) {
   var engine = new GameRegistry(Game);
 
   var router = expressWs(new express.Router());
   router.use(bodyParser.json());
 
-  router.param('gameId', function(req, res, next, gameId) {
+  router.param("gameId", function (req, res, next, gameId) {
     var game = engine.getGameInstance(gameId);
-    if(!game) { res.status(404).send('The requested game does not exist'); return; }
+    if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
-    if(req.query.playerId) {
+    if (req.query.playerId) {
       var player = game.getPlayer(req.query.playerId);
-      if(!player) { res.status(404).send('Invalid player'); return; }
+      if (!player) { res.status(404).send("Invalid player"); return; }
       req.player = player;
     }
 
     next();
   });
 
-  router.post('/create', function(req, res) {
+  router.post("/create", function (req, res) {
     var gameId = engine.createNewGame(req.body);
 
-    if(!gameId) res.status(400).send('Could not create new game');
+    if (!gameId) res.status(400).send("Could not create new game");
     else res.json({ gameId });
   });
 
-  router.post('/:gameId/register', function(req, res) {
+  router.post("/:gameId/register", function (req, res) {
     var playerRes = req.game.registerNewPlayer();
 
-    if(!playerRes) res.status(400).send('Could not register new player');
+    if (!playerRes) res.status(400).send("Could not register new player");
     else res.json(playerRes);
   });
 
-  router.get('/:gameId/connect', function(req, res) {
+  router.get("/:gameId/connect", function (req, res) {
     req.game.connect(req.player);
-    res.send('Connected');
+    res.send("Connected");
   });
 
-  router.get('/:gameId/state', function(req, res) {
-    if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
+  router.get("/:gameId/state", function (req, res) {
+    if (!req.game.hasStarted()) res.status(400).send("Game has not started yet");
     else res.json(req.game.getState(req.player));
   });
 
-  router.post('/:gameId/move', function(req, res) {
-    if(!req.game.hasStarted()) res.status(400).send('Game has not started yet');
-    else if(req.game.move(req.player, req.body)) res.send("OK");
-    else res.status(400).send('Illegal move');
+  router.post("/:gameId/move", function (req, res) {
+    if (!req.game.hasStarted()) res.status(400).send("Game has not started yet");
+    else if (req.game.move(req.player, req.body)) res.send("OK");
+    else res.status(400).send("Illegal move");
   });
 
-  router.get('/:gameId/history', function(req, res) {
+  router.get("/:gameId/history", function (req, res) {
     res.json(req.game.getHistory(req.player));
   });
 
-  router.ws('/:gameId/stream', function(ws, req) {
-    var {game, player} = req;
+  router.ws("/:gameId/stream", function (ws, req) {
+    var { game, player } = req;
 
-    ws.sendJSON = function(obj) { ws.send(JSON.stringify(obj)); };
+    ws.sendJSON = function (obj) { ws.send(JSON.stringify(obj)); };
     function onGameEvent(event, callback) {
       game.on(event, callback);
-      ws.on('close', () => { game.removeListener(event, callback); });
+      ws.on("close", () => { game.removeListener(event, callback); });
     }
 
-    onGameEvent('start', function() {
-      ws.sendJSON({ eventType: 'start', state: game.getState(player) });
+    onGameEvent("start", function () {
+      ws.sendJSON({ eventType: "start", state: game.getState(player) });
     });
 
-    onGameEvent('stateChange', function() {
-      ws.sendJSON({ eventType: 'state', state: game.getState(player) });
+    onGameEvent("stateChange", function () {
+      ws.sendJSON({ eventType: "state", state: game.getState(player) });
     });
 
-    onGameEvent('move', function(player, move) {
-      ws.sendJSON({ eventType: 'move', player, move });
+    onGameEvent("move", function (player, move) {
+      ws.sendJSON({ eventType: "move", player, move });
     });
 
-    onGameEvent('end', function() {
-      ws.sendJSON({ eventType: 'end', state: game.getState(player) });
+    onGameEvent("end", function () {
+      ws.sendJSON({ eventType: "end", state: game.getState(player) });
       ws.close();
     });
 
-    ws.sendJSON({ eventType: 'info', player });
+    ws.sendJSON({ eventType: "info", player });
 
-    if(req.query.history == "true") {
-      ws.sendJSON({ eventType: 'history', history: game.getHistory(player) });
+    if (req.query.history === "true") {
+      ws.sendJSON({ eventType: "history", history: game.getHistory(player) });
     }
 
-    if(game.hasStarted()) {
+    if (game.hasStarted()) {
       var isEnded = game.isEnded();
-      ws.sendJSON({ eventType: isEnded ? 'end' : 'state', state: game.getState(player) });
-      if(isEnded) ws.close();
+      ws.sendJSON({ eventType: isEnded ? "end" : "state", state: game.getState(player) });
+      if (isEnded) ws.close();
     }
 
-    if(player) {
-      onGameEvent('waitingForMove', function(nextPlayer) {
-        if(nextPlayer == player)
-          ws.sendJSON({ eventType: 'requestMove', state: game.getState(player) });
+    if (player) {
+      onGameEvent("waitingForMove", function (nextPlayer) {
+        if (nextPlayer === player)
+          ws.sendJSON({ eventType: "requestMove", state: game.getState(player) });
       });
 
-      ws.on('message', function(msg) {
+      ws.on("message", function (msg) {
         game.move(player, JSON.parse(msg));
       });
 
-      if (game.hasStarted() && player == game.getNextPlayer()) {
-        ws.sendJSON({ eventType: 'requestMove', state: game.getState(player) });
+      if (game.hasStarted() && player === game.getNextPlayer()) {
+        ws.sendJSON({ eventType: "requestMove", state: game.getState(player) });
       }
 
       game.connect(player);

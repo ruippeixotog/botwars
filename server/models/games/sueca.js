@@ -22,7 +22,7 @@ class Sueca extends Game {
     var deck = Sueca.generateDeck();
 
     this.hands = new Array(4);
-    for(let i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       this.hands[i] = deck.slice(10 * i, 10 * (i + 1));
     }
     this.trumpPlayer = Math.floor(Math.random() * 4 + 1);
@@ -40,17 +40,17 @@ class Sueca extends Game {
   }
 
   getPlayerCount() { return 4; }
-  isEnded() { return this.error || this.tricksDone == 10; }
+  isEnded() { return this.error || this.tricksDone === 10; }
   isError() { return this.error; }
   getWinner() { return this.winner; }
   getNextPlayer() { return this.nextPlayer; }
 
   isValidMove(player, card) {
-    return player == this.nextPlayer && this._canPlay(player, card);
+    return player === this.nextPlayer && this._canPlay(player, card);
   }
 
   move(player, card) {
-    if(!this.isValidMove(player, card)) {
+    if (!this.isValidMove(player, card)) {
       this.error = true;
     } else {
       this.trickSuit = this.trickSuit || card.suit;
@@ -58,7 +58,7 @@ class Sueca extends Game {
       this.hands[player - 1] = _(this.hands[player - 1]).reject(Sueca.cardEquals(card));
 
       this.nextPlayer = Sueca.getPlayerAfter(player);
-      if(this.currentTrick[this.nextPlayer - 1])
+      if (this.currentTrick[this.nextPlayer - 1])
         this._endTrick();
     }
   }
@@ -93,10 +93,10 @@ class Sueca extends Game {
   }
 
   _canPlay(player, card) {
-    if(!_(this.hands[player - 1]).some(Sueca.cardEquals(card))) return false;
-    if(!this.trickSuit) return true;
-    return card.suit == this.trickSuit
-        || _(this.hands[player - 1]).every(c => c.suit != this.trickSuit);
+    if (!_(this.hands[player - 1]).some(Sueca.cardEquals(card))) return false;
+    if (!this.trickSuit) return true;
+    return card.suit === this.trickSuit
+        || _(this.hands[player - 1]).every(c => c.suit !== this.trickSuit);
   }
 
   _endTrick() {
@@ -105,7 +105,7 @@ class Sueca extends Game {
 
     var winnerCard;
     var trumpCards = trickCardsWhere({ suit: this.trump.suit });
-    if(trumpCards.length > 0) {
+    if (trumpCards.length > 0) {
       winnerCard = trumpCards[0];
     } else {
       var trickSuitCards = trickCardsWhere({ suit: this.trickSuit });
@@ -120,9 +120,9 @@ class Sueca extends Game {
     this.lastTrick = this.currentTrick;
     this.currentTrick = [null, null, null, null];
 
-    if(++this.tricksDone == 10) {
+    if (++this.tricksDone === 10) {
       this.nextPlayer = null;
-      if(this.points[0] != this.points[1]) {
+      if (this.points[0] !== this.points[1]) {
         this.winner = this.points[0] > this.points[1] ? 1 : 2;
       }
     } else {
@@ -131,7 +131,7 @@ class Sueca extends Game {
   }
 
   static generateDeck() {
-    return _.chain(['clubs', 'diamonds', 'hearts', 'spades']).map(suit =>
+    return _.chain(["clubs", "diamonds", "hearts", "spades"]).map(suit =>
         _(cardData).keys().map(value => ({ suit, value }))
     ).flatten().shuffle().value();
   }
@@ -143,8 +143,8 @@ class Sueca extends Game {
   static getTeam(player) { return (player - 1) % 2 + 1; }
 
   static cardEquals(card) {
-    if(!card) return () => false;
-    return c => c && c.suit == card.suit && c.value == card.value;
+    if (!card) return () => false;
+    return c => c && c.suit === card.suit && c.value === card.value;
   }
 }
 

@@ -27,23 +27,23 @@ class TicTacToe extends Game {
   getNextPlayer() { return this.nextPlayer; }
 
   isValidMove(player, move) {
-    return player == this.nextPlayer && this._isValidPlacement(move);
+    return player === this.nextPlayer && this._isValidPlacement(move);
   }
 
   move(player, move) {
-    if(!this.isValidMove(player, move)) {
+    if (!this.isValidMove(player, move)) {
       this.error = true;
     } else {
       this.nextPlayer = 3 - player; // newState.nextPlayer == 1 ? 2 - 1;
       this.grid[move.row][move.col] = player;
 
-      if(this._checkRow(move.row) ||
+      if (this._checkRow(move.row) ||
           this._checkColumn(move.col) ||
           this._checkDiag(move.row, move.col)) {
         this.winner = player;
       }
 
-      if(++this.moveCount == this.rowCount * this.colCount)
+      if (++this.moveCount === this.rowCount * this.colCount)
         this.gridFull = true;
     }
   }
@@ -70,7 +70,7 @@ class TicTacToe extends Game {
   _isValidPlacement(move) {
     return move.row >= 0 && move.row < this.rowCount &&
         move.col >= 0 && move.col < this.colCount &&
-        this.grid[move.row][move.col] == 0;
+        this.grid[move.row][move.col] === 0;
   }
 
   _checkRow(row) {
@@ -84,15 +84,15 @@ class TicTacToe extends Game {
   _checkDiag(row, col) {
     var colCount = this.grid[0].length;
 
-    return row == col &&
+    return row === col &&
         this._checkCells(_(this.grid).map((r, i) => r[i])) ||
-        row == colCount - col - 1 &&
+        row === colCount - col - 1 &&
         this._checkCells(_(this.grid).map((r, i) => r[colCount - i - 1]));
   }
 
   _checkCells(cells) {
     var winner = cells[0];
-    return winner > 0 && _(cells).every(e => e == winner) ? winner : null;
+    return winner > 0 && _(cells).every(e => e === winner) ? winner : null;
   }
 }
 

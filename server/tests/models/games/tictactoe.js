@@ -2,26 +2,26 @@ import assert from "assert";
 
 const TicTacToe = require.main.require("server/models/games/tictactoe");
 
-describe('TicTacToe', function() {
+describe("TicTacToe", function () {
   var game;
 
-  var startNewGame = function() {
+  var startNewGame = function () {
     game = new TicTacToe({});
   };
 
-  var quickPlay = function(moves) {
-    for(let i = 0; i < moves.length; i++) {
+  var quickPlay = function (moves) {
+    for (let i = 0; i < moves.length; i++) {
       game.move(game.getNextPlayer(), { row: moves[i][0], col: moves[i][1] });
     }
   };
 
   beforeEach(startNewGame);
 
-  it('should have a player count of 2', function () {
+  it("should have a player count of 2", function () {
     assert.equal(game.getPlayerCount(), 2);
   });
 
-  it('should start out with a correct initial state', function () {
+  it("should start out with a correct initial state", function () {
     assert.equal(game.isEnded(), false);
     assert.equal(game.isError(), false);
     assert.equal(game.getWinner(), null);
@@ -34,7 +34,7 @@ describe('TicTacToe', function() {
     });
   });
 
-  it('should update correctly the state with valid moves', function () {
+  it("should update correctly the state with valid moves", function () {
     game.move(1, { row: 0, col: 0 });
     assert.equal(game.isError(), false);
     assert.deepEqual(game.getState().grid, [[1, 0, 0], [0, 0, 0], [0, 0, 0]]);
@@ -44,7 +44,7 @@ describe('TicTacToe', function() {
     assert.deepEqual(game.getState().grid, [[1, 2, 0], [0, 0, 0], [0, 0, 0]]);
   });
 
-  it('should set the state as error when an invalid move is made', function () {
+  it("should set the state as error when an invalid move is made", function () {
     game.move(1, { row: 0, col: 0 });
     game.move(2, { row: 0, col: 3 }); // illegal position
     assert.equal(game.isError(), true);
@@ -60,7 +60,7 @@ describe('TicTacToe', function() {
     assert.equal(game.isError(), true);
   });
 
-  it('should evaluate correctly valid and invalid moves', function () {
+  it("should evaluate correctly valid and invalid moves", function () {
     assert.equal(game.isValidMove(1, { row: 0, col: 0 }), true);
     assert.equal(game.isValidMove(1, { row: 0, col: 3 }), false); // illegal position
     assert.equal(game.isValidMove(1, { row: -1, col: 0 }), false); // illegal position
@@ -70,7 +70,7 @@ describe('TicTacToe', function() {
     assert.equal(game.isValidMove(2, { row: 0, col: 0 }), false); // position already taken
   });
 
-  it('should consider the opponent the winner when a move timeout occurs', function () {
+  it("should consider the opponent the winner when a move timeout occurs", function () {
     assert.equal(game.onMoveTimeout(), true);
     assert.equal(game.getNextPlayer(), null);
     assert.equal(game.getWinner(), 2);
@@ -82,7 +82,7 @@ describe('TicTacToe', function() {
     assert.equal(game.getWinner(), 1);
   });
 
-  it('should signal correctly the ending of a game and its winner', function () {
+  it("should signal correctly the ending of a game and its winner", function () {
     quickPlay([[0, 0], [0, 1], [1, 0], [1, 1]]);
 
     assert.equal(game.isEnded(), false);

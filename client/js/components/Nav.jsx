@@ -10,7 +10,8 @@ var Nav = React.createClass({
 
   render: function () {
     return (
-        <nav className="navbar navbar-default navbar-static-top" role="navigation" style={{marginBottom: 0}}>
+        <nav className="navbar navbar-default navbar-static-top" role="navigation"
+             style={{ marginBottom: 0 }}>
           <HeaderNav {...this.props} />
           <SideNav {...this.props} />
         </nav>

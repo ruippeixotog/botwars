@@ -1,9 +1,9 @@
 class Timer {
 
   start(code, delay) {
-    if(!delay) return;
+    if (!delay) return;
 
-    this.timeoutObj = setTimeout(function() {
+    this.timeoutObj = setTimeout(function () {
       this.timeoutObj = null;
       code();
     }, delay);
@@ -16,7 +16,7 @@ class Timer {
   }
 
   stop() {
-    if(this.timeoutObj) {
+    if (this.timeoutObj) {
       clearTimeout(this.timeoutObj);
       var t = Date.now() - this.timeoutObj.startTime;
       this.timeoutObj = null;

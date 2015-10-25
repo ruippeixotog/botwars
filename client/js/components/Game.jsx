@@ -1,6 +1,6 @@
 import React from "react";
-import {History} from "react-router";
-import {Row, Col, Pagination, Alert, PageHeader} from "react-bootstrap";
+import { History } from "react-router";
+import { Row, Col, Pagination, Alert, PageHeader } from "react-bootstrap";
 import classNames from "classnames";
 
 import GamesActions from "../actions/GamesActions";
@@ -17,23 +17,23 @@ const ConnStates = Object.freeze({
 var Game = React.createClass({
   mixins: [History],
 
-  getGameId: function() {
+  getGameId: function () {
     return this.props.params.gameId;
   },
 
-  getGame: function() {
+  getGame: function () {
     return this.props.route.game;
   },
 
-  getPlayerToken: function() {
+  getPlayerToken: function () {
     return this.props.location.query.playerToken;
   },
 
-  isThisGame: function(gameHref, gameId) {
-    return gameHref == this.getGame().href && gameId == this.getGameId();
+  isThisGame: function (gameHref, gameId) {
+    return gameHref === this.getGame().href && gameId === this.getGameId();
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       connState: ConnStates.NOT_CONNECTED,
       player: null,
@@ -52,12 +52,12 @@ var Game = React.createClass({
     GamesStore.on(GamesEvents.NEW_STATE, this.onNewGameState);
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
   },
 
-  componentWillReceiveProps: function(nextProps) {
-    if(!this.isThisGame(nextProps.route.game.href, nextProps.params.gameId)) {
+  componentWillReceiveProps: function (nextProps) {
+    if (!this.isThisGame(nextProps.route.game.href, nextProps.params.gameId)) {
       clearInterval(this._connRetryTimeout);
       GamesActions.closeGameStream(this.getGame().href, this.getGameId());
       GamesActions.requestGameStream(nextProps.route.game.href, nextProps.params.gameId);
@@ -65,7 +65,7 @@ var Game = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     clearInterval(this._connRetryTimeout);
     GamesStore.removeListener(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.removeListener(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
@@ -75,44 +75,44 @@ var Game = React.createClass({
     GamesActions.closeGameStream(this.getGame().href, this.getGameId());
   },
 
-  onConnectionOpened: function(gameHref, gameId) {
-    if(this.isThisGame(gameHref, gameId)) {
+  onConnectionOpened: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
       this.setState({ connState: ConnStates.CONNECTED });
     }
   },
 
-  onConnectionClosed: function(gameHref, gameId) {
-    if(this.isThisGame(gameHref, gameId)) {
+  onConnectionClosed: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
       this.setState({ connState: ConnStates.FINISHED });
     }
   },
 
-  onConnectionError: function(gameHref, gameId) {
-    if(this.isThisGame(gameHref, gameId)) {
-      if(this.state.connState == ConnStates.CONNECTED) {
+  onConnectionError: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
+      if (this.state.connState === ConnStates.CONNECTED) {
         this.setState({ connState: ConnStates.CONNECTION_DOWN });
       }
       this._connRetryTimeout = setTimeout(this.retryConnection, 3000);
     }
   },
 
-  retryConnection: function() {
+  retryConnection: function () {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
   },
 
-  onGameInfoReceived: function(gameHref, gameId) {
-    if(this.isThisGame(gameHref, gameId)) {
+  onGameInfoReceived: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
       var gameStore = GamesStore.getGame(gameHref, gameId);
       this.setState({ player: gameStore.getPlayer() });
     }
   },
 
-  onNewGameState: function(gameHref, gameId) {
-    if(this.isThisGame(gameHref, gameId)) {
+  onNewGameState: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
       var gameStore = GamesStore.getGame(gameHref, gameId);
       var newStateCount = gameStore.getStateCount();
 
-      if(this.state.followCurrentState) {
+      if (this.state.followCurrentState) {
         this.setState({
           gameState: gameStore.getCurrentState(),
           gameStateCount: newStateCount,
@@ -124,25 +124,25 @@ var Game = React.createClass({
     }
   },
 
-  handleMove: function(move) {
+  handleMove: function (move) {
     GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
   },
 
-  handleGameIdSubmit: function(e) {
+  handleGameIdSubmit: function (e) {
     e.preventDefault();
     var nextGameId = this.refs.nextGameId.getValue();
     this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
   },
 
-  handleGameStateSelect: function(e, {eventKey}) {
+  handleGameStateSelect: function (e, { eventKey }) {
     e.preventDefault();
-    if(eventKey != this.state.gameStateIndex + 1) {
+    if (eventKey !== this.state.gameStateIndex + 1) {
       var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
 
       this.setState({
         gameState: gameStore.getState(eventKey - 1),
         gameStateIndex: eventKey - 1,
-        followCurrentState: eventKey == this.state.gameStateCount - 1
+        followCurrentState: eventKey === this.state.gameStateCount - 1
       });
     }
   },
@@ -153,7 +153,7 @@ var Game = React.createClass({
     var GameComponent = game.component;
 
     var alertText = "";
-    switch(this.state.connState) {
+    switch (this.state.connState) {
       case ConnStates.NOT_CONNECTED:
         alertText = "Connecting to server...";
         break;
@@ -163,10 +163,10 @@ var Game = React.createClass({
     }
 
     var alertClassNames = classNames({
-      "hidden": alertText == ""
+      "hidden": alertText === ""
     });
 
-    var isLastState = this.state.gameStateIndex == this.state.gameStateCount - 1;
+    var isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
 
     return (
         <div className="flex">
@@ -180,8 +180,9 @@ var Game = React.createClass({
           </Alert>
           <Row>
             <Col lg={6}>
-              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true} ellipsis={false}
-                          items={this.state.gameStateCount} activePage={this.state.gameStateIndex + 1}
+              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
+                          ellipsis={false} items={this.state.gameStateCount}
+                          activePage={this.state.gameStateIndex + 1}
                           onSelect={this.handleGameStateSelect} />
             </Col>
           </Row>

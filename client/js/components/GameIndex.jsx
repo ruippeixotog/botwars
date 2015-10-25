@@ -1,6 +1,6 @@
 import React from "react";
-import {History} from "react-router";
-import {Row, Col, Input, Button, PageHeader} from "react-bootstrap";
+import { History } from "react-router";
+import { Row, Col, Input, Button, PageHeader } from "react-bootstrap";
 
 const JoinModes = Object.freeze({
   WATCH: "WATCH",
@@ -15,18 +15,18 @@ var GameIndex = React.createClass({
     children: React.PropTypes.element
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       joinMode: JoinModes.WATCH
     };
   },
 
-  handleGameIdSubmit: function(e) {
+  handleGameIdSubmit: function (e) {
     e.preventDefault();
     var game = this.props.route.game;
     var nextGameId = this.refs.nextGameId.getValue();
 
-    var query = this.state.joinMode == JoinModes.PLAY ?
+    var query = this.state.joinMode === JoinModes.PLAY ?
         `?playerToken=${this.refs.playerToken.getValue()}` :
         "";
 
@@ -35,6 +35,8 @@ var GameIndex = React.createClass({
 
   render: function () {
     var game = this.props.route.game;
+
+    var setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
     return (
         <div>
@@ -51,23 +53,26 @@ var GameIndex = React.createClass({
 
                 <Input label="I want to:">
                   <Input name="action" type="radio" label="watch the game as a spectator"
-                         checked={this.state.joinMode == JoinModes.WATCH}
-                         onChange={() => this.setState({ joinMode: JoinModes.WATCH })} />
+                         checked={this.state.joinMode === JoinModes.WATCH}
+                         onChange={setJoinMode(JoinModes.WATCH)} />
 
                   <Input name="action" type="radio" label="enter the game as a new player (TODO)"
                          disabled={true}
-                         checked={this.state.joinMode == JoinModes.REGISTER_AND_PLAY}
-                         onChange={() => this.setState({ joinMode: JoinModes.REGISTER_AND_PLAY })} />
+                         checked={this.state.joinMode === JoinModes.REGISTER_AND_PLAY}
+                         onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
 
                   <Input>
                     <div className="radio">
                       <label>
-                        <input name="action" type="radio" label="play the game as the player with token"
-                               checked={this.state.joinMode == JoinModes.PLAY}
-                               onChange={() => this.setState({ joinMode: JoinModes.PLAY })} />
+                        <input name="action" type="radio"
+                               label="play the game as the player with token"
+                               checked={this.state.joinMode === JoinModes.PLAY}
+                               onChange={setJoinMode(JoinModes.PLAY)} />
                         <span>play the game as the player with token</span>
-                        <Input type="text" ref="playerToken" bsSize="small" groupClassName="player-token-form-group"
-                               disabled={this.state.joinMode != JoinModes.PLAY} placeholder="playerToken" />
+                        <Input type="text" ref="playerToken" bsSize="small"
+                               groupClassName="player-token-form-group"
+                               disabled={this.state.joinMode !== JoinModes.PLAY}
+                               placeholder="playerToken" />
                       </label>
                     </div>
                   </Input>

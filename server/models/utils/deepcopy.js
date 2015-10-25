@@ -1,4 +1,4 @@
-var deepcopy = function(obj) {
+var deepcopy = function (obj) {
   if (obj == null || typeof obj != "object") return obj;
   var copy;
 

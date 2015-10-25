@@ -1,6 +1,6 @@
 import lazy from "lazy.js";
 
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
 
@@ -24,14 +24,14 @@ class GameStore {
 const GamesStore = lazy(EventEmitter.prototype).extend({
   games: {},
 
-  getGame: function(gameHref, gameId) {
+  getGame: function (gameHref, gameId) {
     var games = this.games[gameHref] = this.games[gameHref] || {};
     return games[gameId] = games[gameId] || new GameStore();
   }
 }).value();
 
 AppDispatcher.register(function (action) {
-  const {actionType, gameHref, gameId, data} = action;
+  const { actionType, gameHref, gameId, data } = action;
 
   switch (actionType) {
     case GamesEvents.INFO:
@@ -41,7 +41,7 @@ AppDispatcher.register(function (action) {
 
     case GamesEvents.HISTORY:
       GamesStore.getGame(gameHref, gameId)._setAllStates(
-          lazy(data).filter(e => e.eventType == "state").map(e => e.state).value());
+          lazy(data).filter(e => e.eventType === "state").map(e => e.state).value());
       break;
 
     case GamesEvents.START:
