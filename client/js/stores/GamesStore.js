@@ -8,15 +8,19 @@ class GameStore {
   constructor() {
     this.states = [];
     this.player = null;
+    this.lastToken = null;
   }
 
   getPlayer() { return this.player; }
+  getLastToken() { return this.lastToken; }
+
   getState(i) { return this.states[i]; }
   getCurrentState() { return this.states[this.states.length - 1]; }
   getAllStates() { return this.states; }
   getStateCount() { return this.states.length; }
 
   _setPlayer(player) { this.player = player; }
+  _setLastToken(playerToken) { this.lastToken = playerToken; }
   _pushState(state) { this.states.push(state); }
   _setAllStates(states) { this.states = states; }
 }
@@ -31,11 +35,23 @@ const GamesStore = lazy(EventEmitter.prototype).extend({
 }).value();
 
 AppDispatcher.register(function (action) {
-  const { actionType, gameHref, gameId, data } = action;
+  const { actionType, gameHref, gameId, playerToken, data } = action;
+
+  if (playerToken) {
+    GamesStore.getGame(gameHref, gameId)._setLastToken(playerToken);
+  }
 
   switch (actionType) {
+    case GamesEvents.REGISTER_SUCCESS:
+      GamesStore.emit(actionType, gameHref, gameId, data.playerId);
+      break;
+
+    case GamesEvents.REGISTER_ERROR:
+      GamesStore.emit(actionType, gameHref, gameId, data);
+      break;
+
     case GamesEvents.INFO:
-      GamesStore.getGame(gameHref, gameId)._setPlayer(action.data.player);
+      GamesStore.getGame(gameHref, gameId)._setPlayer(data.player);
       GamesStore.emit(actionType, gameHref, gameId);
       break;
 

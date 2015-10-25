@@ -1,5 +1,6 @@
 import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
+import request from "superagent";
 
 var gameEvents = {
   info: [GamesEvents.INFO, e => ({ player: e.player })],
@@ -15,26 +16,34 @@ var streams = {};
 
 var GamesActions = {
 
+  register: function (gameHref, gameId) {
+    request.post(`/api${gameHref}\/${gameId}/register`)
+        .set("Accept", "application/json")
+        .end(function (err, res) {
+          AppDispatcher.dispatch({
+            actionType: err ? GamesEvents.REGISTER_ERROR : GamesEvents.REGISTER_SUCCESS,
+            gameHref: gameHref,
+            gameId: gameId,
+            data: err || res.body
+          });
+        });
+  },
+
   requestGameStream: function (gameHref, gameId, playerToken) {
     if ((streams[gameHref] || {})[gameId]) return;
 
     var query = "history=true";
     if (playerToken) query += `&playerId=${playerToken}`;
 
-    var wsHost = `ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`;
-    var ws = new WebSocket(wsHost);
+    var wsUri = `ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`;
+    var ws = new WebSocket(wsUri);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;
 
     var hasEnded = false;
 
     function dispatchEvent(actionType, data) {
-      AppDispatcher.dispatch({
-        actionType: actionType,
-        gameHref: gameHref,
-        gameId: gameId,
-        data: data
-      });
+      AppDispatcher.dispatch({ actionType, gameHref, gameId, playerToken, data });
     }
 
     ws.onopen = function () {
