@@ -17,7 +17,7 @@ var streams = {};
 var GamesActions = {
 
   register: function (gameHref, gameId) {
-    request.post(`/api${gameHref}\/${gameId}/register`)
+    request.post(`/api${gameHref}/games/${gameId}/register`)
         .set("Accept", "application/json")
         .end(function (err, res) {
           AppDispatcher.dispatch({
@@ -35,7 +35,7 @@ var GamesActions = {
     var query = "history=true";
     if (playerToken) query += `&playerToken=${playerToken}`;
 
-    var wsUri = `ws://${window.location.host}\/api${gameHref}\/${gameId}/stream?${query}`;
+    var wsUri = `ws://${window.location.host}\/api${gameHref}/games/${gameId}/stream?${query}`;
     var ws = new WebSocket(wsUri);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;

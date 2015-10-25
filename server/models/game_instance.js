@@ -44,7 +44,7 @@ class GameInstance extends EventEmitter {
 
   getInfo() {
     return {
-      id: this.id,
+      gameId: this.id,
       status: this.status,
       params: this.game.getParams()
     }

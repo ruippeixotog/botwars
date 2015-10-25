@@ -218,7 +218,7 @@ describe("GameInstance", function () {
   it("should provide up-to-date info about a game", function () {
     startNewGame({ a: 1 });
     assert.deepEqual(game.getInfo(), {
-      id: "testId",
+      gameId: "testId",
       params: { a: 1 },
       status: "not_started"
     });
