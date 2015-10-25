@@ -40,7 +40,7 @@ class Sueca extends Game {
   }
 
   getPlayerCount() { return 4; }
-  isEnded() { return this.error || this.winner || this.tricksDone === 10; }
+  isEnded() { return this.error || this.winner !== null || this.tricksDone === 10; }
   isError() { return this.error; }
   getWinner() { return this.winner; }
   getNextPlayer() { return this.nextPlayer; }
