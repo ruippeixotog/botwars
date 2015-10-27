@@ -67,6 +67,7 @@ var GameIndex = React.createClass({
     var tableRows = this.state.games.map(info => (
         <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
           <td>{info.gameId}</td>
+          <td>{info.connectedPlayers}/{info.players}</td>
           <td><GameStatusLabel status={info.status} /></td>
         </tr>
     ));
@@ -84,6 +85,7 @@ var GameIndex = React.createClass({
                 <thead>
                   <tr>
                     <th>ID</th>
+                    <th>Players</th>
                     <th>Status</th>
                   </tr>
                 </thead>

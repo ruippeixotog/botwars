@@ -45,6 +45,8 @@ class GameInstance extends EventEmitter {
   getInfo() {
     return {
       gameId: this.id,
+      connectedPlayers: this.connectedPlayerCount,
+      players: this.game.getPlayerCount(),
       status: this.status,
       params: this.game.getParams()
     }
