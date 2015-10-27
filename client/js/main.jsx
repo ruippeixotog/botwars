@@ -10,6 +10,7 @@ import App from "./components/App";
 import Index from "./components/Index";
 import GameIndex from "./components/GameIndex";
 import Game from "./components/Game";
+import GameStream from "./components/GameStream";
 import PageNotFound from "./components/PageNotFound";
 
 import config from "../../config.json";
@@ -23,6 +24,7 @@ var gameRoutes = games.map(game =>
     <Route path={game.href} key={game.href}>
       <IndexRoute component={GameIndex} game={game} />
       <Route path=":gameId" component={Game} game={game} />
+      <Route path=":gameId/stream" component={GameStream} game={game} />
     </Route>
 );
 

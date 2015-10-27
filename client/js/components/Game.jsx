@@ -1,203 +1,141 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, Pagination } from "react-bootstrap";
+import { Row, Col, Input, Button, PageHeader } from "react-bootstrap";
 
-import GameStatus from "../constants/GameStatus";
 import GamesActions from "../actions/GamesActions";
 import GamesStore from "../stores/GamesStore";
 import GamesEvents from "../events/GamesEvents";
 
-const ConnStatus = Object.freeze({
-  NOT_CONNECTED: "NOT_CONNECTED",
-  CONNECTED: "CONNECTED",
-  CONNECTION_DOWN: "CONNECTION_DOWN",
-  FINISHED: "FINISHED"
+const JoinModes = Object.freeze({
+  WATCH: "WATCH",
+  REGISTER_AND_PLAY: "REGISTER_AND_PLAY",
+  PLAY: "PLAY"
 });
 
-var Game = React.createClass({
+var GameIndex = React.createClass({
   mixins: [History],
 
-  getGameId: function () {
-    return this.props.params.gameId;
-  },
-
-  getGame: function () {
-    return this.props.route.game;
-  },
-
-  getPlayerToken: function () {
-    return this.props.location.query.playerToken;
-  },
-
-  isThisGame: function (gameHref, gameId) {
-    return gameHref === this.getGame().href && gameId === this.getGameId();
+  propTypes: {
+    children: React.PropTypes.element
   },
 
   getInitialState: function () {
     return {
-      connStatus: ConnStatus.NOT_CONNECTED,
-      gameStatus: GameStatus.NOT_STARTED,
-      player: null,
-      gameState: null,
-      gameStateCount: 0,
-      gameStateIndex: null,
-      followCurrentState: true
+      joinMode: JoinModes.WATCH,
+      registering: false
     };
   },
 
-  componentWillMount: function () {
-    GamesStore.on(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
-    GamesStore.on(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
-    GamesStore.on(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
-    GamesStore.on(GamesEvents.INFO, this.onGameInfoReceived);
-    GamesStore.on(GamesEvents.NEW_STATE, this.onNewGameState);
-  },
-
-  componentDidMount: function () {
-    GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
-  },
-
-  componentWillReceiveProps: function (nextProps) {
-    if (!this.isThisGame(nextProps.route.game.href, nextProps.params.gameId)) {
-      clearInterval(this._connRetryTimeout);
-      GamesActions.closeGameStream(this.getGame().href, this.getGameId());
-      GamesActions.requestGameStream(nextProps.route.game.href, nextProps.params.gameId);
-      this.setState(this.getInitialState());
-    }
-  },
-
   componentWillUnmount: function () {
-    clearInterval(this._connRetryTimeout);
-    GamesStore.removeListener(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
-    GamesStore.removeListener(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
-    GamesStore.removeListener(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
-    GamesStore.removeListener(GamesEvents.INFO, this.onGameInfoReceived);
-    GamesStore.removeListener(GamesEvents.NEW_STATE, this.onNewGameState);
-    GamesActions.closeGameStream(this.getGame().href, this.getGameId());
+    this.removeRegisterListeners();
   },
 
-  onConnectionOpened: function (gameHref, gameId) {
-    if (this.isThisGame(gameHref, gameId)) {
-      this.setState({ connStatus: ConnStatus.CONNECTED });
+  onRegisterSuccess: function (gameHref, gameId, playerToken) {
+    var game = this.props.route.game;
+    var pageGameId = this.props.params.gameId;
+
+    if (gameHref === game.href && gameId === pageGameId) {
+      let queryStr = `playerToken=${playerToken}`;
+      this.history.pushState(null, `${gameHref}/${gameId}/stream?${queryStr}`);
     }
   },
 
-  onConnectionClosed: function (gameHref, gameId) {
-    if (this.isThisGame(gameHref, gameId)) {
-      this.setState({ connStatus: ConnStatus.FINISHED });
+  onRegisterError: function (gameHref, gameId) {
+    var game = this.props.route.game;
+    var pageGameId = this.props.params.gameId;
+
+    if (gameHref === game.href && gameId === pageGameId) {
+      this.setState({ registering: false });
+      this.removeRegisterListeners();
     }
   },
 
-  onConnectionError: function (gameHref, gameId) {
-    if (this.isThisGame(gameHref, gameId)) {
-      if (this.state.connStatus === ConnStatus.CONNECTED) {
-        this.setState({ connStatus: ConnStatus.CONNECTION_DOWN });
-      }
-      this._connRetryTimeout = setTimeout(this.retryConnection, 3000);
-    }
-  },
-
-  retryConnection: function () {
-    GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
-  },
-
-  onGameInfoReceived: function (gameHref, gameId) {
-    if (this.isThisGame(gameHref, gameId)) {
-      var gameStore = GamesStore.getGame(gameHref, gameId);
-      this.setState({ player: gameStore.getPlayer() });
-    }
-  },
-
-  onNewGameState: function (gameHref, gameId) {
-    if (this.isThisGame(gameHref, gameId)) {
-      var gameStore = GamesStore.getGame(gameHref, gameId);
-      var newStateCount = gameStore.getStateCount();
-
-      if (this.state.followCurrentState) {
-        this.setState({
-          gameStatus: gameStore.getStatus(),
-          gameState: gameStore.getCurrentState(),
-          gameStateCount: newStateCount,
-          gameStateIndex: newStateCount - 1
-        });
-      } else {
-        this.setState({ gameStateCount: newStateCount });
-      }
-    }
-  },
-
-  handleMove: function (move) {
-    GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
+  removeRegisterListeners: function () {
+    GamesStore.removeListener(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
+    GamesStore.removeListener(GamesEvents.REGISTER_ERROR, this.onRegisterError);
   },
 
   handleGameIdSubmit: function (e) {
     e.preventDefault();
-    var nextGameId = this.refs.nextGameId.getValue();
-    this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
-  },
+    var game = this.props.route.game;
+    var gameId = this.props.params.gameId;
 
-  handleGameStateSelect: function (e, { eventKey }) {
-    e.preventDefault();
-    if (eventKey !== this.state.gameStateIndex + 1) {
-      var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
+    switch (this.state.joinMode) {
+      case JoinModes.WATCH:
+        this.history.pushState(null, `${game.href}/${gameId}/stream`);
+        break;
 
-      this.setState({
-        gameState: gameStore.getState(eventKey - 1),
-        gameStateIndex: eventKey - 1,
-        followCurrentState: eventKey === this.state.gameStateCount
-      });
+      case JoinModes.REGISTER_AND_PLAY:
+        GamesActions.register(game.href, gameId);
+        GamesStore.on(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
+        GamesStore.on(GamesEvents.REGISTER_ERROR, this.onRegisterError);
+        this.setState({ registering: true });
+        break;
+
+      case JoinModes.PLAY:
+        let queryStr = `playerToken=${this.refs.playerToken.getValue()}`;
+        this.history.pushState(null, `${game.href}/${gameId}/stream?${queryStr}`);
+        break;
     }
   },
 
   render: function () {
-    var gameId = this.getGameId();
-    var game = this.getGame();
-    var GameComponent = game.component;
+    var game = this.props.route.game;
+    var gameId = this.props.params.gameId;
+    var { joinMode, registering } = this.state;
 
-    var { connStatus, gameStatus } = this.state;
-
-    var statusElem = <div />;
-    if (connStatus === ConnStatus.NOT_CONNECTED || connStatus === ConnStatus.CONNECTION_DOWN) {
-      statusElem = <div className="game-status connecting">Connecting...</div>;
-    } else {
-      switch (gameStatus) {
-        case GameStatus.NOT_STARTED:
-          statusElem = <div className="game-status not-started">Not started yet</div>;
-          break;
-        case GameStatus.STARTED:
-          statusElem = <div className="game-status started">Live</div>;
-          break;
-        case GameStatus.ENDED:
-          statusElem = <div className="game-status ended">Ended</div>;
-          break;
-      }
-    }
-
-    var isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
+    var setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
     return (
-        <div className="flex">
-          <Row className="page-header">
+        <div>
+          <Row>
             <Col lg={12}>
-              <h1>{game.name}</h1>
+              <PageHeader>{game.name}</PageHeader>
             </Col>
           </Row>
           <Row>
-            <Col md={9}>
-              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
-                          ellipsis={false} items={this.state.gameStateCount}
-                          activePage={this.state.gameStateIndex + 1}
-                          onSelect={this.handleGameStateSelect} />
-            </Col>
-            <Col md={3}>
-              {statusElem}
+            <Col lg={6}>
+              <h4>Watch or play a game!</h4>
+              <form onSubmit={this.handleGameIdSubmit}>
+                <Input type="text" label="Game ID" value={gameId} disabled={true} />
+
+                <Input label="I want to:">
+                  <Input name="action" type="radio" label="watch the game as a spectator"
+                         disabled={registering}
+                         checked={joinMode === JoinModes.WATCH}
+                         onChange={setJoinMode(JoinModes.WATCH)} />
+
+                  <Input name="action" type="radio" label="enter the game as a new player"
+                         disabled={registering}
+                         checked={joinMode === JoinModes.REGISTER_AND_PLAY}
+                         onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
+
+                  <Input>
+                    <div className="radio">
+                      <label>
+                        <input name="action" type="radio"
+                               label="play the game as the player with token"
+                               disabled={registering}
+                               checked={joinMode === JoinModes.PLAY}
+                               onChange={setJoinMode(JoinModes.PLAY)} />
+                        <span>play the game as the player with token</span>
+                        <Input type="text" ref="playerToken" bsSize="small"
+                               groupClassName="player-token-form-group"
+                               disabled={registering || joinMode !== JoinModes.PLAY}
+                               placeholder="playerToken" />
+                      </label>
+                    </div>
+                  </Input>
+                </Input>
+
+                <Button type="submit">Start!</Button>
+              </form>
             </Col>
           </Row>
-          <GameComponent gameId={gameId} player={this.state.player} onMove={this.handleMove}
-                         gameState={this.state.gameState} isLastState={isLastState} />
+          {this.props.children}
         </div>
     );
   }
 });
 
-export default Game;
+export default GameIndex;

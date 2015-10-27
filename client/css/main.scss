@@ -260,11 +260,6 @@ body {
 // BotWars Controls and Styles
 
 .game-status {
-  height: 34px;
-  line-height: 34px;
-  margin-right: 5px;
-
-  text-align: right;
   font-weight: bold;
 
   &.connecting {
@@ -289,6 +284,13 @@ body {
     @extend .fa, .fa-play;
     margin-right: 3px;
   }
+}
+
+.game-stream .game-status {
+  height: 34px;
+  line-height: 34px;
+  margin-right: 5px;
+  text-align: right;
 }
 
 .game-state-nav {

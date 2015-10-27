@@ -1,16 +1,12 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, Input, Button, PageHeader } from "react-bootstrap";
+import { Row, Col, PageHeader, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
-import GamesStore from "../stores/GamesStore";
+import GamesListStore from "../stores/GamesListStore";
 import GamesEvents from "../events/GamesEvents";
 
-const JoinModes = Object.freeze({
-  WATCH: "WATCH",
-  REGISTER_AND_PLAY: "REGISTER_AND_PLAY",
-  PLAY: "PLAY"
-});
+import GameStatusLabel from "./GameStatusLabel";
 
 var GameIndex = React.createClass({
   mixins: [History],
@@ -19,71 +15,61 @@ var GameIndex = React.createClass({
     children: React.PropTypes.element
   },
 
+  getGame: function () {
+    return this.props.route.game;
+  },
+
+  isThisGame: function (gameHref) {
+    return gameHref === this.getGame().href;
+  },
+
   getInitialState: function () {
-    return {
-      joinMode: JoinModes.WATCH,
-      registering: false
-    };
+    return { games: [] };
+  },
+
+  componentWillMount: function () {
+    GamesListStore.on(GamesEvents.GAMES_LIST, this.onNewGamesList);
+    GamesListStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
+    this.retrieveGamesList();
   },
 
   componentWillUnmount: function () {
-    this.removeRegisterListeners();
+    clearInterval(this._gamesPollTimeout);
+    GamesListStore.removeListener(GamesEvents.GAMES_LIST, this.onNewGamesList);
+    GamesListStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
   },
 
-  onRegisterSuccess: function (gameHref, gameId, playerToken) {
-    var game = this.props.route.game;
-    var pageGameId = this.refs.gameId.getValue();
-
-    if (gameHref === game.href && gameId === pageGameId) {
-      let queryStr = `playerToken=${playerToken}`;
-      this.history.pushState(null, `${gameHref}/${gameId}?${queryStr}`);
+  onNewGamesList: function (gameHref) {
+    if (this.isThisGame(gameHref)) {
+      this.setState({ games: GamesListStore.getGames(gameHref) });
     }
   },
 
-  onRegisterError: function (gameHref, gameId) {
-    var game = this.props.route.game;
-    var pageGameId = this.refs.gameId.getValue();
-
-    if (gameHref === game.href && gameId === pageGameId) {
-      this.setState({ registering: false });
-      this.removeRegisterListeners();
+  onGamesListError: function (gameHref) {
+    if (this.isThisGame(gameHref)) {
+      // TODO handle error
     }
   },
 
-  removeRegisterListeners: function () {
-    GamesStore.removeListener(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
-    GamesStore.removeListener(GamesEvents.REGISTER_ERROR, this.onRegisterError);
+  retrieveGamesList: function () {
+    GamesActions.retrieveGamesList(this.getGame().href);
+    this._gamesPollTimeout = setTimeout(this.retrieveGamesList, 5000);
   },
 
-  handleGameIdSubmit: function (e) {
+  handleGameOpen: function (e, gameId) {
     e.preventDefault();
-    var game = this.props.route.game;
-    var gameId = this.refs.gameId.getValue();
-
-    switch (this.state.joinMode) {
-      case JoinModes.WATCH:
-        this.history.pushState(null, `${game.href}/${gameId}`);
-        break;
-
-      case JoinModes.REGISTER_AND_PLAY:
-        GamesActions.register(game.href, gameId);
-        GamesStore.on(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
-        GamesStore.on(GamesEvents.REGISTER_ERROR, this.onRegisterError);
-        this.setState({ registering: true });
-        break;
-
-      case JoinModes.PLAY:
-        let queryStr = `playerToken=${this.refs.playerToken.getValue()}`;
-        this.history.pushState(null, `${game.href}/${gameId}?${queryStr}`);
-        break;
-    }
+    this.history.pushState(null, `${this.getGame().href}/${gameId}`);
   },
 
   render: function () {
-    var game = this.props.route.game;
-    var { joinMode, registering } = this.state;
+    var game = this.getGame();
 
-    var setJoinMode = joinMode => () => { this.setState({ joinMode }); };
+    var tableRows = this.state.games.map(info => (
+        <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
+          <td>{info.gameId}</td>
+          <td><GameStatusLabel status={info.status} /></td>
+        </tr>
+    ));
 
     return (
         <div>
@@ -94,41 +80,17 @@ var GameIndex = React.createClass({
           </Row>
           <Row>
             <Col lg={6}>
-              <h4>Watch or play a game!</h4>
-              <form onSubmit={this.handleGameIdSubmit}>
-                <Input type="text" label="Game ID" ref="gameId" defaultValue="0" />
-
-                <Input label="I want to:">
-                  <Input name="action" type="radio" label="watch the game as a spectator"
-                         disabled={registering}
-                         checked={joinMode === JoinModes.WATCH}
-                         onChange={setJoinMode(JoinModes.WATCH)} />
-
-                  <Input name="action" type="radio" label="enter the game as a new player"
-                         disabled={registering}
-                         checked={joinMode === JoinModes.REGISTER_AND_PLAY}
-                         onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
-
-                  <Input>
-                    <div className="radio">
-                      <label>
-                        <input name="action" type="radio"
-                               label="play the game as the player with token"
-                               disabled={registering}
-                               checked={joinMode === JoinModes.PLAY}
-                               onChange={setJoinMode(JoinModes.PLAY)} />
-                        <span>play the game as the player with token</span>
-                        <Input type="text" ref="playerToken" bsSize="small"
-                               groupClassName="player-token-form-group"
-                               disabled={registering || joinMode !== JoinModes.PLAY}
-                               placeholder="playerToken" />
-                      </label>
-                    </div>
-                  </Input>
-                </Input>
-
-                <Button type="submit">Start!</Button>
-              </form>
+              <Table responsive hover>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableRows}
+                </tbody>
+              </Table>
             </Col>
           </Row>
           {this.props.children}
