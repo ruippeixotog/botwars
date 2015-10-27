@@ -36,6 +36,10 @@ $team2-color: #0029ef;
     border: 3px dashed;
     text-align: center;
 
+    &.current-player {
+      box-shadow: 0 0 12px 12px $highlight-color;
+    }
+
     &.team1 {
       color: $team1-color;
       border-color: $team1-color;
