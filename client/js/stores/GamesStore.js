@@ -1,18 +1,21 @@
 import lazy from "lazy.js";
-
 import { EventEmitter } from "events";
+
 import AppDispatcher from "../AppDispatcher";
+import GameStatus from "../constants/GameStatus";
 import GamesEvents from "../events/GamesEvents";
 
 class GameStore {
   constructor() {
-    this.states = [];
     this.player = null;
     this.lastToken = null;
+    this.status = GameStatus.NOT_STARTED;
+    this.states = [];
   }
 
   getPlayer() { return this.player; }
   getLastToken() { return this.lastToken; }
+  getStatus() { return this.status; }
 
   getState(i) { return this.states[i]; }
   getCurrentState() { return this.states[this.states.length - 1]; }
@@ -21,6 +24,8 @@ class GameStore {
 
   _setPlayer(player) { this.player = player; }
   _setLastToken(playerToken) { this.lastToken = playerToken; }
+  _setStatus(status) { this.status = status; }
+
   _pushState(state) { this.states.push(state); }
   _setAllStates(states) { this.states = states; }
 }
@@ -36,9 +41,10 @@ const GamesStore = lazy(EventEmitter.prototype).extend({
 
 AppDispatcher.register(function (action) {
   const { actionType, gameHref, gameId, playerToken, data } = action;
+  let store = GamesStore.getGame(gameHref, gameId);
 
   if (playerToken) {
-    GamesStore.getGame(gameHref, gameId)._setLastToken(playerToken);
+    store._setLastToken(playerToken);
   }
 
   switch (actionType) {
@@ -51,24 +57,30 @@ AppDispatcher.register(function (action) {
       break;
 
     case GamesEvents.INFO:
-      GamesStore.getGame(gameHref, gameId)._setPlayer(data.player);
+      store._setPlayer(data.player);
       GamesStore.emit(actionType, gameHref, gameId);
       break;
 
     case GamesEvents.HISTORY:
-      GamesStore.getGame(gameHref, gameId)._setAllStates(
+      store._setAllStates(
           lazy(data).filter(e => e.eventType === "state").map(e => e.state).value());
       break;
 
     case GamesEvents.START:
     case GamesEvents.STATE:
+      store._setStatus(GameStatus.STARTED);
+      store._pushState(data);
+      GamesStore.emit(GamesEvents.NEW_STATE, gameHref, gameId);
+      break;
+
     case GamesEvents.END:
-      GamesStore.getGame(gameHref, gameId)._pushState(data);
+      store._setStatus(GameStatus.ENDED);
+      store._pushState(data);
       GamesStore.emit(GamesEvents.NEW_STATE, gameHref, gameId);
       break;
 
     case GamesEvents.CONNECTION_OPENED:
-      GamesStore.getGame(gameHref, gameId)._setAllStates([]);
+      store._setAllStates([]);
       GamesStore.emit(actionType, gameHref, gameId);
       break;
 

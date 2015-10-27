@@ -259,6 +259,38 @@ body {
 
 // BotWars Controls and Styles
 
+.game-status {
+  height: 34px;
+  line-height: 34px;
+  margin-right: 5px;
+
+  text-align: right;
+  font-weight: bold;
+
+  &.connecting {
+    color: $brand-danger;
+  }
+
+  &.connecting:before {
+    @extend .fa, .fa-spinner, .fa-spin;
+    margin-right: 3px;
+  }
+
+  &.not-started:before {
+    @extend .fa, .fa-clock-o;
+    margin-right: 3px;
+  }
+
+  &.started {
+    color: $brand-success;
+  }
+
+  &.started:before {
+    @extend .fa, .fa-play;
+    margin-right: 3px;
+  }
+}
+
 .game-state-nav {
   margin-top: 0;
   margin-bottom: 0;

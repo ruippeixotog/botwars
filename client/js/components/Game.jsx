@@ -1,13 +1,13 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, Pagination, Alert, PageHeader } from "react-bootstrap";
-import classNames from "classnames";
+import { Row, Col, Pagination } from "react-bootstrap";
 
+import GameStatus from "../constants/GameStatus";
 import GamesActions from "../actions/GamesActions";
 import GamesStore from "../stores/GamesStore";
 import GamesEvents from "../events/GamesEvents";
 
-const ConnStates = Object.freeze({
+const ConnStatus = Object.freeze({
   NOT_CONNECTED: "NOT_CONNECTED",
   CONNECTED: "CONNECTED",
   CONNECTION_DOWN: "CONNECTION_DOWN",
@@ -35,7 +35,8 @@ var Game = React.createClass({
 
   getInitialState: function () {
     return {
-      connState: ConnStates.NOT_CONNECTED,
+      connStatus: ConnStatus.NOT_CONNECTED,
+      gameStatus: GameStatus.NOT_STARTED,
       player: null,
       gameState: null,
       gameStateCount: 0,
@@ -77,20 +78,20 @@ var Game = React.createClass({
 
   onConnectionOpened: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      this.setState({ connState: ConnStates.CONNECTED });
+      this.setState({ connStatus: ConnStatus.CONNECTED });
     }
   },
 
   onConnectionClosed: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      this.setState({ connState: ConnStates.FINISHED });
+      this.setState({ connStatus: ConnStatus.FINISHED });
     }
   },
 
   onConnectionError: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      if (this.state.connState === ConnStates.CONNECTED) {
-        this.setState({ connState: ConnStates.CONNECTION_DOWN });
+      if (this.state.connStatus === ConnStatus.CONNECTED) {
+        this.setState({ connStatus: ConnStatus.CONNECTION_DOWN });
       }
       this._connRetryTimeout = setTimeout(this.retryConnection, 3000);
     }
@@ -114,6 +115,7 @@ var Game = React.createClass({
 
       if (this.state.followCurrentState) {
         this.setState({
+          gameStatus: gameStore.getStatus(),
           gameState: gameStore.getCurrentState(),
           gameStateCount: newStateCount,
           gameStateIndex: newStateCount - 1
@@ -152,38 +154,43 @@ var Game = React.createClass({
     var game = this.getGame();
     var GameComponent = game.component;
 
-    var alertText = "";
-    switch (this.state.connState) {
-      case ConnStates.NOT_CONNECTED:
-        alertText = "Connecting to server...";
-        break;
-      case ConnStates.CONNECTION_DOWN:
-        alertText = "Connection is down. Trying to reconnect...";
-        break;
-    }
+    var { connStatus, gameStatus } = this.state;
 
-    var alertClassNames = classNames({
-      "hidden": alertText === ""
-    });
+    var statusElem = <div />;
+    if (connStatus === ConnStatus.NOT_CONNECTED || connStatus === ConnStatus.CONNECTION_DOWN) {
+      statusElem = <div className="game-status connecting">Connecting...</div>;
+    } else {
+      switch (gameStatus) {
+        case GameStatus.NOT_STARTED:
+          statusElem = <div className="game-status not-started">Not started yet</div>;
+          break;
+        case GameStatus.STARTED:
+          statusElem = <div className="game-status started">Live</div>;
+          break;
+        case GameStatus.ENDED:
+          statusElem = <div className="game-status ended">Ended</div>;
+          break;
+      }
+    }
 
     var isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
 
     return (
         <div className="flex">
-          <Row>
+          <Row className="page-header">
             <Col lg={12}>
-              <PageHeader>{game.name}</PageHeader>
+              <h1>{game.name}</h1>
             </Col>
           </Row>
-          <Alert className={alertClassNames} bsStyle="warning">
-            <i className="fa fa-exclamation-circle fa-fw" />{alertText}
-          </Alert>
           <Row>
-            <Col lg={6}>
+            <Col md={9}>
               <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
                           ellipsis={false} items={this.state.gameStateCount}
                           activePage={this.state.gameStateIndex + 1}
                           onSelect={this.handleGameStateSelect} />
+            </Col>
+            <Col md={3}>
+              {statusElem}
             </Col>
           </Row>
           <GameComponent gameId={gameId} player={this.state.player} onMove={this.handleMove}
