@@ -144,7 +144,7 @@ var Game = React.createClass({
       this.setState({
         gameState: gameStore.getState(eventKey - 1),
         gameStateIndex: eventKey - 1,
-        followCurrentState: eventKey === this.state.gameStateCount - 1
+        followCurrentState: eventKey === this.state.gameStateCount
       });
     }
   },
