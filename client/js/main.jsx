@@ -8,6 +8,7 @@ import _ from "underscore";
 
 import App from "./components/App";
 import Index from "./components/Index";
+import GameLayout from "./components/GameLayout";
 import GameIndex from "./components/GameIndex";
 import Game from "./components/Game";
 import GameStream from "./components/GameStream";
@@ -21,7 +22,7 @@ var games = _.map(config.games, (gameInfo, gameId) => {
 });
 
 var gameRoutes = games.map(game =>
-    <Route path={game.href} key={game.href}>
+    <Route path={game.href} component={GameLayout} game={game} key={game.href}>
       <IndexRoute component={GameIndex} game={game} />
       <Route path=":gameId" component={Game} game={game} />
       <Route path=":gameId/stream" component={GameStream} game={game} />

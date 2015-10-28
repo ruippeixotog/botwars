@@ -1,6 +1,6 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, PageHeader, Table } from "react-bootstrap";
+import { Row, Col, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
 import GamesListStore from "../stores/GamesListStore";
@@ -10,10 +10,6 @@ import GameStatusLabel from "./GameStatusLabel";
 
 var GameIndex = React.createClass({
   mixins: [History],
-
-  propTypes: {
-    children: React.PropTypes.element
-  },
 
   getGame: function () {
     return this.props.route.game;
@@ -62,8 +58,6 @@ var GameIndex = React.createClass({
   },
 
   render: function () {
-    var game = this.getGame();
-
     var tableRows = this.state.games.map(info => (
         <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
           <td>{info.gameId}</td>
@@ -73,30 +67,22 @@ var GameIndex = React.createClass({
     ));
 
     return (
-        <div>
-          <Row>
-            <Col lg={12}>
-              <PageHeader>{game.name}</PageHeader>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <Table responsive hover>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Players</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableRows}
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
-          {this.props.children}
-        </div>
+        <Row>
+          <Col lg={6}>
+            <Table responsive hover>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Players</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
     );
   }
 });

@@ -10,7 +10,7 @@ import GamesEvents from "../events/GamesEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
 
-var Game = React.createClass({
+var GameStream = React.createClass({
   mixins: [History],
 
   getGameId: function () {
@@ -155,11 +155,6 @@ var Game = React.createClass({
 
     return (
         <div className="flex">
-          <Row className="page-header">
-            <Col lg={12}>
-              <h1>{game.name}</h1>
-            </Col>
-          </Row>
           <Row className="game-stream">
             <Col md={9}>
               <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
@@ -178,4 +173,4 @@ var Game = React.createClass({
   }
 });
 
-export default Game;
+export default GameStream;
