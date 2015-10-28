@@ -16,6 +16,18 @@ var streams = {};
 
 var GamesActions = {
 
+  retrieveGameInfo: function (gameHref, gameId) {
+    request.get(`/api${gameHref}/games/${gameId}`)
+        .set("Accept", "application/json")
+        .end(function (err, res) {
+          AppDispatcher.dispatch({
+            actionType: err ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO,
+            gameHref: gameHref,
+            game: err || res.body
+          });
+        });
+  },
+
   retrieveGamesList: function (gameHref) {
     request.get(`/api${gameHref}/games`)
         .set("Accept", "application/json")

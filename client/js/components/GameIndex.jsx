@@ -3,7 +3,7 @@ import { History } from "react-router";
 import { Row, Col, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
-import GamesListStore from "../stores/GamesListStore";
+import GamesInfoStore from "../stores/GamesInfoStore";
 import GamesEvents from "../events/GamesEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
@@ -24,20 +24,20 @@ var GameIndex = React.createClass({
   },
 
   componentWillMount: function () {
-    GamesListStore.on(GamesEvents.GAMES_LIST, this.onNewGamesList);
-    GamesListStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
+    GamesInfoStore.on(GamesEvents.GAMES_LIST, this.onNewGamesList);
+    GamesInfoStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
     this.retrieveGamesList();
   },
 
   componentWillUnmount: function () {
     clearInterval(this._gamesPollTimeout);
-    GamesListStore.removeListener(GamesEvents.GAMES_LIST, this.onNewGamesList);
-    GamesListStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
+    GamesInfoStore.removeListener(GamesEvents.GAMES_LIST, this.onNewGamesList);
+    GamesInfoStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
   },
 
   onNewGamesList: function (gameHref) {
     if (this.isThisGame(gameHref)) {
-      this.setState({ games: GamesListStore.getGames(gameHref) });
+      this.setState({ games: GamesInfoStore.getGames(gameHref) });
     }
   },
 

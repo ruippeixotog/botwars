@@ -1,10 +1,13 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, Input, Button } from "react-bootstrap";
+import { Row, Col, Input, Button, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
+import GamesInfoStore from "../stores/GamesInfoStore";
 import GamesStore from "../stores/GamesStore";
 import GamesEvents from "../events/GamesEvents";
+
+import GameStatusLabel from "./GameStatusLabel";
 
 const JoinModes = Object.freeze({
   WATCH: "WATCH",
@@ -15,15 +18,54 @@ const JoinModes = Object.freeze({
 var GameIndex = React.createClass({
   mixins: [History],
 
+  getGameId: function () {
+    return this.props.params.gameId;
+  },
+
+  getGame: function () {
+    return this.props.route.game;
+  },
+
+  isThisGame: function (gameHref, gameId) {
+    return gameHref === this.getGame().href && gameId === this.getGameId();
+  },
+
   getInitialState: function () {
     return {
+      gameInfo: {},
       joinMode: JoinModes.WATCH,
       registering: false
     };
   },
 
+  componentWillMount: function () {
+    GamesInfoStore.on(GamesEvents.GAME_INFO, this.onNewGameInfo);
+    GamesInfoStore.on(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
+    this.retrieveGameInfo();
+  },
+
   componentWillUnmount: function () {
+    clearInterval(this._gamePollTimeout);
+    GamesInfoStore.removeListener(GamesEvents.GAME_INFO, this.onNewGameInfo);
+    GamesInfoStore.removeListener(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
     this.removeRegisterListeners();
+  },
+
+  onNewGameInfo: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
+      this.setState({ gameInfo: GamesInfoStore.getGame(gameHref, gameId) });
+    }
+  },
+
+  onGameInfoError: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
+      // TODO handle error
+    }
+  },
+
+  retrieveGameInfo: function () {
+    GamesActions.retrieveGameInfo(this.getGame().href, this.getGameId());
+    this._gamePollTimeout = setTimeout(this.retrieveGameInfo, 5000);
   },
 
   onRegisterSuccess: function (gameHref, gameId, playerToken) {
@@ -76,18 +118,38 @@ var GameIndex = React.createClass({
   },
 
   render: function () {
-    var gameId = this.props.params.gameId;
-    var { joinMode, registering } = this.state;
+    var { joinMode, registering, gameInfo } = this.state;
+    var isGameFull = gameInfo.connectedPlayers === gameInfo.players;
 
     var setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
     return (
         <Row>
           <Col lg={6}>
-            <h4>Watch or play a game!</h4>
-            <form onSubmit={this.handleGameIdSubmit}>
-              <Input type="text" label="Game ID" value={gameId} disabled={true} />
+            <h4>Game {gameInfo.gameId}</h4>
 
+            <Table>
+              <tbody>
+                <tr>
+                  <th>Players</th>
+                  <td>{gameInfo.connectedPlayers}/{gameInfo.players}</td>
+                </tr>
+                <tr>
+                  <th>Status</th>
+                  <td><GameStatusLabel status={gameInfo.status} /></td>
+                </tr>
+                <tr>
+                  <th>Parameters</th>
+                  <td>
+                    <pre>
+                      {JSON.stringify(gameInfo.params, null, 2)}
+                    </pre>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+
+            <form onSubmit={this.handleGameIdSubmit}>
               <Input label="I want to:">
                 <Input name="action" type="radio" label="watch the game as a spectator"
                        disabled={registering}
@@ -95,7 +157,7 @@ var GameIndex = React.createClass({
                        onChange={setJoinMode(JoinModes.WATCH)} />
 
                 <Input name="action" type="radio" label="enter the game as a new player"
-                       disabled={registering}
+                       disabled={registering || isGameFull}
                        checked={joinMode === JoinModes.REGISTER_AND_PLAY}
                        onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
 
