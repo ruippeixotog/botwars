@@ -220,12 +220,20 @@ describe("GameInstance", function () {
     assert.deepEqual(game.getInfo(), {
       gameId: "testId",
       params: { a: 1 },
+      connectedPlayers: 0,
+      players: 2,
       status: "not_started"
     });
 
     registerAll();
     connectAll();
-    assert.equal(game.getInfo().status, "started");
+    assert.deepEqual(game.getInfo(), {
+      gameId: "testId",
+      params: { a: 1 },
+      connectedPlayers: 2,
+      players: 2,
+      status: "started"
+    });
 
     game.move(1, 32);
     assert.equal(game.getInfo().status, "started");
