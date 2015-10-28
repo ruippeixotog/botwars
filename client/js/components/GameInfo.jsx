@@ -15,7 +15,7 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-var GameIndex = React.createClass({
+var GameInfo = React.createClass({
   mixins: [History],
 
   getGameId: function () {
@@ -187,4 +187,4 @@ var GameIndex = React.createClass({
   }
 });
 
-export default GameIndex;
+export default GameInfo;
