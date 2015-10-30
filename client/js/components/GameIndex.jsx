@@ -20,13 +20,21 @@ var GameIndex = React.createClass({
   },
 
   getInitialState: function () {
-    return { games: [] };
+    return { games: GamesInfoStore.getGames(this.getGame().href) || [] };
   },
 
   componentWillMount: function () {
     GamesInfoStore.on(GamesEvents.GAMES_LIST, this.onNewGamesList);
     GamesInfoStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
     this.retrieveGamesList();
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    if (!this.isThisGame(nextProps.route.game.href)) {
+      this.setState({ games: GamesInfoStore.getGames(nextProps.route.game.href) || [] });
+      clearInterval(this._gamesPollTimeout);
+      this.retrieveGamesList(nextProps.route.game.href);
+    }
   },
 
   componentWillUnmount: function () {
@@ -47,8 +55,8 @@ var GameIndex = React.createClass({
     }
   },
 
-  retrieveGamesList: function () {
-    GamesActions.retrieveGamesList(this.getGame().href);
+  retrieveGamesList: function (nextGameHref) {
+    GamesActions.retrieveGamesList(nextGameHref || this.getGame().href);
     this._gamesPollTimeout = setTimeout(this.retrieveGamesList, 5000);
   },
 
