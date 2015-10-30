@@ -259,6 +259,12 @@ body {
 
 // BotWars Controls and Styles
 
+.games-list {
+  tbody > tr {
+    cursor: pointer;
+  }
+}
+
 .game-status {
   font-weight: bold;
 

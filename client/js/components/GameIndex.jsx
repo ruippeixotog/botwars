@@ -69,7 +69,7 @@ var GameIndex = React.createClass({
     return (
         <Row>
           <Col lg={6}>
-            <Table responsive hover>
+            <Table className="games-list" responsive hover>
               <thead>
                 <tr>
                   <th>ID</th>
