@@ -82,7 +82,7 @@ class TicTacToe extends Game {
   }
 
   _checkDiag(row, col) {
-    var colCount = this.grid[0].length;
+    let colCount = this.grid[0].length;
 
     return row === col &&
         this._checkCells(_(this.grid).map((r, i) => r[i])) ||
@@ -91,7 +91,7 @@ class TicTacToe extends Game {
   }
 
   _checkCells(cells) {
-    var winner = cells[0];
+    let winner = cells[0];
     return winner > 0 && _(cells).every(e => e === winner) ? winner : null;
   }
 }

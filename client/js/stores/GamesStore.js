@@ -34,7 +34,7 @@ const GamesStore = lazy(EventEmitter.prototype).extend({
   games: {},
 
   getGame: function (gameHref, gameId) {
-    var games = this.games[gameHref] = this.games[gameHref] || {};
+    let games = this.games[gameHref] = this.games[gameHref] || {};
     return games[gameId] = games[gameId] || new GameStore();
   }
 }).value();

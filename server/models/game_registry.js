@@ -7,12 +7,12 @@ class GameRegistry {
   constructor(Game) {
     this.Game = Game;
     this.instances = {
-      "0": new GameInstance("0", new Game({ moveTimeLimit: 1000 }))
+      "0": new GameInstance("0", new Game({ moveTimeLimit: 0 }))
     };
   }
 
   createNewGame(params) {
-    var id = crypto.randomBytes(8).toString("hex");
+    let id = crypto.randomBytes(8).toString("hex");
     this.instances[id] = new GameInstance(id, new this.Game(params || {}));
     return id;
   }

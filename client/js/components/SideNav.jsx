@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router";
 
-var SideNav = React.createClass({
+let SideNav = React.createClass({
 
   propTypes: {
     games: React.PropTypes.array.isRequired
   },
 
   render: function () {
-    var gameLinks = this.props.games.map(game =>
+    let gameLinks = this.props.games.map(game =>
       <li key={game.href}>
         <Link to={game.href}><i className="fa fa-gamepad fa-fw" /> {game.name}</Link>
       </li>

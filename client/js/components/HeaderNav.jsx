@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 
-var HeaderNav = React.createClass({
+let HeaderNav = React.createClass({
 
   render: function () {
     return (

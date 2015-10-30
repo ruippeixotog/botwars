@@ -1,13 +1,13 @@
 import React from "react";
 
-var DebugGame = React.createClass({
+let DebugGame = React.createClass({
 
   propTypes: {
     gameId: React.PropTypes.string.isRequired
   },
 
   render: function () {
-    var gameRepr = JSON.stringify(this.props.gameState, null, 2);
+    let gameRepr = JSON.stringify(this.props.gameState, null, 2);
 
     return (
         <div>

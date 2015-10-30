@@ -15,7 +15,7 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-var GameInfo = React.createClass({
+let GameInfo = React.createClass({
   mixins: [History],
 
   getGameId: function () {
@@ -73,8 +73,8 @@ var GameInfo = React.createClass({
   },
 
   onRegisterSuccess: function (gameHref, gameId, playerToken) {
-    var game = this.props.route.game;
-    var pageGameId = this.props.params.gameId;
+    let game = this.props.route.game;
+    let pageGameId = this.props.params.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
       let queryStr = `playerToken=${playerToken}`;
@@ -83,8 +83,8 @@ var GameInfo = React.createClass({
   },
 
   onRegisterError: function (gameHref, gameId) {
-    var game = this.props.route.game;
-    var pageGameId = this.props.params.gameId;
+    let game = this.props.route.game;
+    let pageGameId = this.props.params.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
       this.setState({ registering: false });
@@ -99,8 +99,8 @@ var GameInfo = React.createClass({
 
   handleGameIdSubmit: function (e) {
     e.preventDefault();
-    var game = this.props.route.game;
-    var gameId = this.props.params.gameId;
+    let game = this.props.route.game;
+    let gameId = this.props.params.gameId;
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH:
@@ -122,10 +122,10 @@ var GameInfo = React.createClass({
   },
 
   render: function () {
-    var { joinMode, registering, gameInfo } = this.state;
-    var isGameFull = gameInfo.connectedPlayers === gameInfo.players;
+    let { joinMode, registering, gameInfo } = this.state;
+    let isGameFull = gameInfo.connectedPlayers === gameInfo.players;
 
-    var setJoinMode = joinMode => () => { this.setState({ joinMode }); };
+    let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
     return (
         <Row>

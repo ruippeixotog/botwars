@@ -18,7 +18,7 @@ class Timer {
   stop() {
     if (this.timeoutObj) {
       clearTimeout(this.timeoutObj);
-      var t = Date.now() - this.timeoutObj.startTime;
+      let t = Date.now() - this.timeoutObj.startTime;
       this.timeoutObj = null;
       return t;
     }

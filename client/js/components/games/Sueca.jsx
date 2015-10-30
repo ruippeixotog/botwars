@@ -22,8 +22,8 @@ class Card extends React.Component {
   }
 
   render() {
-    var { card, top, left, zIndex, onClick, ...props } = this.props;
-    var cardClasses = "card " + (card ? ` ${card.suit} ${this.getRankClass(card.value)}` : "");
+    let { card, top, left, zIndex, onClick, ...props } = this.props;
+    let cardClasses = "card " + (card ? ` ${card.suit} ${this.getRankClass(card.value)}` : "");
     return (
         <div className={cardClasses} style={{ top: `${top}%`, left: `${left}%`, zIndex }}
              onClick={onClick ? () => onClick(card) : null} {...props}>
@@ -39,7 +39,7 @@ const CurrentTrick = ({ cards, lastTrickCards, delta = 10, rot }) => {
   if (_(cards).every(c => c == null) && lastTrickCards)
     cards = lastTrickCards;
 
-  var cardElems = [];
+  let cardElems = [];
   for (let i = 0; i < 4; i++) {
     if (!cards[i]) continue;
     let pi = (i + rot) % 4;
@@ -56,8 +56,8 @@ const CurrentTrick = ({ cards, lastTrickCards, delta = 10, rot }) => {
 };
 
 const PlayerLabel = ({ player, nextPlayer, top, left }) => {
-  var team = player % 2 ? 1 : 2;
-  var isCurrentPlayer = player === nextPlayer;
+  let team = player % 2 ? 1 : 2;
+  let isCurrentPlayer = player === nextPlayer;
   return (
       <div className={`player-chip team${team} ${isCurrentPlayer ? "current-player" : ""}`}
            style={{ top: `${top}%`, left: `${left}%` }}>{player}</div>
@@ -67,9 +67,9 @@ const PlayerLabel = ({ player, nextPlayer, top, left }) => {
 const Hand = ({ player, nextPlayer, cards, cardCount, deltaX = 40, deltaY = 35,
     deltaCx = 2, deltaCy = 3, onCardClick, rot }) => {
 
-  var info = playerInfo[((player - 1) + rot) % 4];
-  var x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
-  var y = 50 + info.y * deltaY - info.x * deltaCy * 4.5;
+  let info = playerInfo[((player - 1) + rot) % 4];
+  let x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
+  let y = 50 + info.y * deltaY - info.x * deltaCy * 4.5;
 
   function cardIndex(card) {
     switch (card.value) {
@@ -87,9 +87,9 @@ const Hand = ({ player, nextPlayer, cards, cardCount, deltaX = 40, deltaY = 35,
     return cardIndex(card1) - cardIndex(card2);
   }
 
-  var sortedCards = cards ? cards.sort(cardCompare) : {};
+  let sortedCards = cards ? cards.sort(cardCompare) : {};
 
-  var cardElems = [];
+  let cardElems = [];
   for (let i = 0; i < cardCount; i++) {
     cardElems.push(<Card card={sortedCards[i]} top={y} left={x} zIndex={i} key={`card${i}`}
                          onClick={onCardClick} />);
@@ -109,14 +109,14 @@ const Hand = ({ player, nextPlayer, cards, cardCount, deltaX = 40, deltaY = 35,
 const Hands = ({ player, nextPlayer, handCards, tricksDone, currentTrick, rot, onCardClick }) => {
   if (!currentTrick) return <div className="hands" />;
 
-  var hands = [];
+  let hands = [];
   for (let i = 0; i < 4; i++) {
     if (i === player - 1) {
       hands.push(<Hand player={i + 1} nextPlayer={nextPlayer} cards={handCards}
                        cardCount={handCards.length} key={`hand${i}`} rot={rot}
                        onCardClick={onCardClick ? card => onCardClick(card, i) : null} />)
     } else {
-      var cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
+      let cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
       hands.push(<Hand player={i + 1} nextPlayer={nextPlayer} cardCount={cardCount}
                        key={`hand${i}`} rot={rot} />);
     }
@@ -143,7 +143,7 @@ const Trump = ({ card, player }) => {
 const LastTrick = ({ cards, x = 10, y = 85, delta = 5, rot }) => {
   if (!cards) cards = [];
 
-  var cardElems = cards.map((c, i) => {
+  let cardElems = cards.map((c, i) => {
     let pi = (i + rot) % 4;
     return <Card card={c} key={`trick${i}`} zIndex={10 + i}
                  top={y + playerInfo[pi].y * delta} left={x + playerInfo[pi].x * delta} />;
@@ -167,11 +167,11 @@ const Scoreboard = ({ score }) => (
 );
 
 const Sueca = ({ player, gameState, isLastState, onMove }) => {
-  var { nextPlayer, hand, currentTrick, lastTrick, tricksDone,
+  let { nextPlayer, hand, currentTrick, lastTrick, tricksDone,
       trump, trumpPlayer, score } = gameState || {};
 
-  var rot = player ? (5 - player) % 4 : 0;
-  var onCardClick = isLastState && player === nextPlayer ? onMove : null;
+  let rot = player ? (5 - player) % 4 : 0;
+  let onCardClick = isLastState && player === nextPlayer ? onMove : null;
 
   return (
       <Row className="flex">

@@ -34,19 +34,19 @@ DummyGame.END_MOVE = "END_MOVE";
 DummyGame.INVALID_MOVE = "INVALID_MOVE";
 
 describe("GameInstance", function () {
-  var gameLogic, game;
+  let gameLogic, game;
 
-  var startNewGame = function (params = {}) {
+  let startNewGame = function (params = {}) {
     gameLogic = new DummyGame(params);
     game = new GameInstance("testId", gameLogic);
   };
 
-  var registerAll = function () {
+  let registerAll = function () {
     for (let i = 0; i < gameLogic.getPlayerCount(); i++)
       game.registerNewPlayer();
   };
 
-  var connectAll = function () {
+  let connectAll = function () {
     for (let i = 0; i < gameLogic.getPlayerCount(); i++) {
       game.connect(i + 1);
     }
@@ -55,9 +55,9 @@ describe("GameInstance", function () {
   beforeEach(startNewGame);
 
   it("should handle correctly player registations", function () {
-    var p1 = game.registerNewPlayer();
+    let p1 = game.registerNewPlayer();
     assert(p1 != null);
-    var p2 = game.registerNewPlayer();
+    let p2 = game.registerNewPlayer();
     assert(p2 != null);
     assert.equal(game.registerNewPlayer(), null);
 
@@ -79,7 +79,7 @@ describe("GameInstance", function () {
   });
 
   it('should emit a "start" event on start', function (done) {
-    var allConnected = false;
+    let allConnected = false;
 
     game.on("start", function () {
       if (!allConnected) throw new Error('"start" sent before all players connected');
@@ -95,7 +95,7 @@ describe("GameInstance", function () {
   });
 
   it('should emit a "waitingForMove" event on start', function (done) {
-    var allConnected = false;
+    let allConnected = false;
 
     game.on("waitingForMove", function (player) {
       if (!allConnected) throw new Error('"waitingForMove" sent before all players connected');
@@ -158,7 +158,7 @@ describe("GameInstance", function () {
     registerAll();
     connectAll();
 
-    var received = {};
+    let received = {};
 
     game.on("move", function (player, move) {
       assert.equal(player, 1);

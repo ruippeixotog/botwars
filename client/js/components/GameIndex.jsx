@@ -8,7 +8,7 @@ import GamesEvents from "../events/GamesEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
 
-var GameIndex = React.createClass({
+let GameIndex = React.createClass({
   mixins: [History],
 
   getGame: function () {
@@ -66,7 +66,7 @@ var GameIndex = React.createClass({
   },
 
   render: function () {
-    var tableRows = this.state.games.map(info => (
+    let tableRows = this.state.games.map(info => (
         <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
           <td>{info.gameId}</td>
           <td>{info.connectedPlayers}/{info.players}</td>

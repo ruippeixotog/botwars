@@ -54,8 +54,8 @@ class GameInstance extends EventEmitter {
 
   registerNewPlayer() {
     if (this.currentPlayerCount < this.game.getPlayerCount()) {
-      var playerToken = crypto.randomBytes(20).toString("hex");
-      var player = ++this.currentPlayerCount;
+      let playerToken = crypto.randomBytes(20).toString("hex");
+      let player = ++this.currentPlayerCount;
 
       this.playerTokenTable[playerToken] = player;
       this.playerState[player] = { connectedOnce: false };
@@ -95,7 +95,7 @@ class GameInstance extends EventEmitter {
     if (this.game.isEnded() || !this.game.isValidMove(player, move))
       return false;
 
-    var moveTime = this.moveTimer.stop();
+    let moveTime = this.moveTimer.stop();
     this.game.move(player, move, moveTime);
     this.emit("move", player, move);
 
@@ -131,7 +131,7 @@ class GameInstance extends EventEmitter {
   }
 
   _onMoveTimeout() {
-    var oldNextPlayer = this.game.getNextPlayer();
+    let oldNextPlayer = this.game.getNextPlayer();
     if (this.game.onMoveTimeout()) {
       this._onStateChange({ announceMove: this.game.getNextPlayer() !== oldNextPlayer });
     }

@@ -4,39 +4,39 @@ import _ from "underscore";
 const Sueca = require.main.require("server/models/games/sueca");
 
 describe("Sueca", function () {
-  var game;
+  let game;
 
-  var startNewGame = function () {
+  let startNewGame = function () {
     game = new Sueca({});
   };
 
-  var quickPlay = function (n) {
+  let quickPlay = function (n) {
     for (let i = 0; i < n; i++) {
       game.move(game.getNextPlayer(), validCard());
     }
   };
 
-  var isCard = function (card) {
+  let isCard = function (card) {
     return card.suit && card.value;
   };
 
-  var isSameCard = function (card) {
+  let isSameCard = function (card) {
     return c => c.suit === card.suit && c.value === card.value;
   };
 
-  var validCard = function () {
-    var state = game.getState(game.getNextPlayer());
+  let validCard = function () {
+    let state = game.getState(game.getNextPlayer());
     return _(state.hand).find(c => c.suit === state.trickSuit) || state.hand[0];
   };
 
-  var invalidCard = function () {
-    var state = game.getState(game.getNextPlayer());
-    var invalidCards = _(state.hand).filter(c => c.suit !== state.trickSuit);
+  let invalidCard = function () {
+    let state = game.getState(game.getNextPlayer());
+    let invalidCards = _(state.hand).filter(c => c.suit !== state.trickSuit);
     return invalidCards.length === state.hand.length ? null : invalidCards[0];
   };
 
-  var prevPlayer = function (player) { return (player + 2) % 4 + 1; };
-  var nextPlayer = function (player) { return player % 4 + 1; };
+  let prevPlayer = function (player) { return (player + 2) % 4 + 1; };
+  let nextPlayer = function (player) { return player % 4 + 1; };
 
   beforeEach(startNewGame);
 
@@ -49,13 +49,13 @@ describe("Sueca", function () {
     assert.equal(game.isError(), false);
     assert.equal(game.getWinner(), null);
 
-    var player = game.getNextPlayer();
+    let player = game.getNextPlayer();
     assert(player >= 1 && player <= 4);
 
-    var initialState = game.getFullState();
+    let initialState = game.getFullState();
     assert.equal(initialState.nextPlayer, player);
 
-    var seenCards = {};
+    let seenCards = {};
     assert.equal(initialState.hands.length, 4);
     _.chain(initialState.hands).flatten().every(c => {
       assert(!seenCards[`${c.suit}-${c.value}`]);
@@ -81,8 +81,8 @@ describe("Sueca", function () {
 
   it("should update correctly the state with valid moves until the end", function () {
     for (let t = 0; t < 40; t++) {
-      var player = game.getNextPlayer();
-      var card = validCard();
+      let player = game.getNextPlayer();
+      let card = validCard();
 
       game.move(player, card);
       assert.equal(game.isError(), false);
@@ -104,8 +104,8 @@ describe("Sueca", function () {
     assert.equal(game.isEnded(), true);
     assert.equal(game.getNextPlayer(), null);
 
-    var finalState = game.getFullState();
-    var isDraw = finalState.score[0] === finalState.score[1];
+    let finalState = game.getFullState();
+    let isDraw = finalState.score[0] === finalState.score[1];
     assert.equal(game.getWinner() == null, isDraw);
   });
 
@@ -148,7 +148,7 @@ describe("Sueca", function () {
   });
 
   it("should consider the opponent the winner when a move timeout occurs", function () {
-    var player = game.getNextPlayer();
+    let player = game.getNextPlayer();
     assert.equal(game.onMoveTimeout(), true);
     assert.equal(game.getNextPlayer(), null);
     assert.equal(game.getWinner(), player % 2 ? 1 : 2);
@@ -157,7 +157,7 @@ describe("Sueca", function () {
   it("update correctly the score after a move", function () {
     quickPlay(4);
 
-    var trickPoints = _(game.getFullState().lastTrick).reduce((sum, c) => {
+    let trickPoints = _(game.getFullState().lastTrick).reduce((sum, c) => {
       switch (c.value) {
         case "A": return sum + 11;
         case "7": return sum + 10;
@@ -168,7 +168,7 @@ describe("Sueca", function () {
       }
     }, 0);
 
-    var state = game.getFullState();
+    let state = game.getFullState();
     assert(state.score[0] === 0 && state.score[1] === trickPoints ||
         state.score[1] === 0 && state.score[0] === trickPoints);
 

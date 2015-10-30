@@ -1,6 +1,6 @@
 import { Dispatcher } from "flux";
 
-var dispatcher = new Dispatcher();
+let dispatcher = new Dispatcher();
 
 dispatcher.dispatchNext = function (obj) {
   setTimeout(() => { dispatcher.dispatch(obj); });

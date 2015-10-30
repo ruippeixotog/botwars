@@ -10,7 +10,7 @@ import GamesEvents from "../events/GamesEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
 
-var GameStream = React.createClass({
+let GameStream = React.createClass({
   mixins: [History],
 
   getGameId: function () {
@@ -99,15 +99,15 @@ var GameStream = React.createClass({
 
   onGameInfoReceived: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      var gameStore = GamesStore.getGame(gameHref, gameId);
+      let gameStore = GamesStore.getGame(gameHref, gameId);
       this.setState({ player: gameStore.getPlayer() });
     }
   },
 
   onNewGameState: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      var gameStore = GamesStore.getGame(gameHref, gameId);
-      var newStateCount = gameStore.getStateCount();
+      let gameStore = GamesStore.getGame(gameHref, gameId);
+      let newStateCount = gameStore.getStateCount();
 
       if (this.state.followCurrentState) {
         this.setState({
@@ -128,14 +128,14 @@ var GameStream = React.createClass({
 
   handleGameIdSubmit: function (e) {
     e.preventDefault();
-    var nextGameId = this.refs.nextGameId.getValue();
+    let nextGameId = this.refs.nextGameId.getValue();
     this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
   },
 
   handleGameStateSelect: function (e, { eventKey }) {
     e.preventDefault();
     if (eventKey !== this.state.gameStateIndex + 1) {
-      var gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
+      let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
 
       this.setState({
         gameState: gameStore.getState(eventKey - 1),
@@ -146,12 +146,12 @@ var GameStream = React.createClass({
   },
 
   render: function () {
-    var gameId = this.getGameId();
-    var game = this.getGame();
-    var GameComponent = game.component;
+    let gameId = this.getGameId();
+    let game = this.getGame();
+    let GameComponent = game.component;
 
-    var { connStatus, gameStatus } = this.state;
-    var isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
+    let { connStatus, gameStatus } = this.state;
+    let isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
 
     return (
         <div className="flex">

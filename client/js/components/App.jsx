@@ -1,14 +1,14 @@
 import React from "react";
 import Nav from "./Nav";
 
-var App = React.createClass({
+let App = React.createClass({
 
   propTypes: {
     children: React.PropTypes.element.isRequired
   },
 
   render: function () {
-    var games = this.props.route.games;
+    let games = this.props.route.games;
 
     return (
         <div className="fill flex">

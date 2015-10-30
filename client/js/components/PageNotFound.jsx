@@ -1,6 +1,6 @@
 import React from "react";
 
-var PageNotFound = React.createClass({
+let PageNotFound = React.createClass({
 
   propTypes: {
     location: React.PropTypes.object.isRequired

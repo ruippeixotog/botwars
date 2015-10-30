@@ -3,8 +3,8 @@ import { Col, Row } from "react-bootstrap";
 
 const CellX = React.createClass({
   render: function () {
-    var dx = this.props.col * 200;
-    var dy = this.props.row * 200;
+    let dx = this.props.col * 200;
+    let dy = this.props.row * 200;
     return (
         <g transform={`translate(${dx},${dy})`}>
           <line x1="30" x2="170" y1="30" y2="170"
@@ -18,8 +18,8 @@ const CellX = React.createClass({
 
 const CellO = React.createClass({
   render: function () {
-    var dx = this.props.col * 200 + 100;
-    var dy = this.props.row * 200 + 100;
+    let dx = this.props.col * 200 + 100;
+    let dy = this.props.row * 200 + 100;
     return (
         <circle cx={dx} cy={dy} r="72" style={{ strokeWidth: 10, stroke: "green", fill: "none" }} />
     );
@@ -29,24 +29,24 @@ const CellO = React.createClass({
 const Grid = React.createClass({
 
   handleClick: function (evt) {
-    var uupos = evt.target.createSVGPoint();
+    let uupos = evt.target.createSVGPoint();
     uupos.x = evt.clientX;
     uupos.y = evt.clientY;
-    var ctm = evt.target.getScreenCTM().inverse();
+    let ctm = evt.target.getScreenCTM().inverse();
     if (ctm) uupos = uupos.matrixTransform(ctm);
 
     this.props.onMove({ row: Math.floor(uupos.y / 200), col: Math.floor(uupos.x / 200) });
   },
 
   render: function () {
-    var grid = this.props.grid;
-    var cells = [];
+    let grid = this.props.grid;
+    let cells = [];
 
     if (grid) {
       for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 3; col++) {
           if (grid[row][col] > 0) {
-            var Cell = grid[row][col] === 1 ? CellO : CellX;
+            let Cell = grid[row][col] === 1 ? CellO : CellX;
             cells.push(<Cell row={row} col={col} key={[row, col]} />);
           }
         }
@@ -75,7 +75,7 @@ const PlayerTextRepr = ({ player }) => (
 const GameStatusMessage = ({ gameState }) => {
   if (!gameState) return <span>Waiting for the game to start...</span>;
 
-  var { nextPlayer, winner, isError } = gameState;
+  let { nextPlayer, winner, isError } = gameState;
   if (nextPlayer !== null)
     return <span>Player {nextPlayer} (<PlayerTextRepr player={nextPlayer} />) to play</span>;
   if (winner !== null)
@@ -85,11 +85,11 @@ const GameStatusMessage = ({ gameState }) => {
   return <span>It's a draw!</span>;
 };
 
-var TicTacToe = React.createClass({
+let TicTacToe = React.createClass({
 
   render: function () {
-    var gameState = this.props.gameState;
-    var onMove = this.props.isLastState ? this.props.onMove : () => {};
+    let gameState = this.props.gameState;
+    let onMove = this.props.isLastState ? this.props.onMove : () => {};
 
     return (
         <Row>

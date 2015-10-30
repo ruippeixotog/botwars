@@ -1,6 +1,6 @@
-var deepcopy = function (obj) {
+let deepcopy = function (obj) {
   if (obj == null || typeof obj != "object") return obj;
-  var copy;
+  let copy;
 
   if (obj instanceof Date) {
     copy = new Date();
@@ -10,7 +10,7 @@ var deepcopy = function (obj) {
 
   if (obj instanceof Array) {
     copy = [];
-    for (var i = 0; i < obj.length; i++) {
+    for (let i = 0; i < obj.length; i++) {
       copy[i] = deepcopy(obj[i]);
     }
     return copy;
@@ -18,7 +18,7 @@ var deepcopy = function (obj) {
 
   if (obj instanceof Object) {
     copy = {};
-    for (var attr in obj) {
+    for (let attr in obj) {
       if (obj.hasOwnProperty(attr)) {
         copy[attr] = deepcopy(obj[attr]);
       }
@@ -29,4 +29,4 @@ var deepcopy = function (obj) {
   throw new Error("Unable to copy object! Its type isn't supported.");
 };
 
-module.exports = deepcopy;
+export default deepcopy;

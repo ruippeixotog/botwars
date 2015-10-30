@@ -5,18 +5,18 @@ import expressWs from "../models/utils/express-ws";
 import GameRegistry from "../models/game_registry";
 
 export default function (Game) {
-  var engine = new GameRegistry(Game);
+  let engine = new GameRegistry(Game);
 
-  var router = expressWs(new express.Router());
+  let router = expressWs(new express.Router());
   router.use(bodyParser.json());
 
   router.param("gameId", function (req, res, next, gameId) {
-    var game = engine.getGameInstance(gameId);
+    let game = engine.getGameInstance(gameId);
     if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
     if (req.query.playerToken) {
-      var player = game.getPlayer(req.query.playerToken);
+      let player = game.getPlayer(req.query.playerToken);
       if (!player) { res.status(404).send("Invalid player"); return; }
       req.player = player;
     }
@@ -29,7 +29,7 @@ export default function (Game) {
   });
 
   router.post("/games", function (req, res) {
-    var gameId = engine.createNewGame(req.body);
+    let gameId = engine.createNewGame(req.body);
 
     if (!gameId) res.status(400).send("Could not create new game");
     else res.json({ gameId });
@@ -40,7 +40,7 @@ export default function (Game) {
   });
 
   router.post("/games/:gameId/register", function (req, res) {
-    var playerRes = req.game.registerNewPlayer();
+    let playerRes = req.game.registerNewPlayer();
 
     if (!playerRes) res.status(400).send("Could not register new player");
     else res.json(playerRes);
@@ -67,7 +67,7 @@ export default function (Game) {
   });
 
   router.ws("/games/:gameId/stream", function (ws, req) {
-    var { game, player } = req;
+    let { game, player } = req;
 
     ws.sendJSON = function (obj) { ws.send(JSON.stringify(obj)); };
     function onGameEvent(event, callback) {
@@ -99,7 +99,7 @@ export default function (Game) {
     }
 
     if (game.hasStarted()) {
-      var isEnded = game.isEnded();
+      let isEnded = game.isEnded();
       ws.sendJSON({ eventType: isEnded ? "end" : "state", state: game.getState(player) });
       if (isEnded) ws.close();
     }

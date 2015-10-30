@@ -4,16 +4,16 @@ import { Server as WebSocketServer } from "ws";
 import { EventEmitter } from "events";
 
 function prepareApp(app) {
-  var oldListen = app.listen.bind(app);
+  let oldListen = app.listen.bind(app);
 
   app.listen = function (...args) {
-    var server = oldListen(...args);
+    let server = oldListen(...args);
 
-    var proxyServer = new EventEmitter();
+    let proxyServer = new EventEmitter();
     app.wsServer = new WebSocketServer({ server: proxyServer });
 
     server.on("upgrade", function (req, socket, head) {
-      var res = new http.ServerResponse(req);
+      let res = new http.ServerResponse(req);
       res.assignSocket(socket);
 
       res.upgradeWs = function (handler) {

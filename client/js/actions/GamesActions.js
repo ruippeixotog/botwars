@@ -2,7 +2,7 @@ import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
 import request from "superagent";
 
-var gameEvents = {
+let gameEvents = {
   info: [GamesEvents.INFO, e => ({ player: e.player })],
   history: [GamesEvents.HISTORY, e => e.history],
   start: [GamesEvents.START, e => e.state],
@@ -12,9 +12,9 @@ var gameEvents = {
   end: [GamesEvents.END, e => e.state]
 };
 
-var streams = {};
+let streams = {};
 
-var GamesActions = {
+let GamesActions = {
 
   retrieveGameInfo: function (gameHref, gameId) {
     request.get(`/api${gameHref}/games/${gameId}`)
@@ -56,15 +56,15 @@ var GamesActions = {
   requestGameStream: function (gameHref, gameId, playerToken) {
     if ((streams[gameHref] || {})[gameId]) return;
 
-    var query = "history=true";
+    let query = "history=true";
     if (playerToken) query += `&playerToken=${playerToken}`;
 
-    var wsUri = `ws://${window.location.host}\/api${gameHref}/games/${gameId}/stream?${query}`;
-    var ws = new WebSocket(wsUri);
+    let wsUri = `ws://${window.location.host}\/api${gameHref}/games/${gameId}/stream?${query}`;
+    let ws = new WebSocket(wsUri);
     streams[gameHref] = streams[gameHref] || {};
     streams[gameHref][gameId] = ws;
 
-    var hasEnded = false;
+    let hasEnded = false;
 
     function dispatchEvent(actionType, data) {
       AppDispatcher.dispatch({ actionType, gameHref, gameId, playerToken, data });
@@ -75,11 +75,11 @@ var GamesActions = {
     };
 
     ws.onmessage = function (ev) {
-      var event = JSON.parse(ev.data);
+      let event = JSON.parse(ev.data);
       if (event.eventType === "end") {
         hasEnded = true;
       }
-      var [actionType, getData] = gameEvents[event.eventType];
+      let [actionType, getData] = gameEvents[event.eventType];
       dispatchEvent(actionType, getData(event));
     };
 

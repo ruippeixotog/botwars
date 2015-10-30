@@ -19,7 +19,7 @@ class Sueca extends Game {
   constructor(params = {}) {
     super(params);
 
-    var deck = Sueca.generateDeck();
+    let deck = Sueca.generateDeck();
 
     this.hands = new Array(4);
     for (let i = 0; i < 4; i++) {
@@ -80,10 +80,11 @@ class Sueca extends Game {
   }
 
   getStateView(fullState, player) {
-    var state = _.extend({}, fullState);
-    state.hand = fullState.hands[player - 1];
-    delete state.hands;
-    return state;
+    return {
+      ...fullState,
+      hands: undefined,
+      hand: fullState.hands[player - 1]
+    };
   }
 
   onMoveTimeout() {
@@ -103,16 +104,16 @@ class Sueca extends Game {
     const trickCardsWhere = props =>
         _.chain(this.currentTrick).where(props).sortBy(c => -cardData[c.value].index).value();
 
-    var winnerCard;
-    var trumpCards = trickCardsWhere({ suit: this.trump.suit });
+    let winnerCard;
+    let trumpCards = trickCardsWhere({ suit: this.trump.suit });
     if (trumpCards.length > 0) {
       winnerCard = trumpCards[0];
     } else {
-      var trickSuitCards = trickCardsWhere({ suit: this.trickSuit });
+      let trickSuitCards = trickCardsWhere({ suit: this.trickSuit });
       winnerCard = trickSuitCards[0];
     }
 
-    var winnerPlayer = this.currentTrick.findIndex(Sueca.cardEquals(winnerCard)) + 1;
+    let winnerPlayer = this.currentTrick.findIndex(Sueca.cardEquals(winnerCard)) + 1;
     this.score[Sueca.getTeam(winnerPlayer) - 1] +=
         _(this.currentTrick).reduce((acc, c) => acc + cardData[c.value].points, 0);
 

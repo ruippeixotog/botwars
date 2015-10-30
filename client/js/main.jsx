@@ -16,12 +16,12 @@ import PageNotFound from "./components/PageNotFound";
 
 import config from "../../config.json";
 
-var games = _.map(config.games, (gameInfo, gameId) => {
-  var GameComponent = require(gameInfo.clientComponent);
+let games = _.map(config.games, (gameInfo, gameId) => {
+  let GameComponent = require(gameInfo.clientComponent);
   return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
 });
 
-var gameRoutes = games.map(game =>
+let gameRoutes = games.map(game =>
     <Route path={game.href} component={GameLayout} game={game} key={game.href}>
       <IndexRoute component={GameIndex} game={game} />
       <Route path=":gameId" component={GameInfo} game={game} />
@@ -29,7 +29,7 @@ var gameRoutes = games.map(game =>
     </Route>
 );
 
-var routes = (
+let routes = (
     <Route path="/" component={App} games={games}>
       <IndexRoute component={Index} />
       {gameRoutes}

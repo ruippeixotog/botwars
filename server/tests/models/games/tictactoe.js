@@ -3,13 +3,13 @@ import assert from "assert";
 const TicTacToe = require.main.require("server/models/games/tictactoe");
 
 describe("TicTacToe", function () {
-  var game;
+  let game;
 
-  var startNewGame = function () {
+  let startNewGame = function () {
     game = new TicTacToe({});
   };
 
-  var quickPlay = function (moves) {
+  let quickPlay = function (moves) {
     for (let i = 0; i < moves.length; i++) {
       game.move(game.getNextPlayer(), { row: moves[i][0], col: moves[i][1] });
     }
