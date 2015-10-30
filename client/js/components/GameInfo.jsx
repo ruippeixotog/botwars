@@ -31,10 +31,14 @@ var GameInfo = React.createClass({
   },
 
   getInitialState: function () {
+    let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
+    let lastPlayerToken = gameStore.getLastToken();
+
     return {
       gameInfo: {},
-      joinMode: JoinModes.WATCH,
-      registering: false
+      joinMode: lastPlayerToken ? JoinModes.PLAY : JoinModes.WATCH,
+      registering: false,
+      lastPlayerToken: lastPlayerToken
     };
   },
 
@@ -173,7 +177,8 @@ var GameInfo = React.createClass({
                       <Input type="text" ref="playerToken" bsSize="small"
                              groupClassName="player-token-form-group"
                              disabled={registering || joinMode !== JoinModes.PLAY}
-                             placeholder="playerToken" />
+                             placeholder="playerToken"
+                             defaultValue={this.state.lastPlayerToken} />
                     </label>
                   </div>
                 </Input>
