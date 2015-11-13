@@ -40,7 +40,7 @@ export default function (Game) {
   });
 
   router.post("/games/:gameId/register", function (req, res) {
-    let playerRes = req.game.registerNewPlayer();
+    let playerRes = req.game.registerNewPlayer(parseInt(req.query.player) || null);
 
     if (!playerRes) res.status(400).send("Could not register new player");
     else res.json(playerRes);

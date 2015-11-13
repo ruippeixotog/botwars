@@ -52,16 +52,19 @@ class GameInstance extends EventEmitter {
     }
   }
 
-  registerNewPlayer() {
-    if (this.currentPlayerCount < this.game.getPlayerCount()) {
-      let playerToken = crypto.randomBytes(20).toString("hex");
-      let player = ++this.currentPlayerCount;
+  registerNewPlayer(player) {
+    if (player && this.playerState[player]) return null;
+    if (this.currentPlayerCount == this.game.getPlayerCount()) return null;
 
-      this.playerTokenTable[playerToken] = player;
-      this.playerState[player] = { connectedOnce: false };
-      return { player, playerToken };
+    let playerToken = crypto.randomBytes(20).toString("hex");
+    if(!player) {
+      for(player = 1; this.playerState[player]; player++) {}
     }
-    return null;
+
+    this.currentPlayerCount++;
+    this.playerTokenTable[playerToken] = player;
+    this.playerState[player] = { connectedOnce: false };
+    return { player, playerToken };
   }
 
   getPlayer(playerToken) {
