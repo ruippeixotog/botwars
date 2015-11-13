@@ -7,7 +7,8 @@ import { EventEmitter } from "events";
 const GameStatus = Object.freeze({
   NOT_STARTED: "not_started",
   STARTED: "started",
-  ENDED: "ended"
+  ENDED: "ended",
+  ERROR: "error"
 });
 
 class GameInstance extends EventEmitter {
@@ -45,10 +46,12 @@ class GameInstance extends EventEmitter {
   getInfo() {
     return {
       gameId: this.id,
+      params: this.game.getParams(),
       connectedPlayers: this.connectedPlayerCount,
       players: this.game.getPlayerCount(),
       status: this.status,
-      params: this.game.getParams()
+      ...(this.status === GameStatus.STARTED ? { nextPlayer: this.getNextPlayer() } : {}),
+      ...(this.status === GameStatus.ENDED ? { winner: this.getWinner() } : {})
     }
   }
 
@@ -114,6 +117,10 @@ class GameInstance extends EventEmitter {
     return this.hasStarted() ? this.game.getState(player) : null;
   }
 
+  getWinner() {
+    return this.hasStarted() ? this.game.getWinner() : null;
+  }
+
   getHistory(player) {
     return this.history.events.map(histEvent =>
       histEvent.eventType === "move" ? histEvent :
@@ -128,7 +135,7 @@ class GameInstance extends EventEmitter {
 
       this.moveTimer.start(this._onMoveTimeout.bind(this), this.game.getMoveTimeLimit());
     } else {
-      this.status = GameStatus.ENDED;
+      this.status = this.game.isError() ? GameStatus.ERROR : GameStatus.ENDED;
       this.emit("end");
     }
   }

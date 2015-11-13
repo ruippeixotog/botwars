@@ -150,6 +150,14 @@ let GameInfo = React.createClass({
                     </pre>
                   </td>
                 </tr>
+                <tr>
+                  <th>Next player</th>
+                  <td>{gameInfo.nextPlayer || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <th>Winner</th>
+                  <td>{gameInfo.winner || 'N/A'}</td>
+                </tr>
               </tbody>
             </Table>
 

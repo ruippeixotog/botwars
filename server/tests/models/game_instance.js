@@ -23,7 +23,7 @@ class DummyGame extends Game {
   move(player, move) {
     this.lastMove = move;
     if (move === DummyGame.INVALID_MOVE) this.error = true;
-    else if (move === DummyGame.END_MOVE) this.ended = true;
+    else if (move === DummyGame.END_MOVE) { this.ended = true; this.winner = player; }
   }
   onMoveTimeout() { this.didTimeout = true; return true; }
   getFullState() { return this.state; }
@@ -232,14 +232,22 @@ describe("GameInstance", function () {
       params: { a: 1 },
       connectedPlayers: 2,
       players: 2,
-      status: "started"
+      status: "started",
+      nextPlayer: 1
     });
 
     game.move(1, 32);
     assert.equal(game.getInfo().status, "started");
 
     game.move(1, DummyGame.END_MOVE);
-    assert.equal(game.getInfo().status, "ended");
+    assert.deepEqual(game.getInfo(), {
+      gameId: "testId",
+      params: { a: 1 },
+      connectedPlayers: 2,
+      players: 2,
+      status: "ended",
+      winner: 1
+    });
   });
 
   it("should record and provide a history of the game moves and states", function () {
