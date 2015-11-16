@@ -1,17 +1,11 @@
-import bodyParser from "body-parser";
 import express from "express";
 import expressWs from "../models/utils/express-ws";
 
-import GameRegistry from "../models/game_registry";
-
-export default function (Game) {
-  let engine = new GameRegistry(Game);
-
+export default function (gameEngine) {
   let router = expressWs(new express.Router());
-  router.use(bodyParser.json());
 
   router.param("gameId", function (req, res, next, gameId) {
-    let game = engine.getGameInstance(gameId);
+    let game = gameEngine.getGameInstance(gameId);
     if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
@@ -24,49 +18,49 @@ export default function (Game) {
     next();
   });
 
-  router.get("/games", function (req, res) {
-    res.json(engine.getAllGamesInfo());
+  router.get("/", function (req, res) {
+    res.json(gameEngine.getAllGamesInfo());
   });
 
-  router.post("/games", function (req, res) {
-    let gameId = engine.createNewGame(req.body);
+  router.post("/", function (req, res) {
+    let gameId = gameEngine.createNewGame(req.body);
 
     if (!gameId) res.status(400).send("Could not create new game");
     else res.json({ gameId });
   });
 
-  router.get("/games/:gameId", function (req, res) {
+  router.get("/:gameId", function (req, res) {
     res.json(req.game.getInfo());
   });
 
-  router.post("/games/:gameId/register", function (req, res) {
+  router.post("/:gameId/register", function (req, res) {
     let playerRes = req.game.registerNewPlayer(parseInt(req.query.player) || null);
 
     if (!playerRes) res.status(400).send("Could not register new player");
     else res.json(playerRes);
   });
 
-  router.get("/games/:gameId/connect", function (req, res) {
+  router.get("/:gameId/connect", function (req, res) {
     req.game.connect(req.player);
     res.send("Connected");
   });
 
-  router.get("/games/:gameId/state", function (req, res) {
+  router.get("/:gameId/state", function (req, res) {
     if (!req.game.hasStarted()) res.status(400).send("Game has not started yet");
     else res.json(req.game.getState(req.player));
   });
 
-  router.post("/games/:gameId/move", function (req, res) {
+  router.post("/:gameId/move", function (req, res) {
     if (!req.game.hasStarted()) res.status(400).send("Game has not started yet");
     else if (req.game.move(req.player, req.body)) res.send("OK");
     else res.status(400).send("Illegal move");
   });
 
-  router.get("/games/:gameId/history", function (req, res) {
+  router.get("/:gameId/history", function (req, res) {
     res.json(req.game.getHistory(req.player));
   });
 
-  router.ws("/games/:gameId/stream", function (ws, req) {
+  router.ws("/:gameId/stream", function (ws, req) {
     let { game, player } = req;
 
     ws.sendJSON = function (obj) { ws.send(JSON.stringify(obj)); };

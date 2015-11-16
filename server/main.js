@@ -4,7 +4,7 @@ import fs from "fs";
 import morgan from "morgan";
 import _ from "underscore";
 
-import gameRoute from "./routes/game_route";
+import gameRoute from "./routes/game";
 
 const app = expressWs(express());
 const config = JSON.parse(fs.readFileSync("config.json"));
