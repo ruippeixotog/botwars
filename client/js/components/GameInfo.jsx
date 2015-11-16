@@ -152,11 +152,11 @@ let GameInfo = React.createClass({
                 </tr>
                 <tr>
                   <th>Next player</th>
-                  <td>{gameInfo.nextPlayer || 'N/A'}</td>
+                  <td>{gameInfo.nextPlayer || "N/A"}</td>
                 </tr>
                 <tr>
                   <th>Winner</th>
-                  <td>{gameInfo.winner || 'N/A'}</td>
+                  <td>{gameInfo.winner || "N/A"}</td>
                 </tr>
               </tbody>
             </Table>
