@@ -1,5 +1,4 @@
 class Game {
-  // constructor(params)
   constructor(params = {}) {
     if (this.constructor === Game) {
       throw new TypeError("Cannot construct Game instances directly");

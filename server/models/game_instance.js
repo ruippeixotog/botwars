@@ -1,8 +1,9 @@
 import crypto from "crypto";
 import deepcopy from "./utils/deepcopy";
-import Timer from "./utils/timer";
 
 import { EventEmitter } from "events";
+import PlayerRegistry from "./player_registry";
+import Timer from "./utils/timer";
 
 const GameStatus = Object.freeze({
   NOT_STARTED: "not_started",
@@ -20,10 +21,7 @@ class GameInstance extends EventEmitter {
     this.moveTimer = new Timer();
     this.history = { events: [], next: null };
 
-    this.currentPlayerCount = 0;
-    this.connectedPlayerCount = 0;
-    this.playerTokenTable = {};
-    this.playerState = {};
+    this.playerReg = new PlayerRegistry(game.getPlayerCount());
 
     for (let event of ["start", "stateChange"]) {
       this.on(event, function () {
@@ -47,7 +45,7 @@ class GameInstance extends EventEmitter {
     return {
       gameId: this.id,
       params: this.game.getParams(),
-      connectedPlayers: this.connectedPlayerCount,
+      connectedPlayers: this.playerReg.getConnectedCount(),
       players: this.game.getPlayerCount(),
       status: this.status,
       ...(this.status === GameStatus.STARTED ? { nextPlayer: this.getNextPlayer() } : {}),
@@ -55,33 +53,16 @@ class GameInstance extends EventEmitter {
     }
   }
 
-  registerNewPlayer(player) {
-    if (player && this.playerState[player]) return null;
-    if (this.currentPlayerCount === this.game.getPlayerCount()) return null;
-
-    let playerToken = crypto.randomBytes(20).toString("hex");
-    if (!player) {
-      player = 1;
-      while (this.playerState[player]) player++;
-    }
-
-    this.currentPlayerCount++;
-    this.playerTokenTable[playerToken] = player;
-    this.playerState[player] = { connectedOnce: false };
-    return { player, playerToken };
+  registerNewPlayer(player, playerToken) {
+    return this.playerReg.register(player, playerToken);
   }
 
   getPlayer(playerToken) {
-    return this.playerTokenTable[playerToken];
+    return this.playerReg.getPlayer(playerToken);
   }
 
   connect(player) {
-    if (this.playerState[player].connectedOnce) return;
-
-    this.connectedPlayerCount++;
-    this.playerState[player].connectedOnce = true;
-
-    if (!this.hasStarted() && this.connectedPlayerCount === this.game.getPlayerCount()) {
+    if (this.playerReg.connect(player)) {
       this.status = GameStatus.STARTED;
       this.emit("start");
       this._onStateChange({ announceState: false });
