@@ -5,7 +5,7 @@ export default function (gameEngine) {
   let router = expressWs(new express.Router());
 
   router.param("gameId", function (req, res, next, gameId) {
-    let game = gameEngine.getGameInstance(gameId);
+    let game = gameEngine.get(gameId);
     if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
@@ -23,7 +23,7 @@ export default function (gameEngine) {
   });
 
   router.post("/", function (req, res) {
-    let gameId = gameEngine.createNewGame(req.body);
+    let gameId = gameEngine.create(req.body);
 
     if (!gameId) res.status(400).send("Could not create new game");
     else res.json({ gameId });

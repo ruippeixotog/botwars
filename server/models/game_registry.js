@@ -1,24 +1,11 @@
-import crypto from "crypto";
 import _ from "underscore";
 
 import GameInstance from "./game_instance";
+import Registry from "./registry";
 
-class GameRegistry {
+class GameRegistry extends Registry {
   constructor(Game) {
-    this.Game = Game;
-    this.instances = {
-      "0": new GameInstance("0", new Game({ moveTimeLimit: 0 }))
-    };
-  }
-
-  createNewGame(params) {
-    let id = crypto.randomBytes(8).toString("hex");
-    this.instances[id] = new GameInstance(id, new this.Game(params || {}));
-    return id;
-  }
-
-  getGameInstance(id) {
-    return this.instances[id];
+    super((id, params) => new GameInstance(id, new Game(params)));
   }
 
   getAllGamesInfo() {
