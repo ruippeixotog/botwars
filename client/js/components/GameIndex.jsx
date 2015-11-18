@@ -62,7 +62,7 @@ let GameIndex = React.createClass({
 
   handleGameOpen: function (e, gameId) {
     e.preventDefault();
-    this.history.pushState(null, `${this.getGame().href}/${gameId}`);
+    this.history.pushState(null, `${this.getGame().href}/games/${gameId}`);
   },
 
   render: function () {

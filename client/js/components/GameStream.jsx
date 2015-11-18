@@ -126,12 +126,6 @@ let GameStream = React.createClass({
     GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
   },
 
-  handleGameIdSubmit: function (e) {
-    e.preventDefault();
-    let nextGameId = this.refs.nextGameId.getValue();
-    this.history.pushState(null, `${this.getGame().href}/${nextGameId}`);
-  },
-
   handleGameStateSelect: function (e, { eventKey }) {
     e.preventDefault();
     if (eventKey !== this.state.gameStateIndex + 1) {

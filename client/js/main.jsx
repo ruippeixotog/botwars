@@ -24,8 +24,8 @@ let games = _.map(config.games, (gameInfo, gameId) => {
 let gameRoutes = games.map(game =>
     <Route path={game.href} component={GameLayout} game={game} key={game.href}>
       <IndexRoute component={GameIndex} game={game} />
-      <Route path=":gameId" component={GameInfo} game={game} />
-      <Route path=":gameId/stream" component={GameStream} game={game} />
+      <Route path="games/:gameId" component={GameInfo} game={game} />
+      <Route path="games/:gameId/stream" component={GameStream} game={game} />
     </Route>
 );
 

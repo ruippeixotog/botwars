@@ -78,7 +78,7 @@ let GameInfo = React.createClass({
 
     if (gameHref === game.href && gameId === pageGameId) {
       let queryStr = `playerToken=${playerToken}`;
-      this.history.pushState(null, `${gameHref}/${gameId}/stream?${queryStr}`);
+      this.history.pushState(null, `${gameHref}/games/${gameId}/stream?${queryStr}`);
     }
   },
 
@@ -97,14 +97,14 @@ let GameInfo = React.createClass({
     GamesStore.removeListener(GamesEvents.REGISTER_ERROR, this.onRegisterError);
   },
 
-  handleGameIdSubmit: function (e) {
+  handleGameFormSubmit: function (e) {
     e.preventDefault();
     let game = this.props.route.game;
     let gameId = this.props.params.gameId;
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH:
-        this.history.pushState(null, `${game.href}/${gameId}/stream`);
+        this.history.pushState(null, `${game.href}/games/${gameId}/stream`);
         break;
 
       case JoinModes.REGISTER_AND_PLAY:
@@ -116,7 +116,7 @@ let GameInfo = React.createClass({
 
       case JoinModes.PLAY:
         let queryStr = `playerToken=${this.refs.playerToken.getValue()}`;
-        this.history.pushState(null, `${game.href}/${gameId}/stream?${queryStr}`);
+        this.history.pushState(null, `${game.href}/games/${gameId}/stream?${queryStr}`);
         break;
     }
   },
@@ -170,7 +170,7 @@ let GameInfo = React.createClass({
               </tbody>
             </Table>
 
-            <form onSubmit={this.handleGameIdSubmit}>
+            <form onSubmit={this.handleGameFormSubmit}>
               <Input label="I want to:">
                 <Input name="action" type="radio" label="watch the game as a spectator"
                        disabled={registering}
