@@ -22,8 +22,8 @@ class Game {
     throw new Error(this.constructor + ".isError not implemented");
   }
 
-  getWinner() {
-    throw new Error(this.constructor + ".getWinner not implemented");
+  getWinners() {
+    throw new Error(this.constructor + ".getWinners not implemented");
   }
 
   getNextPlayer() {

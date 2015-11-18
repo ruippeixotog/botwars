@@ -23,7 +23,7 @@ class TicTacToe extends Game {
   getPlayerCount() { return 2; }
   isEnded() { return this.error || this.winner != null || this.gridFull; }
   isError() { return this.error; }
-  getWinner() { return this.winner; }
+  getWinners() { return this.winner ? [this.winner] : this.gridFull ? [] : null; }
   getNextPlayer() { return this.nextPlayer; }
 
   isValidMove(player, move) {

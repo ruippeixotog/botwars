@@ -17,7 +17,7 @@ class DummyGame extends Game {
   getPlayerCount() { return 2; }
   isEnded() { return this.ended; }
   isError() { return this.error; }
-  getWinner() { return this.winner; }
+  getWinners() { return this.winner ? [this.winner] : null; }
   getNextPlayer() { return this.nextPlayer; }
   isValidMove(player, move) { return move !== DummyGame.INVALID_MOVE; }
   move(player, move) {
@@ -246,7 +246,7 @@ describe("GameInstance", function () {
       connectedPlayers: 2,
       players: 2,
       status: "ended",
-      winner: 1
+      winners: [1]
     });
   });
 

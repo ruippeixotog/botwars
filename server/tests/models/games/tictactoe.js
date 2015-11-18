@@ -24,7 +24,7 @@ describe("TicTacToe", function () {
   it("should start out with a correct initial state", function () {
     assert.equal(game.isEnded(), false);
     assert.equal(game.isError(), false);
-    assert.equal(game.getWinner(), null);
+    assert.equal(game.getWinners(), null);
     assert.equal(game.getNextPlayer(), 1);
     assert.deepEqual(game.getState(), {
       nextPlayer: 1,
@@ -73,13 +73,13 @@ describe("TicTacToe", function () {
   it("should consider the opponent the winner when a move timeout occurs", function () {
     assert.equal(game.onMoveTimeout(), true);
     assert.equal(game.getNextPlayer(), null);
-    assert.equal(game.getWinner(), 2);
+    assert.deepEqual(game.getWinners(), [2]);
 
     startNewGame();
     game.move(1, { row: 0, col: 0 });
     assert.equal(game.onMoveTimeout(), true);
     assert.equal(game.getNextPlayer(), null);
-    assert.equal(game.getWinner(), 1);
+    assert.deepEqual(game.getWinners(), [1]);
   });
 
   it("should signal correctly the ending of a game and its winner", function () {
@@ -88,7 +88,7 @@ describe("TicTacToe", function () {
     assert.equal(game.isEnded(), false);
     game.move(1, { row: 2, col: 0 });
     assert.equal(game.isEnded(), true); // vertical line
-    assert.equal(game.getWinner(), 1);
+    assert.deepEqual(game.getWinners(), [1]);
 
     startNewGame();
     quickPlay([[0, 0], [1, 0], [0, 1], [1, 1], [2, 0]]);
@@ -96,7 +96,7 @@ describe("TicTacToe", function () {
     assert.equal(game.isEnded(), false);
     game.move(2, { row: 1, col: 2 });
     assert.equal(game.isEnded(), true); // horizontal line
-    assert.equal(game.getWinner(), 2);
+    assert.deepEqual(game.getWinners(), [2]);
 
     startNewGame();
     quickPlay([[0, 0], [1, 0], [1, 1], [1, 2]]);
@@ -104,7 +104,7 @@ describe("TicTacToe", function () {
     assert.equal(game.isEnded(), false);
     game.move(1, { row: 2, col: 2 });
     assert.equal(game.isEnded(), true); // diagonal line
-    assert.equal(game.getWinner(), 1);
+    assert.deepEqual(game.getWinners(), [1]);
 
     startNewGame();
     quickPlay([[0, 0], [0, 1], [1, 1], [2, 2], [1, 2], [1, 0], [0, 2], [2, 0]]);
@@ -112,6 +112,6 @@ describe("TicTacToe", function () {
     assert.equal(game.isEnded(), false);
     game.move(1, { row: 2, col: 1 });
     assert.equal(game.isEnded(), true); // draw
-    assert.equal(game.getWinner(), null);
+    assert.deepEqual(game.getWinners(), []);
   });
 });

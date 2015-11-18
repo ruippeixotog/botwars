@@ -32,9 +32,13 @@ class Match extends Competition {
     return this.currentGame && this.currentGame.isError();
   }
 
-  getWinner() {
-    let max = _.max(this.winCount);
-    return _.findIndex(this.winCount, cnt => cnt === max) + 1;
+  getWinners() {
+    let max = 0, maxPlayers = [];
+    for (let i = 0; i < this.playerCount; i++) {
+      if (this.winCount[i] > max) { max = this.winCount[i]; maxPlayers = [i + 1]; }
+      else if (this.winCount[i] === max) { maxPlayers.push(i + 1); }
+    }
+    return maxPlayers;
   }
 
   start() {
@@ -46,7 +50,7 @@ class Match extends Competition {
   }
 
   onGameEnd(game) {
-    this.winCount[game.getWinner() - 1]++;
+    game.getWinners().forEach(p => { this.winCount[p - 1]++; });
     this.playedGameCount++;
     return this.isEnded() ? null : this.gameInfo;
   }

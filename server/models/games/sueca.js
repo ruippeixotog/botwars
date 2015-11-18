@@ -30,7 +30,7 @@ class Sueca extends Game {
 
     this.nextPlayer = Sueca.getPlayerAfter(this.trumpPlayer);
     this.score = [0, 0];
-    this.winner = null;
+    this.winners = null;
     this.error = false;
 
     this.trickSuit = null;
@@ -40,9 +40,9 @@ class Sueca extends Game {
   }
 
   getPlayerCount() { return 4; }
-  isEnded() { return this.error || this.winner !== null || this.tricksDone === 10; }
+  isEnded() { return this.error || this.winners !== null || this.tricksDone === 10; }
   isError() { return this.error; }
-  getWinner() { return this.winner; }
+  getWinners() { return this.winners; }
   getNextPlayer() { return this.nextPlayer; }
 
   isValidMove(player, card) {
@@ -74,7 +74,7 @@ class Sueca extends Game {
       trickSuit: this.trickSuit,
       tricksDone: this.tricksDone,
       score: this.score,
-      winner: this.winner,
+      winners: this.winners,
       isError: this.error
     };
   }
@@ -88,7 +88,7 @@ class Sueca extends Game {
   }
 
   onMoveTimeout() {
-    this.winner = Sueca.getTeam(this.nextPlayer);
+    this.winners = Sueca.getTeam(this.nextPlayer) === 1 ? [1, 3] : [2, 4];
     this.nextPlayer = null;
     return true;
   }
@@ -124,7 +124,9 @@ class Sueca extends Game {
     if (++this.tricksDone === 10) {
       this.nextPlayer = null;
       if (this.score[0] !== this.score[1]) {
-        this.winner = this.score[0] > this.score[1] ? 1 : 2;
+        this.winners = this.score[0] > this.score[1] ? [1, 3] : [2, 4];
+      } else {
+        this.winners = [];
       }
     } else {
       this.nextPlayer = winnerPlayer;

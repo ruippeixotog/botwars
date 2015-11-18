@@ -127,6 +127,15 @@ let GameInfo = React.createClass({
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
+    let winnerCell = "N/A";
+    if (gameInfo.winners) {
+      switch (gameInfo.winners.length) {
+        case 0: winnerCell = "Draw"; break;
+        case 1: winnerCell = `Player ${gameInfo.winners[0]}`; break;
+        default: winnerCell = `Players ${gameInfo.winners.join(", ")}`;
+      }
+    }
+
     return (
         <Row>
           <Col lg={6}>
@@ -155,8 +164,8 @@ let GameInfo = React.createClass({
                   <td>{gameInfo.nextPlayer || "N/A"}</td>
                 </tr>
                 <tr>
-                  <th>Winner</th>
-                  <td>{gameInfo.winner || "N/A"}</td>
+                  <th>Winners</th>
+                  <td>{winnerCell}</td>
                 </tr>
               </tbody>
             </Table>

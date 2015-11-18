@@ -28,7 +28,7 @@ class CompetitionInstance {
       gamesPlayed: this.games.length - (this.currentGame ? 1 : 0),
       status: this.status,
       ...(this.status === CompStatus.STARTED ? { currentGame: this.currentGame.id } : {}),
-      ...(this.status === CompStatus.ENDED ? { winner: this.getWinner() } : {}),
+      ...(this.status === CompStatus.ENDED ? { winners: this.getWinners() } : {}),
       ...this.comp.getExtraInfo()
     }
   }
@@ -64,8 +64,8 @@ class CompetitionInstance {
     return this.hasStarted() ? this.currentGame : null;
   }
 
-  getWinner() {
-    return this.hasStarted() ? this.comp.getWinner() : null;
+  getWinners() {
+    return this.hasStarted() ? this.comp.getWinners() : null;
   }
 
   _createNewGame(gameInfo) {

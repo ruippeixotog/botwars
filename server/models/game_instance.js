@@ -48,7 +48,7 @@ class GameInstance extends EventEmitter {
       players: this.game.getPlayerCount(),
       status: this.status,
       ...(this.status === GameStatus.STARTED ? { nextPlayer: this.getNextPlayer() } : {}),
-      ...(this.status === GameStatus.ENDED ? { winner: this.getWinner() } : {})
+      ...(this.status === GameStatus.ENDED ? { winners: this.getWinners() } : {})
     }
   }
 
@@ -98,8 +98,8 @@ class GameInstance extends EventEmitter {
     return this.hasStarted() ? this.game.getState(player) : null;
   }
 
-  getWinner() {
-    return this.hasStarted() ? this.game.getWinner() : null;
+  getWinners() {
+    return this.hasStarted() ? this.game.getWinners() : null;
   }
 
   getHistory(player) {

@@ -47,7 +47,7 @@ describe("Sueca", function () {
   it("should start out with a correct initial state", function () {
     assert.equal(game.isEnded(), false);
     assert.equal(game.isError(), false);
-    assert.equal(game.getWinner(), null);
+    assert.equal(game.getWinners(), null);
 
     let player = game.getNextPlayer();
     assert(player >= 1 && player <= 4);
@@ -88,7 +88,7 @@ describe("Sueca", function () {
       assert.equal(game.isError(), false);
 
       if (t < 39) {
-        assert.equal(game.getWinner(), null);
+        assert.equal(game.getWinners(), null);
         assert.equal(game.isEnded(), false);
       }
 
@@ -106,7 +106,7 @@ describe("Sueca", function () {
 
     let finalState = game.getFullState();
     let isDraw = finalState.score[0] === finalState.score[1];
-    assert.equal(game.getWinner() == null, isDraw);
+    assert.equal(game.getWinners().length === 0, isDraw);
   });
 
   it("should set the state as error when an invalid move is made", function () {
@@ -151,7 +151,7 @@ describe("Sueca", function () {
     let player = game.getNextPlayer();
     assert.equal(game.onMoveTimeout(), true);
     assert.equal(game.getNextPlayer(), null);
-    assert.equal(game.getWinner(), player % 2 ? 1 : 2);
+    assert.deepEqual(game.getWinners(), player % 2 ? [1, 3] : [2, 4]);
   });
 
   it("update correctly the score after a move", function () {
