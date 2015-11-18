@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import deepcopy from "./utils/deepcopy";
 
 import { EventEmitter } from "events";
