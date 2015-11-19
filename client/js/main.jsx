@@ -2,16 +2,18 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Router, IndexRoute } from "react-router";
+import { Route, Router, IndexRoute, IndexRedirect } from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
 import _ from "underscore";
 
 import App from "./components/App";
 import Index from "./components/Index";
 import GameLayout from "./components/GameLayout";
-import GameIndex from "./components/GameIndex";
+import GamesIndex from "./components/GamesIndex";
 import GameInfo from "./components/GameInfo";
 import GameStream from "./components/GameStream";
+import CompsIndex from "./components/CompsIndex";
+import CompInfo from "./components/CompInfo";
 import PageNotFound from "./components/PageNotFound";
 
 import config from "../../config.json";
@@ -23,9 +25,16 @@ let games = _.map(config.games, (gameInfo, gameId) => {
 
 let gameRoutes = games.map(game =>
     <Route path={game.href} component={GameLayout} game={game} key={game.href}>
-      <IndexRoute component={GameIndex} game={game} />
-      <Route path="games/:gameId" component={GameInfo} game={game} />
-      <Route path="games/:gameId/stream" component={GameStream} game={game} />
+      <IndexRedirect to="games" />
+      <Route path="games">
+        <IndexRoute component={GamesIndex} game={game} />
+        <Route path=":gameId" component={GameInfo} game={game} />
+        <Route path=":gameId/stream" component={GameStream} game={game} />
+      </Route>
+      <Route path="competitions">
+        <IndexRoute component={CompsIndex} game={game} />
+        <Route path=":compId" component={CompInfo} game={game} />
+      </Route>
     </Route>
 );
 

@@ -7,8 +7,9 @@ import GamesInfoStore from "../stores/GamesInfoStore";
 import GamesEvents from "../events/GamesEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
+import GameTabsNav from "./GameTabsNav";
 
-let GameIndex = React.createClass({
+let GamesIndex = React.createClass({
   mixins: [History],
 
   getGame: function () {
@@ -85,25 +86,28 @@ let GameIndex = React.createClass({
     });
 
     return (
-        <Row>
-          <Col lg={6}>
-            <Table className="games-list" responsive hover>
-              <thead>
+        <div>
+          <GameTabsNav gameHref={this.getGame().href} activeKey="games" />
+          <Row>
+            <Col lg={6}>
+              <Table className="games-list" responsive hover>
+                <thead>
                 <tr>
                   <th>ID</th>
                   <th>Players</th>
                   <th>Status</th>
                   <th>Winners</th>
                 </tr>
-              </thead>
-              <tbody>
+                </thead>
+                <tbody>
                 {tableRows}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+        </div>
     );
   }
 });
 
-export default GameIndex;
+export default GamesIndex;
