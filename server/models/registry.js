@@ -5,7 +5,7 @@ class Registry {
     this.instanceFactory = instanceFactory;
     this.idLength = idLength;
     this.instances = {
-      "0": instanceFactory("0", {})
+      "0": instanceFactory("0", { name: "Test" })
     };
   }
 

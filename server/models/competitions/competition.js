@@ -1,10 +1,18 @@
 class Competition {
-  constructor(params = {}) {
+  constructor({ name, ...params } = {}) {
     if (this.constructor === Competition) {
       throw new TypeError("Cannot construct Competition instances directly");
     }
+    this.name = name;
     this.params = params;
-    this.gameParams = params.gameParams || {};
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getType() {
+    throw new Error(this.constructor.name + ".getType not implemented");
   }
 
   getParams() {
@@ -12,23 +20,23 @@ class Competition {
   }
 
   getPlayerCount() {
-    throw new Error(this.constructor + ".getPlayerCount not implemented");
+    throw new Error(this.constructor.name + ".getPlayerCount not implemented");
   }
 
   isEnded() {
-    throw new Error(this.constructor + ".isEnded not implemented");
+    throw new Error(this.constructor.name + ".isEnded not implemented");
   }
 
   isError() {
-    throw new Error(this.constructor + ".isError not implemented");
+    throw new Error(this.constructor.name + ".isError not implemented");
   }
 
   getWinners() {
-    throw new Error(this.constructor + ".getWinners not implemented");
+    throw new Error(this.constructor.name + ".getWinners not implemented");
   }
 
   start() {
-    throw new Error(this.constructor + ".start not implemented");
+    throw new Error(this.constructor.name + ".start not implemented");
   }
 
   // onGameStart(game)
@@ -37,7 +45,7 @@ class Competition {
 
   // onGameEnd(game)
   onGameEnd() {
-    throw new Error(this.constructor + ".onGameEnd not implemented");
+    throw new Error(this.constructor.name + ".onGameEnd not implemented");
   }
 
   getExtraInfo() {

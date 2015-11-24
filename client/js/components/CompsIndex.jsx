@@ -68,6 +68,8 @@ let CompsIndex = React.createClass({
 
   render: function () {
     let tableRows = this.state.competitions.map(info => {
+      let nameCell = info.name || <span className="no-name">{"#" + info.compId}</span>;
+
       let winnerCell = "";
       if (info.winners) {
         switch (info.winners.length) {
@@ -76,9 +78,11 @@ let CompsIndex = React.createClass({
           default: winnerCell = `Players ${info.winners.join(", ")}`;
         }
       }
+
       return (
           <tr key={info.compId} onClick={e => this.handleCompOpen(e, info.compId)}>
-            <td>{info.compId}</td>
+            <td>{nameCell}</td>
+            <td>{info.type}</td>
             <td>{info.registeredPlayers}/{info.players}</td>
             <td><GameStatusLabel status={info.status}/></td>
             <td>{winnerCell}</td>
@@ -89,11 +93,12 @@ let CompsIndex = React.createClass({
         <div>
           <GameTabsNav gameHref={this.getGame().href} activeKey="competitions" />
           <Row>
-            <Col lg={6}>
+            <Col lg={9}>
               <Table className="games-list" responsive hover>
                 <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Type</th>
                   <th>Players</th>
                   <th>Status</th>
                   <th>Winners</th>

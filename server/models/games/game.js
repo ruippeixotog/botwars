@@ -1,9 +1,14 @@
 class Game {
-  constructor(params = {}) {
+  constructor({ name, ...params } = {}) {
     if (this.constructor === Game) {
       throw new TypeError("Cannot construct Game instances directly");
     }
+    this.name = name;
     this.params = params;
+  }
+
+  getName() {
+    return this.name;
   }
 
   getParams() {
@@ -11,33 +16,33 @@ class Game {
   }
 
   getPlayerCount() {
-    throw new Error(this.constructor + ".getPlayerCount not implemented");
+    throw new Error(this.constructor.name + ".getPlayerCount not implemented");
   }
 
   isEnded() {
-    throw new Error(this.constructor + ".isEnded not implemented");
+    throw new Error(this.constructor.name + ".isEnded not implemented");
   }
 
   isError() {
-    throw new Error(this.constructor + ".isError not implemented");
+    throw new Error(this.constructor.name + ".isError not implemented");
   }
 
   getWinners() {
-    throw new Error(this.constructor + ".getWinners not implemented");
+    throw new Error(this.constructor.name + ".getWinners not implemented");
   }
 
   getNextPlayer() {
-    throw new Error(this.constructor + ".getCurrentPlayer not implemented");
+    throw new Error(this.constructor.name + ".getCurrentPlayer not implemented");
   }
 
   // isValidMove(player, move)
   isValidMove() {
-    throw new Error(this.constructor + ".isValidMove not implemented");
+    throw new Error(this.constructor.name + ".isValidMove not implemented");
   }
 
   // move(player, move, moveTime)
   move() {
-    throw new Error(this.constructor + ".move not implemented");
+    throw new Error(this.constructor.name + ".move not implemented");
   }
 
   getMoveTimeLimit() {
@@ -45,16 +50,16 @@ class Game {
   }
 
   onMoveTimeout() {
-    throw new Error(this.constructor + ".onMoveTimeout not implemented");
+    throw new Error(this.constructor.name + ".onMoveTimeout not implemented");
   }
 
   getFullState() {
-    throw new Error(this.constructor + ".getFullState not implemented");
+    throw new Error(this.constructor.name + ".getFullState not implemented");
   }
 
   // getStateView(fullState, player)
   getStateView() {
-    throw new Error(this.constructor + ".getStateView not implemented");
+    throw new Error(this.constructor.name + ".getStateView not implemented");
   }
 
   // getState(player)

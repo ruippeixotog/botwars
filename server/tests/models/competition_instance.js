@@ -17,6 +17,7 @@ class DummyCompetition extends Competition {
     this.didTimeout = false;
     this.state = 0;
   }
+  getType() { return "dummy"; }
   getPlayerCount() { return 2; }
   isEnded() { return this.ended; }
   isError() { return this.error; }
@@ -88,9 +89,11 @@ describe("CompetitionInstance", function () {
   });
 
   it("should provide up-to-date info about a competition", function () {
-    startNewComp({ a: 1 });
+    startNewComp({ name: "Comp2", a: 1 });
     assert.deepEqual(comp.getInfo(), {
       compId: "testId",
+      name: "Comp2",
+      type: "dummy",
       params: { a: 1 },
       registeredPlayers: 0,
       players: 2,
@@ -102,6 +105,8 @@ describe("CompetitionInstance", function () {
     registerAll();
     assert.deepEqual(comp.getInfo(), {
       compId: "testId",
+      name: "Comp2",
+      type: "dummy",
       params: { a: 1 },
       registeredPlayers: 2,
       players: 2,

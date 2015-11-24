@@ -128,6 +128,8 @@ let CompInfo = React.createClass({
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
+    let title = compInfo.name || "Competition #" + compInfo.compId;
+
     let winnerCell = "N/A";
     if (compInfo.winners) {
       switch (compInfo.winners.length) {
@@ -146,10 +148,22 @@ let CompInfo = React.createClass({
     return (
         <Row>
           <Col lg={6}>
-            <h4>Comp {compInfo.compId}</h4>
+            <h4>{title}</h4>
 
             <Table>
               <tbody>
+                <tr>
+                  <th>Competition ID</th>
+                  <td>{compInfo.compId}</td>
+                </tr>
+                <tr>
+                  <th>Name</th>
+                  <td>{compInfo.name || "N/A"}</td>
+                </tr>
+                <tr>
+                  <th>Type</th>
+                  <td>{compInfo.type}</td>
+                </tr>
                 <tr>
                   <th>Players</th>
                   <td>{compInfo.registeredPlayers}/{compInfo.players}</td>

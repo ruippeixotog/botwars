@@ -265,6 +265,11 @@ body {
   tbody > tr {
     cursor: pointer;
   }
+
+  .no-name {
+    color: grey;
+    font-style: italic;
+  }
 }
 
 .game-status {

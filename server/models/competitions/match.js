@@ -12,12 +12,12 @@ class Match extends Competition {
 
     this.gameInfo = {
       players: _.range(1, this.playerCount + 1),
-      gameParams: this.gameParams
+      gameParams: params.gameParams
     }
   }
 
-  getParams() {
-    return this.params;
+  getType() {
+    return "match";
   }
 
   getPlayerCount() {

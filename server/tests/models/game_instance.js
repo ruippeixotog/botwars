@@ -216,9 +216,10 @@ describe("GameInstance", function () {
   });
 
   it("should provide up-to-date info about a game", function () {
-    startNewGame({ a: 1 });
+    startNewGame({ name: "Game2", a: 1 });
     assert.deepEqual(game.getInfo(), {
       gameId: "testId",
+      name: "Game2",
       params: { a: 1 },
       connectedPlayers: 0,
       players: 2,
@@ -229,6 +230,7 @@ describe("GameInstance", function () {
     connectAll();
     assert.deepEqual(game.getInfo(), {
       gameId: "testId",
+      name: "Game2",
       params: { a: 1 },
       connectedPlayers: 2,
       players: 2,
@@ -242,6 +244,7 @@ describe("GameInstance", function () {
     game.move(1, DummyGame.END_MOVE);
     assert.deepEqual(game.getInfo(), {
       gameId: "testId",
+      name: "Game2",
       params: { a: 1 },
       connectedPlayers: 2,
       players: 2,

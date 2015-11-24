@@ -22,6 +22,8 @@ class CompetitionInstance {
   getInfo() {
     return {
       compId: this.id,
+      name: this.comp.getName(),
+      type: this.comp.getType(),
       params: this.comp.getParams(),
       registeredPlayers: this.playerReg.getRegisteredCount(),
       players: this.comp.getPlayerCount(),

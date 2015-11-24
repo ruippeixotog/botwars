@@ -127,6 +127,8 @@ let GameInfo = React.createClass({
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
+    let title = gameInfo.name || "Game #" + gameInfo.gameId;
+
     let winnerCell = "N/A";
     if (gameInfo.winners) {
       switch (gameInfo.winners.length) {
@@ -139,10 +141,18 @@ let GameInfo = React.createClass({
     return (
         <Row>
           <Col lg={6}>
-            <h4>Game {gameInfo.gameId}</h4>
+            <h4>{title}</h4>
 
             <Table>
               <tbody>
+                <tr>
+                  <th>Game ID</th>
+                  <td>{gameInfo.gameId}</td>
+                </tr>
+                <tr>
+                  <th>Name</th>
+                  <td>{gameInfo.name || "N/A"}</td>
+                </tr>
                 <tr>
                   <th>Players</th>
                   <td>{gameInfo.connectedPlayers}/{gameInfo.players}</td>
