@@ -1,6 +1,7 @@
 import AppDispatcher from "../AppDispatcher";
 import GamesEvents from "../events/GamesEvents";
-import request from "superagent";
+
+import API from "../utils/API";
 
 let gameEvents = {
   info: [GamesEvents.INFO, e => ({ player: e.player })],
@@ -17,83 +18,61 @@ let streams = {};
 let GamesActions = {
 
   retrieveGameInfo: function (gameHref, gameId) {
-    request.get(`/api${gameHref}/games/${gameId}`)
-        .set("Accept", "application/json")
-        .end(function (err, res) {
-          AppDispatcher.dispatch({
-            actionType: err ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO,
-            gameHref: gameHref,
-            gameId: gameId,
-            game: res.body,
-            error: err
-          });
-        });
+    API.gameHref(gameHref).games().gameId(gameId).info((error, game) => {
+      let actionType = error ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO;
+      AppDispatcher.dispatch({ actionType, gameHref, gameId, game, error });
+    });
   },
 
   retrieveGamesList: function (gameHref) {
-    request.get(`/api${gameHref}/games`)
-        .set("Accept", "application/json")
-        .end(function (err, res) {
-          AppDispatcher.dispatch({
-            actionType: err ? GamesEvents.GAMES_LIST_ERROR : GamesEvents.GAMES_LIST,
-            gameHref: gameHref,
-            games: res.body,
-            error: err
-          });
-        });
+    API.gameHref(gameHref).games().all((error, games) => {
+      let actionType = error ? GamesEvents.GAMES_LIST_ERROR : GamesEvents.GAMES_LIST;
+      AppDispatcher.dispatch({ actionType, gameHref, games, error });
+    });
   },
 
   register: function (gameHref, gameId) {
-    request.post(`/api${gameHref}/games/${gameId}/register`)
-        .set("Accept", "application/json")
-        .end(function (err, res) {
-          AppDispatcher.dispatch({
-            actionType: err ? GamesEvents.REGISTER_ERROR : GamesEvents.REGISTER_SUCCESS,
-            gameHref: gameHref,
-            gameId: gameId,
-            data: res.body,
-            error: err
-          });
-        });
+    API.gameHref(gameHref).games().gameId(gameId).register((error, data) => {
+      let actionType = error ? GamesEvents.REGISTER_ERROR : GamesEvents.REGISTER_SUCCESS;
+      AppDispatcher.dispatch({ actionType, gameHref, gameId, data, error });
+    });
   },
 
   requestGameStream: function (gameHref, gameId, playerToken) {
     if ((streams[gameHref] || {})[gameId]) return;
 
-    let query = "history=true";
-    if (playerToken) query += `&playerToken=${playerToken}`;
+    let params = { history: true, playerToken: playerToken };
+    API.gameHref(gameHref).games().gameId(gameId).stream(params, (error, ws) => {
+      streams[gameHref] = streams[gameHref] || {};
+      streams[gameHref][gameId] = ws;
 
-    let wsUri = `ws://${window.location.host}\/api${gameHref}/games/${gameId}/stream?${query}`;
-    let ws = new WebSocket(wsUri);
-    streams[gameHref] = streams[gameHref] || {};
-    streams[gameHref][gameId] = ws;
+      let hasEnded = false;
 
-    let hasEnded = false;
-
-    function dispatchEvent(actionType, data) {
-      AppDispatcher.dispatch({ actionType, gameHref, gameId, playerToken, data });
-    }
-
-    ws.onopen = function () {
-      dispatchEvent(GamesEvents.CONNECTION_OPENED);
-    };
-
-    ws.onmessage = function (ev) {
-      let event = JSON.parse(ev.data);
-      if (event.eventType === "end") {
-        hasEnded = true;
+      function dispatchEvent(actionType, data) {
+        AppDispatcher.dispatch({ actionType, gameHref, gameId, playerToken, data });
       }
-      let [actionType, getData] = gameEvents[event.eventType];
-      dispatchEvent(actionType, getData(event));
-    };
 
-    ws.onclose = function () {
-      dispatchEvent(hasEnded || ws.closeRequested ?
-          GamesEvents.CONNECTION_CLOSED : GamesEvents.CONNECTION_ERROR);
-      delete streams[gameHref][gameId];
-    };
+      ws.onopen = function () {
+        dispatchEvent(GamesEvents.CONNECTION_OPENED);
+      };
 
-    ws.onerror = ws.onclose;
+      ws.onmessage = function (ev) {
+        let event = JSON.parse(ev.data);
+        if (event.eventType === "end") {
+          hasEnded = true;
+        }
+        let [actionType, getData] = gameEvents[event.eventType];
+        dispatchEvent(actionType, getData(event));
+      };
+
+      ws.onclose = function () {
+        dispatchEvent(hasEnded || ws.closeRequested ?
+            GamesEvents.CONNECTION_CLOSED : GamesEvents.CONNECTION_ERROR);
+        delete streams[gameHref][gameId];
+      };
+
+      ws.onerror = ws.onclose;
+    });
   },
 
   sendMove: function (gameHref, gameId, move) {

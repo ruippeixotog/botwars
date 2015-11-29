@@ -100,13 +100,13 @@ let CompsIndex = React.createClass({
             <Col lg={9}>
               <Table className="games-list" responsive hover>
                 <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Players</th>
-                  <th>Status</th>
-                  <th>Winners</th>
-                </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Players</th>
+                    <th>Status</th>
+                    <th>Winners</th>
+                  </tr>
                 </thead>
                 <tbody>
                 {tableRows}
