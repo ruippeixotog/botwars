@@ -3,9 +3,8 @@ import { History } from "react-router";
 import { Row, Col, Input, Button, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
-import GamesInfoStore from "../stores/GamesInfoStore";
-import GamesStore from "../stores/GamesStore";
 import GamesEvents from "../events/GamesEvents";
+import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 
@@ -32,32 +31,30 @@ let GameInfo = React.createClass({
 
   getInitialState: function () {
     let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
-    let lastPlayerToken = gameStore.getLastToken();
-
     return {
-      gameInfo: {},
-      joinMode: lastPlayerToken ? JoinModes.PLAY : JoinModes.WATCH,
+      gameInfo: gameStore.getInfo(),
+      joinMode: gameStore.getLastToken() ? JoinModes.PLAY : JoinModes.WATCH,
       registering: false,
-      lastPlayerToken: lastPlayerToken
+      lastPlayerToken: gameStore.getLastToken()
     };
   },
 
   componentWillMount: function () {
-    GamesInfoStore.on(GamesEvents.GAME_INFO, this.onNewGameInfo);
-    GamesInfoStore.on(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
+    GamesStore.on(GamesEvents.GAME_INFO, this.onGameInfoUpdate);
+    GamesStore.on(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
     this.retrieveGameInfo();
   },
 
   componentWillUnmount: function () {
     clearInterval(this._gamePollTimeout);
-    GamesInfoStore.removeListener(GamesEvents.GAME_INFO, this.onNewGameInfo);
-    GamesInfoStore.removeListener(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
+    GamesStore.removeListener(GamesEvents.GAME_INFO, this.onGameInfoUpdate);
+    GamesStore.removeListener(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
     this.removeRegisterListeners();
   },
 
-  onNewGameInfo: function (gameHref, gameId) {
+  onGameInfoUpdate: function (gameHref, gameId) {
     if (this.isThisGame(gameHref, gameId)) {
-      this.setState({ gameInfo: GamesInfoStore.getGame(gameHref, gameId) });
+      this.setState({ gameInfo: GamesStore.getGame(gameHref, gameId).getInfo() });
     }
   },
 

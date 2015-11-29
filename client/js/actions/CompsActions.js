@@ -11,7 +11,9 @@ let CompsActions = {
           AppDispatcher.dispatch({
             actionType: err ? CompsEvents.COMP_INFO_ERROR : CompsEvents.COMP_INFO,
             gameHref: gameHref,
-            competition: err || res.body
+            compId: compId,
+            comp: res.body,
+            error: err
           });
         });
   },
@@ -23,7 +25,8 @@ let CompsActions = {
           AppDispatcher.dispatch({
             actionType: err ? CompsEvents.COMPS_LIST_ERROR : CompsEvents.COMPS_LIST,
             gameHref: gameHref,
-            competitions: err || res.body
+            comps: res.body,
+            error: err
           });
         });
   },
@@ -36,7 +39,8 @@ let CompsActions = {
             actionType: err ? CompsEvents.REGISTER_ERROR : CompsEvents.REGISTER_SUCCESS,
             gameHref: gameHref,
             compId: compId,
-            data: err || res.body
+            data: res.body,
+            error: err
           });
         });
   }

@@ -3,9 +3,8 @@ import { History, Link } from "react-router";
 import { Row, Col, Input, Button, Table } from "react-bootstrap";
 
 import CompsActions from "../actions/CompsActions";
-import CompsInfoStore from "../stores/CompsInfoStore";
-import CompsStore from "../stores/CompsStore";
 import CompsEvents from "../events/CompsEvents";
+import CompsStore from "../stores/CompsStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 
@@ -32,32 +31,30 @@ let CompInfo = React.createClass({
 
   getInitialState: function () {
     let compStore = CompsStore.getComp(this.getGame().href, this.getCompId());
-    let lastPlayerToken = compStore.getLastToken();
-
     return {
-      compInfo: {},
-      joinMode: lastPlayerToken ? JoinModes.PLAY : JoinModes.WATCH,
+      compInfo: compStore.getInfo(),
+      joinMode: compStore.getLastToken() ? JoinModes.PLAY : JoinModes.WATCH,
       registering: false,
-      lastPlayerToken: lastPlayerToken
+      lastPlayerToken: compStore.getLastToken()
     };
   },
 
   componentWillMount: function () {
-    CompsInfoStore.on(CompsEvents.COMP_INFO, this.onNewCompInfo);
-    CompsInfoStore.on(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
+    CompsStore.on(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
+    CompsStore.on(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
     this.retrieveCompInfo();
   },
 
   componentWillUnmount: function () {
     clearInterval(this._compPollTimeout);
-    CompsInfoStore.removeListener(CompsEvents.COMP_INFO, this.onNewCompInfo);
-    CompsInfoStore.removeListener(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
+    CompsStore.removeListener(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
+    CompsStore.removeListener(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
     this.removeRegisterListeners();
   },
 
-  onNewCompInfo: function (gameHref, compId) {
+  onCompInfoUpdate: function (gameHref, compId) {
     if (this.isThisGame(gameHref, compId)) {
-      this.setState({ compInfo: CompsInfoStore.getComp(gameHref, compId) });
+      this.setState({ compInfo: CompsStore.getComp(gameHref, compId).getInfo() });
     }
   },
 

@@ -23,7 +23,9 @@ let GamesActions = {
           AppDispatcher.dispatch({
             actionType: err ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO,
             gameHref: gameHref,
-            game: err || res.body
+            gameId: gameId,
+            game: res.body,
+            error: err
           });
         });
   },
@@ -35,7 +37,8 @@ let GamesActions = {
           AppDispatcher.dispatch({
             actionType: err ? GamesEvents.GAMES_LIST_ERROR : GamesEvents.GAMES_LIST,
             gameHref: gameHref,
-            games: err || res.body
+            games: res.body,
+            error: err
           });
         });
   },
@@ -48,7 +51,8 @@ let GamesActions = {
             actionType: err ? GamesEvents.REGISTER_ERROR : GamesEvents.REGISTER_SUCCESS,
             gameHref: gameHref,
             gameId: gameId,
-            data: err || res.body
+            data: res.body,
+            error: err
           });
         });
   },

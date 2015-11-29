@@ -3,8 +3,8 @@ import { History } from "react-router";
 import { Row, Col, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
-import GamesInfoStore from "../stores/GamesInfoStore";
 import GamesEvents from "../events/GamesEvents";
+import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
@@ -21,18 +21,21 @@ let GamesIndex = React.createClass({
   },
 
   getInitialState: function () {
-    return { games: GamesInfoStore.getGames(this.getGame().href) || [] };
+    let gameStores = GamesStore.getAllGames(this.getGame().href);
+    return { games: gameStores.map(g => g.info) };
   },
 
   componentWillMount: function () {
-    GamesInfoStore.on(GamesEvents.GAMES_LIST, this.onNewGamesList);
-    GamesInfoStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
+    GamesStore.on(GamesEvents.GAMES_LIST, this.onGamesListUpdate);
+    GamesStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
     this.retrieveGamesList();
   },
 
   componentWillReceiveProps: function (nextProps) {
     if (!this.isThisGame(nextProps.route.game.href)) {
-      this.setState({ games: GamesInfoStore.getGames(nextProps.route.game.href) || [] });
+      let gameStores = GamesStore.getAllGames(this.getGame().href);
+
+      this.setState({ games: gameStores.map(g => g.info) });
       clearInterval(this._gamesPollTimeout);
       this.retrieveGamesList(nextProps.route.game.href);
     }
@@ -40,13 +43,14 @@ let GamesIndex = React.createClass({
 
   componentWillUnmount: function () {
     clearInterval(this._gamesPollTimeout);
-    GamesInfoStore.removeListener(GamesEvents.GAMES_LIST, this.onNewGamesList);
-    GamesInfoStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
+    GamesStore.removeListener(GamesEvents.GAMES_LIST, this.onGamesListUpdate);
+    GamesStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
   },
 
-  onNewGamesList: function (gameHref) {
+  onGamesListUpdate: function (gameHref) {
     if (this.isThisGame(gameHref)) {
-      this.setState({ games: GamesInfoStore.getGames(gameHref) });
+      let gameStores = GamesStore.getAllGames(this.getGame().href);
+      this.setState({ games: gameStores.map(g => g.info) });
     }
   },
 

@@ -3,8 +3,8 @@ import { History } from "react-router";
 import { Row, Col, Table } from "react-bootstrap";
 
 import CompsActions from "../actions/CompsActions";
-import CompsInfoStore from "../stores/CompsInfoStore";
 import CompsEvents from "../events/CompsEvents";
+import CompsStore from "../stores/CompsStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
@@ -21,18 +21,21 @@ let CompsIndex = React.createClass({
   },
 
   getInitialState: function () {
-    return { competitions: CompsInfoStore.getComps(this.getGame().href) || [] };
+    let compStores = CompsStore.getAllComps(this.getGame().href);
+    return { comps: compStores.map(c => c.getInfo()) };
   },
 
   componentWillMount: function () {
-    CompsInfoStore.on(CompsEvents.COMPS_LIST, this.onNewCompsList);
-    CompsInfoStore.on(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
+    CompsStore.on(CompsEvents.COMPS_LIST, this.onCompsListUpdate);
+    CompsStore.on(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
     this.retrieveCompsList();
   },
 
   componentWillReceiveProps: function (nextProps) {
     if (!this.isThisGame(nextProps.route.game.href)) {
-      this.setState({ competitions: CompsInfoStore.getComps(nextProps.route.game.href) || [] });
+      let compStores = CompsStore.getAllComps(nextProps.route.game.href);
+
+      this.setState({ comps: compStores.map(c => c.getInfo()) });
       clearInterval(this._compsPollTimeout);
       this.retrieveGamesList(nextProps.route.game.href);
     }
@@ -40,13 +43,14 @@ let CompsIndex = React.createClass({
 
   componentWillUnmount: function () {
     clearInterval(this._compsPollTimeout);
-    CompsInfoStore.removeListener(CompsEvents.COMPS_LIST, this.onNewCompsList);
-    CompsInfoStore.removeListener(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
+    CompsStore.removeListener(CompsEvents.COMPS_LIST, this.onCompsListUpdate);
+    CompsStore.removeListener(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
   },
 
-  onNewCompsList: function (gameHref) {
+  onCompsListUpdate: function (gameHref) {
     if (this.isThisGame(gameHref)) {
-      this.setState({ competitions: CompsInfoStore.getComps(gameHref) });
+      let compStores = CompsStore.getAllComps(gameHref);
+      this.setState({ comps: compStores.map(c => c.info) });
     }
   },
 
@@ -67,7 +71,7 @@ let CompsIndex = React.createClass({
   },
 
   render: function () {
-    let tableRows = this.state.competitions.map(info => {
+    let tableRows = this.state.comps.map(info => {
       let nameCell = info.name || <span className="no-name">{"#" + info.compId}</span>;
 
       let winnerCell = "";
