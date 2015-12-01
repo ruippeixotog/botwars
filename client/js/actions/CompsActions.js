@@ -5,6 +5,13 @@ import API from "../utils/API";
 
 let CompsActions = {
 
+  retrieveCompsList: function (gameHref) {
+    API.gameHref(gameHref).competitions().all((error, comps) => {
+      let actionType = error ? CompsEvents.COMPS_LIST_ERROR : CompsEvents.COMPS_LIST;
+      AppDispatcher.dispatch({ actionType, gameHref, comps, error });
+    });
+  },
+
   retrieveCompInfo: function (gameHref, compId) {
     API.gameHref(gameHref).competitions().compId(compId).info((error, comp) => {
       let actionType = error ? CompsEvents.COMP_INFO_ERROR : CompsEvents.COMP_INFO;
@@ -12,10 +19,10 @@ let CompsActions = {
     });
   },
 
-  retrieveCompsList: function (gameHref) {
-    API.gameHref(gameHref).competitions().all((error, comps) => {
-      let actionType = error ? CompsEvents.COMPS_LIST_ERROR : CompsEvents.COMPS_LIST;
-      AppDispatcher.dispatch({ actionType, gameHref, comps, error });
+  retrieveCompGames: function (gameHref, compId) {
+    API.gameHref(gameHref).competitions().compId(compId).games((error, games) => {
+      let actionType = error ? CompsEvents.COMP_GAMES_ERROR : CompsEvents.COMP_GAMES;
+      AppDispatcher.dispatch({ actionType, gameHref, compId, games, error });
     });
   },
 

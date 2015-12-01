@@ -44,5 +44,9 @@ export default function (gameEngine) {
     else res.json(playerRes);
   });
 
+  router.get("/:compId/games", function (req, res) {
+    res.json(req.comp.getGames().map(g => g.getInfo()));
+  });
+
   return router;
 }

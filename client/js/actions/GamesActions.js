@@ -17,17 +17,17 @@ let streams = {};
 
 let GamesActions = {
 
-  retrieveGameInfo: function (gameHref, gameId) {
-    API.gameHref(gameHref).games().gameId(gameId).info((error, game) => {
-      let actionType = error ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO;
-      AppDispatcher.dispatch({ actionType, gameHref, gameId, game, error });
-    });
-  },
-
   retrieveGamesList: function (gameHref) {
     API.gameHref(gameHref).games().all((error, games) => {
       let actionType = error ? GamesEvents.GAMES_LIST_ERROR : GamesEvents.GAMES_LIST;
       AppDispatcher.dispatch({ actionType, gameHref, games, error });
+    });
+  },
+
+  retrieveGameInfo: function (gameHref, gameId) {
+    API.gameHref(gameHref).games().gameId(gameId).info((error, game) => {
+      let actionType = error ? GamesEvents.GAME_INFO_ERROR : GamesEvents.GAME_INFO;
+      AppDispatcher.dispatch({ actionType, gameHref, gameId, game, error });
     });
   },
 

@@ -5,6 +5,7 @@ import { Row, Col, Input, Button, Table } from "react-bootstrap";
 import CompsActions from "../actions/CompsActions";
 import CompsEvents from "../events/CompsEvents";
 import CompsStore from "../stores/CompsStore";
+import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 
@@ -33,6 +34,7 @@ let CompInfo = React.createClass({
     let compStore = CompsStore.getComp(this.getGame().href, this.getCompId());
     return {
       compInfo: compStore.getInfo(),
+      compGames: [],
       joinMode: compStore.getLastToken() ? JoinModes.PLAY : JoinModes.WATCH,
       registering: false,
       lastPlayerToken: compStore.getLastToken()
@@ -42,6 +44,8 @@ let CompInfo = React.createClass({
   componentWillMount: function () {
     CompsStore.on(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
     CompsStore.on(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
+    CompsStore.on(CompsEvents.COMP_GAMES, this.onCompGamesUpdate);
+    CompsStore.on(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
     this.retrieveCompInfo();
   },
 
@@ -49,6 +53,8 @@ let CompInfo = React.createClass({
     clearInterval(this._compPollTimeout);
     CompsStore.removeListener(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
     CompsStore.removeListener(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
+    CompsStore.removeListener(CompsEvents.COMP_GAMES, this.onCompGamesUpdate);
+    CompsStore.removeListener(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
     this.removeRegisterListeners();
   },
 
@@ -64,8 +70,27 @@ let CompInfo = React.createClass({
     }
   },
 
+  onCompGamesUpdate: function (gameHref, compId) {
+    if (this.isThisGame(gameHref, compId)) {
+      let compGameIds = CompsStore.getComp(gameHref, compId).getGames();
+      let compGames = compGameIds.map(gameId => {
+        let gameStore = GamesStore.getGame(this.getGame().href, gameId);
+        return gameStore.getInfo();
+      });
+
+      this.setState({ compGames });
+    }
+  },
+
+  onCompGamesError: function (gameHref, gameId) {
+    if (this.isThisGame(gameHref, gameId)) {
+      // TODO handle error
+    }
+  },
+
   retrieveCompInfo: function () {
     CompsActions.retrieveCompInfo(this.getGame().href, this.getCompId());
+    CompsActions.retrieveCompGames(this.getGame().href, this.getCompId());
     this._compPollTimeout = setTimeout(this.retrieveCompInfo, 5000);
   },
 

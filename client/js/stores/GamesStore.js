@@ -4,6 +4,7 @@ import _ from "underscore";
 
 import AppDispatcher from "../AppDispatcher";
 import GameStatus from "../constants/GameStatus";
+import CompsEvents from "../events/CompsEvents";
 import GamesEvents from "../events/GamesEvents";
 
 class GameStore {
@@ -71,6 +72,13 @@ AppDispatcher.register(function (action) {
 
     case GamesEvents.GAMES_LIST_ERROR:
       GamesStore.emit(actionType, gameHref, error);
+      break;
+
+    case CompsEvents.COMP_GAMES:
+      action.games.forEach(info => {
+        GamesStore.getGame(gameHref, info.gameId)._setInfo(info);
+        GamesStore.emit(GamesEvents.GAME_INFO, gameHref, info.gameId);
+      });
       break;
 
     case GamesEvents.REGISTER_SUCCESS:

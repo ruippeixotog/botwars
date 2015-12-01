@@ -12,7 +12,6 @@ function uri(host, path, protocol = "http") {
 }
 
 function exec(method, uri, data, cb) {
-  console.log(method + " " + uri);
   return request(method, uri)
       .send(data)
       .set("Accept", "application/json")
@@ -55,6 +54,7 @@ function compIdRoute(host, baseUri, compId) {
   let path = `${baseUri}/${compId}`;
   return {
     info: cb => httpGet(uri(host, path), cb),
+    games: cb => httpGet(uri(host, `${path}/games`), cb),
 
     register: (player, cb) => {
       let payload = {};

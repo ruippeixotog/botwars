@@ -8,13 +8,16 @@ import CompsEvents from "../events/CompsEvents";
 class CompStore {
   constructor() {
     this.info = {};
+    this.games = [];
     this.lastToken = null;
   }
 
   getInfo() { return this.info; }
+  getGames() { return this.games; }
   getLastToken() { return this.lastToken; }
 
   _setInfo(info) { this.info = info; }
+  _setGames(games) { this.games = games; }
   _setLastToken(playerToken) { this.lastToken = playerToken; }
 }
 
@@ -43,6 +46,15 @@ AppDispatcher.register(function (action) {
       break;
 
     case CompsEvents.COMP_INFO_ERROR:
+      CompsStore.emit(actionType, gameHref, compId, error);
+      break;
+
+    case CompsEvents.COMP_GAMES:
+      store._setGames(action.games.map(g => g.gameId));
+      CompsStore.emit(actionType, gameHref, compId);
+      break;
+
+    case CompsEvents.COMP_GAMES_ERROR:
       CompsStore.emit(actionType, gameHref, compId, error);
       break;
 
