@@ -1,0 +1,30 @@
+#match {
+  .match-game {
+    padding: 8px;
+  }
+
+  .game-status {
+    display: inline;
+    margin-left: 1em;
+  }
+
+  .player { font-weight: bold; }
+
+  .player1 { color: #F15854; }
+  .player2 { color: #60BD68; }
+  .player3 { color: #5DA5DA; }
+  .player4 { color: #FAA43A; }
+  .player5 { color: #4D4D4D; }
+  .player6 { color: #B276B2; }
+  .player7 { color: #FAA43A; }
+  .player8 { color: #F17CB0; }
+
+  .player1-bg { background-color: #F15854; }
+  .player2-bg { background-color: #60BD68; }
+  .player3-bg { background-color: #5DA5DA; }
+  .player4-bg { background-color: #FAA43A; }
+  .player5-bg { background-color: #4D4D4D; }
+  .player6-bg { background-color: #B276B2; }
+  .player7-bg { background-color: #FAA43A; }
+  .player8-bg { background-color: #F17CB0; }
+}

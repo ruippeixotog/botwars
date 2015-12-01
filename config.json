@@ -10,5 +10,12 @@
       "serverModule": "./models/games/sueca",
       "clientComponent": "./components/games/Sueca"
     }
+  },
+
+  "competitions": {
+    "match": {
+      "serverModule": "./models/competitions/match",
+      "clientComponent": "./components/competitions/Match"
+    }
   }
 }

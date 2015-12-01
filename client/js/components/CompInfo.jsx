@@ -144,8 +144,8 @@ let CompInfo = React.createClass({
   },
 
   render: function () {
-    let game = this.props.route.game;
-    let { joinMode, registering, compInfo } = this.state;
+    let { game, compTypes } = this.props.route;
+    let { joinMode, registering, compInfo, compGames } = this.state;
     let isGameFull = compInfo.connectedPlayers === compInfo.players;
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
@@ -167,13 +167,23 @@ let CompInfo = React.createClass({
           <Link to={`${game.href}/games/${compInfo.currentGame}`}>{compInfo.currentGame}</Link>;
     }
 
-    return (
-        <Row>
-          <Col lg={6}>
-            <h4>{title}</h4>
+    let CompComponent = compTypes[compInfo.type];
+    let compCol = CompComponent ?
+        <Col lg={9}><CompComponent gameHref={game.href} info={compInfo} games={compGames} /></Col> :
+        <Col lg={0} />;
 
-            <Table>
-              <tbody>
+    return (
+        <div>
+          <Row>
+            <Col lg={12}>
+              <h3>{title}</h3>
+            </Col>
+          </Row>
+          <Row>
+            {compCol}
+            <Col lg={CompComponent ? 3 : 12}>
+              <Table>
+                <tbody>
                 <tr>
                   <th>Competition ID</th>
                   <td>{compInfo.compId}</td>
@@ -210,44 +220,48 @@ let CompInfo = React.createClass({
                   <th>Winners</th>
                   <td>{winnerCell}</td>
                 </tr>
-              </tbody>
-            </Table>
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={12}>
+              <form onSubmit={this.handleCompFormSubmit}>
+                <Input label="I want to:">
+                  <Input name="action" type="radio" label="watch the game as a spectator"
+                         disabled={registering}
+                         checked={joinMode === JoinModes.WATCH}
+                         onChange={setJoinMode(JoinModes.WATCH)} />
 
-            <form onSubmit={this.handleCompFormSubmit}>
-              <Input label="I want to:">
-                <Input name="action" type="radio" label="watch the game as a spectator"
-                       disabled={registering}
-                       checked={joinMode === JoinModes.WATCH}
-                       onChange={setJoinMode(JoinModes.WATCH)} />
+                  <Input name="action" type="radio" label="enter the game as a new player"
+                         disabled={registering || isGameFull}
+                         checked={joinMode === JoinModes.REGISTER_AND_PLAY}
+                         onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
 
-                <Input name="action" type="radio" label="enter the game as a new player"
-                       disabled={registering || isGameFull}
-                       checked={joinMode === JoinModes.REGISTER_AND_PLAY}
-                       onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
-
-                <Input>
-                  <div className="radio">
-                    <label>
-                      <input name="action" type="radio"
-                             label="play the game as the player with token"
-                             disabled={registering}
-                             checked={joinMode === JoinModes.PLAY}
-                             onChange={setJoinMode(JoinModes.PLAY)} />
-                      <span>play the game as the player with token</span>
-                      <Input type="text" ref="playerToken" bsSize="small"
-                             groupClassName="player-token-form-group"
-                             disabled={registering || joinMode !== JoinModes.PLAY}
-                             placeholder="playerToken"
-                             defaultValue={this.state.lastPlayerToken} />
-                    </label>
-                  </div>
+                  <Input>
+                    <div className="radio">
+                      <label>
+                        <input name="action" type="radio"
+                               label="play the game as the player with token"
+                               disabled={registering}
+                               checked={joinMode === JoinModes.PLAY}
+                               onChange={setJoinMode(JoinModes.PLAY)} />
+                        <span>play the game as the player with token</span>
+                        <Input type="text" ref="playerToken" bsSize="small"
+                               groupClassName="player-token-form-group"
+                               disabled={registering || joinMode !== JoinModes.PLAY}
+                               placeholder="playerToken"
+                               defaultValue={this.state.lastPlayerToken} />
+                      </label>
+                    </div>
+                  </Input>
                 </Input>
-              </Input>
 
-              <Button type="submit">Start!</Button>
-            </form>
-          </Col>
-        </Row>
+                <Button type="submit">Start!</Button>
+              </form>
+            </Col>
+          </Row>
+        </div>
     );
   }
 });

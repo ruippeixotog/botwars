@@ -23,6 +23,8 @@ let games = _.map(config.games, (gameInfo, gameId) => {
   return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
 });
 
+let compTypes = _.mapObject(config.competitions, compInfo => require(compInfo.clientComponent));
+
 let gameRoutes = games.map(game =>
     <Route path={game.href} component={GameLayout} game={game} key={game.href}>
       <IndexRedirect to="games" />
@@ -33,7 +35,7 @@ let gameRoutes = games.map(game =>
       </Route>
       <Route path="competitions">
         <IndexRoute component={CompsIndex} game={game} />
-        <Route path=":compId" component={CompInfo} game={game} />
+        <Route path=":compId" component={CompInfo} game={game} compTypes={compTypes} />
       </Route>
     </Route>
 );
