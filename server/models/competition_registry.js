@@ -4,8 +4,13 @@ import CompetitionInstance from "./competition_instance";
 import Registry from "./registry";
 
 class CompetitionRegistry extends Registry {
-  constructor(Competition, gameEngine) {
-    super((id, params) => new CompetitionInstance(id, new Competition(params), gameEngine));
+  constructor(compTypes, gameEngine) {
+    super((id, { type, ...params }) => {
+      let Competition = compTypes[type];
+      return Competition ?
+          new CompetitionInstance(id, new Competition(params), gameEngine) :
+          null;
+    });
   }
 
   getAllCompetitionsInfo() {

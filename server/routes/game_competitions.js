@@ -1,12 +1,13 @@
 import express from "express";
 
 import CompetitionRegistry from "../models/competition_registry";
-import Match from "../models/competitions/match";
 
-export default function (gameEngine) {
-  let compEngine = new CompetitionRegistry(Match, gameEngine);
-
+export default function (gameEngine, compTypes) {
+  let compEngine = new CompetitionRegistry(compTypes, gameEngine);
   let router = new express.Router();
+
+  // TODO competition only for debugging purposes
+  compEngine.create({ name: "Test match", type: "match" }, "0");
 
   router.param("compId", function (req, res, next, compId) {
     let comp = compEngine.get(compId);

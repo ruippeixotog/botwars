@@ -4,15 +4,13 @@ class Registry {
   constructor(instanceFactory, idLength = 8) {
     this.instanceFactory = instanceFactory;
     this.idLength = idLength;
-    this.instances = {
-      "0": instanceFactory("0", { name: "Test" })
-    };
+    this.instances = {};
   }
 
-  create(params) {
-    let id = crypto.randomBytes(this.idLength).toString("hex");
+  create(params, id) {
+    id = id || crypto.randomBytes(this.idLength).toString("hex");
     this.instances[id] = this.instanceFactory(id, params || {});
-    return id;
+    return this.instances[id] ? id : null;
   }
 
   get(id) {

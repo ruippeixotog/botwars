@@ -4,6 +4,9 @@ import expressWs from "../models/utils/express-ws";
 export default function (gameEngine) {
   let router = expressWs(new express.Router());
 
+  // TODO game only for debugging purposes
+  gameEngine.create({ name: "Test game" }, "0");
+
   router.param("gameId", function (req, res, next, gameId) {
     let game = gameEngine.get(gameId);
     if (!game) { res.status(404).send("The requested game does not exist"); return; }

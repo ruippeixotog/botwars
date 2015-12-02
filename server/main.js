@@ -11,9 +11,11 @@ const config = JSON.parse(fs.readFileSync("config.json"));
 
 app.use(morgan("dev"));
 
+let compTypes = _.mapObject(config.competitions, compInfo => require(compInfo.serverModule));
+
 _.each(config.games, (gameInfo, gameId) => {
   let Game = require(gameInfo.serverModule);
-  app.use(`/api/${gameId}`, gameRoute(Game));
+  app.use(`/api/${gameId}`, gameRoute(Game, compTypes));
 });
 
 app.use(express.static("dist"));
