@@ -78,6 +78,10 @@ AppDispatcher.register(function (action) {
     case CompsEvents.REGISTER_ERROR:
       CompsStore.emit(actionType, gameHref, compId, error);
       break;
+
+    case CompsEvents.COMP_ENTER:
+      store._setLastToken(action.playerToken);
+      break;
   }
 });
 

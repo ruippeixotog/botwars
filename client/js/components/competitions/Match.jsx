@@ -27,7 +27,7 @@ let Match = React.createClass({
       let winnerElem = <span />;
       if (gameInfo.winners) {
         let winnerLabels = gameInfo.winners
-            .map(w => [<span className={`player player${w}`}>{w}</span>])
+            .map(w => [<span key={w} className={`player player${w}`}>{w}</span>])
             .reduce((acc, span) => [...acc, ", ", ...span]);
 
         let streamUrl = Paths.gameStream(gameHref, gameInfo.gameId, { compId: info.compId });
@@ -41,7 +41,7 @@ let Match = React.createClass({
               {i + 1}.
               <Link to={Paths.gameInfo(gameHref, gameInfo.gameId)}>
                 <GameStatusLabel status={gameInfo.status} showLabels={false}/>
-                {gameInfo.name || "#" + gameInfo.gameId}
+                {gameInfo.name || "#" + gameInfo.gameId.substr(0, 8)}
               </Link>
               <br />
               {winnerElem}

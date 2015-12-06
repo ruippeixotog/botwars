@@ -1,14 +1,18 @@
 import React from "react";
 import { History } from "react-router";
-import { Row, Col, Pagination } from "react-bootstrap";
+import { Row, Col, Pagination, Pager, PageItem } from "react-bootstrap";
 
 import GameStatus from "../constants/GameStatus";
 import ConnStatus from "../constants/ConnStatus";
 import GamesActions from "../actions/GamesActions";
+import CompsActions from "../actions/CompsActions";
 import GamesStore from "../stores/GamesStore";
+import CompsStore from "../stores/CompsStore";
 import GamesEvents from "../events/GamesEvents";
+import CompsEvents from "../events/CompsEvents";
 
 import GameStatusLabel from "./GameStatusLabel";
+import Paths from "../utils/RouterPaths";
 
 let GameStream = React.createClass({
   mixins: [History],
@@ -25,6 +29,10 @@ let GameStream = React.createClass({
     return this.props.location.query.playerToken;
   },
 
+  getCompId: function () {
+    return this.props.location.query.compId;
+  },
+
   isThisGame: function (gameHref, gameId) {
     return gameHref === this.getGame().href && gameId === this.getGameId();
   },
@@ -37,7 +45,9 @@ let GameStream = React.createClass({
       gameState: null,
       gameStateCount: 0,
       gameStateIndex: null,
-      followCurrentState: true
+      followCurrentState: true,
+      prevGameId: null,
+      nextGameId: null
     };
   },
 
@@ -51,13 +61,18 @@ let GameStream = React.createClass({
 
   componentDidMount: function () {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
+    this.retrieveCompGames();
   },
 
   componentWillReceiveProps: function (nextProps) {
     if (!this.isThisGame(nextProps.route.game.href, nextProps.params.gameId)) {
       clearInterval(this._connRetryTimeout);
       GamesActions.closeGameStream(this.getGame().href, this.getGameId());
-      GamesActions.requestGameStream(nextProps.route.game.href, nextProps.params.gameId);
+      GamesActions.requestGameStream(
+          nextProps.route.game.href,
+          nextProps.params.gameId,
+          nextProps.location.query.playerToken);
+      this.retrieveCompGames();
       this.setState(this.getInitialState());
     }
   },
@@ -119,7 +134,45 @@ let GameStream = React.createClass({
       } else {
         this.setState({ gameStateCount: newStateCount });
       }
+
+      if (gameStore.getStatus() === GameStatus.ENDED)
+        this.retrieveCompGames();
     }
+  },
+
+  retrieveCompGames: function () {
+    if (this.getCompId()) {
+      if (this.getPlayerToken()) {
+        CompsActions.enter(this.getGame().href, this.getCompId(), this.getPlayerToken());
+      }
+      CompsActions.retrieveCompGames(this.getGame().href, this.getCompId());
+      CompsStore.on(CompsEvents.COMP_GAMES, this.onCompGamesReceived);
+      CompsStore.on(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
+    }
+  },
+
+  onCompGamesReceived: function (gameHref, compId) {
+    if (gameHref === this.getGame().href && compId === this.getCompId()) {
+      let compGames = CompsStore.getComp(gameHref, compId).getGames();
+      let gameIdx = compGames.indexOf(this.getGameId());
+      this.setState({
+        prevGameId: gameIdx === 0 ? null : compGames[gameIdx - 1],
+        nextGameId: gameIdx === compGames.length - 1 ? null : compGames[gameIdx + 1]
+      });
+      this.removeCompGamesListeners();
+    }
+  },
+
+  onCompGamesError: function (gameHref, compId) {
+    if (gameHref === this.getGame().href && compId === this.getCompId()) {
+      // TODO handle error
+      this.removeCompGamesListeners();
+    }
+  },
+
+  removeCompGamesListeners: function () {
+    CompsStore.removeListener(CompsEvents.COMP_GAMES, this.onCompGamesReceived);
+    CompsStore.removeListener(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
   },
 
   handleMove: function (move) {
@@ -144,17 +197,47 @@ let GameStream = React.createClass({
     let game = this.getGame();
     let GameComponent = game.component;
 
-    let { connStatus, gameStatus } = this.state;
+    let { connStatus, gameStatus, prevGameId, nextGameId } = this.state;
     let isLastState = this.state.gameStateIndex === this.state.gameStateCount - 1;
+
+    let compControls = [];
+
+    if (this.getCompId()) {
+      let goTo = href => () => { this.history.pushState(null, href); };
+
+      let pathOpts = { playerToken: this.getPlayerToken(), compId: this.getCompId() };
+      let prevGamePath = Paths.gameStream(game.href, prevGameId, pathOpts);
+      let compInfoPath = Paths.compInfo(game.href, this.getCompId());
+      let nextGamePath = Paths.gameStream(game.href, nextGameId, pathOpts);
+
+      compControls.push(
+          <Pager key="comp-nav">
+            <PageItem disabled={!prevGameId} onSelect={goTo(prevGamePath)}
+                      href={prevGameId ? prevGamePath : null}>
+              &lt; Previous
+            </PageItem>
+            <PageItem onSelect={goTo(compInfoPath)} href={compInfoPath}>
+              Back
+            </PageItem>
+            <PageItem disabled={!nextGameId} onSelect={goTo(nextGamePath)}
+                      href={nextGameId ? nextGamePath : null}>
+              Next &gt;
+            </PageItem>
+          </Pager>
+      );
+    }
 
     return (
         <div className="flex">
           <Row className="game-stream">
-            <Col md={9}>
+            <Col md={6}>
               <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
                           ellipsis={false} items={this.state.gameStateCount}
                           activePage={this.state.gameStateIndex + 1}
                           onSelect={this.handleGameStateSelect} />
+            </Col>
+            <Col md={3} className="game-comp-nav">
+              {compControls}
             </Col>
             <Col md={3} className="game-status-col">
               <GameStatusLabel status={gameStatus} connStatus={connStatus} />

@@ -100,8 +100,12 @@ let CompInfo = React.createClass({
     let pageCompId = this.props.params.compId;
 
     if (gameHref === game.href && compId === pageCompId) {
-      let queryStr = `playerToken=${playerToken}`;
-      this.history.pushState(null, `${gameHref}/games/${compId}/stream?${queryStr}`);
+      let { compInfo, compGames } = this.state;
+      // TODO a game may not exist yet and it must be handled properly
+      let gameId = compInfo.currentGame || compGames[compGames.length - 1];
+
+      this.history.pushState(null, Paths.gameStream(gameHref, gameId, { compId, playerToken }));
+      this.removeRegisterListeners();
     }
   },
 
@@ -124,6 +128,8 @@ let CompInfo = React.createClass({
     e.preventDefault();
     let game = this.props.route.game;
     let compId = this.props.params.compId;
+    let { compInfo, compGames } = this.state;
+    let gameId = compInfo.currentGame || compGames[compGames.length - 1];
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH:
@@ -229,12 +235,12 @@ let CompInfo = React.createClass({
             <Col lg={12}>
               <form onSubmit={this.handleCompFormSubmit}>
                 <Input label="I want to:">
-                  <Input name="action" type="radio" label="watch the game as a spectator"
+                  <Input name="action" type="radio" label="watch the competition as a spectator"
                          disabled={registering}
                          checked={joinMode === JoinModes.WATCH}
                          onChange={setJoinMode(JoinModes.WATCH)} />
 
-                  <Input name="action" type="radio" label="enter the game as a new player"
+                  <Input name="action" type="radio" label="enter the competition as a new player"
                          disabled={registering || isGameFull}
                          checked={joinMode === JoinModes.REGISTER_AND_PLAY}
                          onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
@@ -243,11 +249,11 @@ let CompInfo = React.createClass({
                     <div className="radio">
                       <label>
                         <input name="action" type="radio"
-                               label="play the game as the player with token"
+                               label="play the competition as the player with token"
                                disabled={registering}
                                checked={joinMode === JoinModes.PLAY}
                                onChange={setJoinMode(JoinModes.PLAY)} />
-                        <span>play the game as the player with token</span>
+                        <span>play the competition as the player with token</span>
                         <Input type="text" ref="playerToken" bsSize="small"
                                groupClassName="player-token-form-group"
                                disabled={registering || joinMode !== JoinModes.PLAY}

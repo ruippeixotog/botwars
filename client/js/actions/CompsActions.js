@@ -31,6 +31,12 @@ let CompsActions = {
       let actionType = error ? CompsEvents.REGISTER_ERROR : CompsEvents.REGISTER_SUCCESS;
       AppDispatcher.dispatch({ actionType, gameHref, compId, data, error });
     });
+  },
+
+  enter: function (gameHref, compId, playerToken) {
+    setTimeout(() => AppDispatcher.dispatch({
+      actionType: CompsEvents.COMP_ENTER, gameHref, compId, playerToken
+    }));
   }
 };
 
