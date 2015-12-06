@@ -8,6 +8,7 @@ import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
+import Paths from "../utils/RouterPaths";
 
 let GamesIndex = React.createClass({
   mixins: [History],
@@ -67,7 +68,7 @@ let GamesIndex = React.createClass({
 
   handleGameOpen: function (e, gameId) {
     e.preventDefault();
-    this.history.pushState(null, `${this.getGame().href}/games/${gameId}`);
+    this.history.pushState(null, Paths.gameInfo(this.getGame().href, gameId));
   },
 
   render: function () {

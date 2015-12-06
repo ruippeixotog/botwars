@@ -7,6 +7,7 @@ import GamesEvents from "../events/GamesEvents";
 import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
+import Paths from "../utils/RouterPaths";
 
 const JoinModes = Object.freeze({
   WATCH: "WATCH",
@@ -74,8 +75,8 @@ let GameInfo = React.createClass({
     let pageGameId = this.props.params.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
-      let queryStr = `playerToken=${playerToken}`;
-      this.history.pushState(null, `${gameHref}/games/${gameId}/stream?${queryStr}`);
+      this.history.pushState(null, Paths.gameStream(gameHref, gameId, { playerToken }));
+      this.removeRegisterListeners();
     }
   },
 
@@ -101,7 +102,7 @@ let GameInfo = React.createClass({
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH:
-        this.history.pushState(null, `${game.href}/games/${gameId}/stream`);
+        this.history.pushState(null, Paths.gameStream(game.href, gameId));
         break;
 
       case JoinModes.REGISTER_AND_PLAY:
@@ -112,8 +113,8 @@ let GameInfo = React.createClass({
         break;
 
       case JoinModes.PLAY:
-        let queryStr = `playerToken=${this.refs.playerToken.getValue()}`;
-        this.history.pushState(null, `${game.href}/games/${gameId}/stream?${queryStr}`);
+        let playerToken = this.refs.playerToken.getValue();
+        this.history.pushState(null, Paths.gameStream(game.href, gameId, { playerToken }));
         break;
     }
   },

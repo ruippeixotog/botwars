@@ -8,6 +8,7 @@ import CompsStore from "../stores/CompsStore";
 import GamesStore from "../stores/GamesStore";
 
 import GameStatusLabel from "./GameStatusLabel";
+import Paths from "../utils/RouterPaths";
 
 const JoinModes = Object.freeze({
   WATCH: "WATCH",
@@ -126,7 +127,7 @@ let CompInfo = React.createClass({
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH:
-        this.history.pushState(null, `${game.href}/competitions/${compId}/stream`);
+        this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId }));
         break;
 
       case JoinModes.REGISTER_AND_PLAY:
@@ -137,8 +138,8 @@ let CompInfo = React.createClass({
         break;
 
       case JoinModes.PLAY:
-        let queryStr = `playerToken=${this.refs.playerToken.getValue()}`;
-        this.history.pushState(null, `${game.href}/competitions/${compId}/stream?${queryStr}`);
+        let playerToken = this.refs.playerToken.getValue();
+        this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId, playerToken }));
         break;
     }
   },
@@ -164,7 +165,7 @@ let CompInfo = React.createClass({
     let currentGameCell = "N/A";
     if (compInfo.currentGame) {
       currentGameCell =
-          <Link to={`${game.href}/games/${compInfo.currentGame}`}>{compInfo.currentGame}</Link>;
+          <Link to={Paths.gameInfo(game.href, compInfo.currentGame)}>{compInfo.currentGame}</Link>;
     }
 
     let CompComponent = compTypes[compInfo.type];

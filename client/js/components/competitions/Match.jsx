@@ -4,6 +4,7 @@ import { Row, Col, ProgressBar } from "react-bootstrap";
 import _ from "underscore";
 
 import GameStatusLabel from "../GameStatusLabel";
+import Paths from "../../utils/RouterPaths";
 
 let Match = React.createClass({
 
@@ -22,24 +23,25 @@ let Match = React.createClass({
 
     let progressBar = <ProgressBar>{playerProgressBars}</ProgressBar>;
 
-    let gameElems = games.map((info, i) => {
+    let gameElems = games.map((gameInfo, i) => {
       let winnerElem = <span />;
-      if (info.winners) {
-        let winnerLabels = info.winners
+      if (gameInfo.winners) {
+        let winnerLabels = gameInfo.winners
             .map(w => [<span className={`player player${w}`}>{w}</span>])
             .reduce((acc, span) => [...acc, ", ", ...span]);
 
+        let streamUrl = Paths.gameStream(gameHref, gameInfo.gameId, { compId: info.compId });
         winnerElem = winnerLabels.length > 0 ?
-            <span>Won by {winnerLabels}</span> :
-            <span>Draw</span>;
+            <Link to={streamUrl}>Won by {winnerLabels}</Link> :
+            <Link to={streamUrl}>Draw</Link>;
       }
       return (
-          <Col xs={6} sm={4} md={3} key={info.gameId}>
+          <Col xs={6} sm={4} md={3} key={gameInfo.gameId}>
             <div className="match-game panel panel-default">
               {i + 1}.
-              <Link to={`${gameHref}/games/${info.gameId}`}>
-                <GameStatusLabel status={info.status} showLabels={false}/>
-                {info.name || "#" + info.gameId}
+              <Link to={Paths.gameInfo(gameHref, gameInfo.gameId)}>
+                <GameStatusLabel status={gameInfo.status} showLabels={false}/>
+                {gameInfo.name || "#" + gameInfo.gameId}
               </Link>
               <br />
               {winnerElem}

@@ -8,6 +8,7 @@ import CompsStore from "../stores/CompsStore";
 
 import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
+import Paths from "../utils/RouterPaths";
 
 let CompsIndex = React.createClass({
   mixins: [History],
@@ -67,7 +68,7 @@ let CompsIndex = React.createClass({
 
   handleCompOpen: function (e, compId) {
     e.preventDefault();
-    this.history.pushState(null, `${this.getGame().href}/competitions/${compId}`);
+    this.history.pushState(null, Paths.compInfo(this.getGame().href, compId));
   },
 
   render: function () {
