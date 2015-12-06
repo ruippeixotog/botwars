@@ -120,7 +120,7 @@ let GameInfo = React.createClass({
 
   render: function () {
     let { joinMode, registering, gameInfo } = this.state;
-    let isGameFull = gameInfo.connectedPlayers === gameInfo.players;
+    let isGameFull = gameInfo.registeredPlayers === gameInfo.players;
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
@@ -156,7 +156,7 @@ let GameInfo = React.createClass({
                   </tr>
                   <tr>
                     <th>Players</th>
-                    <td>{gameInfo.connectedPlayers}/{gameInfo.players}</td>
+                    <td>{gameInfo.registeredPlayers}/{gameInfo.players}</td>
                   </tr>
                   <tr>
                     <th>Status</th>

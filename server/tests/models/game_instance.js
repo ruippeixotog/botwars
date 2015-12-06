@@ -221,17 +221,29 @@ describe("GameInstance", function () {
       gameId: "testId",
       name: "Game2",
       params: { a: 1 },
+      registeredPlayers: 0,
       connectedPlayers: 0,
       players: 2,
       status: "not_started"
     });
 
     registerAll();
+    assert.deepEqual(game.getInfo(), {
+      gameId: "testId",
+      name: "Game2",
+      params: { a: 1 },
+      registeredPlayers: 2,
+      connectedPlayers: 0,
+      players: 2,
+      status: "not_started"
+    });
+
     connectAll();
     assert.deepEqual(game.getInfo(), {
       gameId: "testId",
       name: "Game2",
       params: { a: 1 },
+      registeredPlayers: 2,
       connectedPlayers: 2,
       players: 2,
       status: "started",
@@ -246,6 +258,7 @@ describe("GameInstance", function () {
       gameId: "testId",
       name: "Game2",
       params: { a: 1 },
+      registeredPlayers: 2,
       connectedPlayers: 2,
       players: 2,
       status: "ended",

@@ -146,7 +146,7 @@ let CompInfo = React.createClass({
   render: function () {
     let { game, compTypes } = this.props.route;
     let { joinMode, registering, compInfo, compGames } = this.state;
-    let isGameFull = compInfo.connectedPlayers === compInfo.players;
+    let isGameFull = compInfo.registeredPlayers === compInfo.players;
 
     let setJoinMode = joinMode => () => { this.setState({ joinMode }); };
 
