@@ -1,3 +1,6 @@
+$player-colors: #F15854, #60BD68, #5DA5DA, #FAA43A,
+                #4D4D4D, #B276B2, #FAA43A, #F17CB0;
+
 #match {
   .match-game {
     padding: 8px;
@@ -24,21 +27,8 @@
 
   .player { font-weight: bold; }
 
-  .player1 { color: #F15854; }
-  .player2 { color: #60BD68; }
-  .player3 { color: #5DA5DA; }
-  .player4 { color: #FAA43A; }
-  .player5 { color: #4D4D4D; }
-  .player6 { color: #B276B2; }
-  .player7 { color: #FAA43A; }
-  .player8 { color: #F17CB0; }
-
-  .player1-bg { background-color: #F15854; }
-  .player2-bg { background-color: #60BD68; }
-  .player3-bg { background-color: #5DA5DA; }
-  .player4-bg { background-color: #FAA43A; }
-  .player5-bg { background-color: #4D4D4D; }
-  .player6-bg { background-color: #B276B2; }
-  .player7-bg { background-color: #FAA43A; }
-  .player8-bg { background-color: #F17CB0; }
+  @for $i from 1 through length($player-colors) {
+    .player#{$i} { color: nth($player-colors, $i); }
+    .player#{$i}-bg { background-color: nth($player-colors, $i); }
+  }
 }
