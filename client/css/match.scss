@@ -8,6 +8,20 @@
     margin-left: 1em;
   }
 
+  .win-token {
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 0.5em;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+  }
+
+  .token-right {
+    float: right;
+    margin-right: 0;
+  }
+
   .player { font-weight: bold; }
 
   .player1 { color: #F15854; }

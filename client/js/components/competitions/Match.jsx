@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router";
-import { Row, Col, ProgressBar } from "react-bootstrap";
+import { Row, Col, Table, ProgressBar } from "react-bootstrap";
 import _ from "underscore";
+
+import GameStatus from "../../constants/GameStatus";
 
 import GameStatusLabel from "../GameStatusLabel";
 import Paths from "../../utils/RouterPaths";
@@ -11,37 +13,41 @@ let Match = React.createClass({
   render: function () {
     let { gameHref, info, games } = this.props;
 
-    let weightedWinCount = _.times(info.players, () => 0);
-    games.filter(g => g.winners).forEach(g => {
-      g.winners.forEach(w => { weightedWinCount[w - 1] += 1 / g.winners.length })
-    });
-
-    let playerProgressBars = weightedWinCount.map((cnt, i) =>
-      <ProgressBar key={i} now={cnt} max={info.gamesTotal}
-                   className={`player${i + 1}-bg`} label={`%(now)s / %(max)s`} />
+    let sortedWinCount = _(info.winCount.map((cnt, i) => [cnt, i + 1])).sortBy(e => -e[0]);
+    let scores = sortedWinCount.map(([cnt, p], pos) =>
+      <tr key={p}>
+        <td>{pos + 1}.</td>
+        <td>
+          <span className={`win-token player${p}-bg`} />
+          Player {p}
+        </td>
+        <td>{cnt}</td>
+      </tr>
     );
 
-    let progressBar = <ProgressBar>{playerProgressBars}</ProgressBar>;
+    let progressBar = <ProgressBar active={info.status === GameStatus.STARTED}
+                                   now={info.gamesPlayed} max={info.gamesTotal}
+                                   label={`%(now)s / %(max)s`} />;
 
     let gameElems = games.map((gameInfo, i) => {
-      let winnerElem = <span />;
+      let winnerElem = <span>&nbsp;</span>;
       if (gameInfo.winners) {
-        let winnerLabels = gameInfo.winners
-            .map(w => [<span key={w} className={`player player${w}`}>{w}</span>])
-            .reduce((acc, span) => [...acc, ", ", ...span]);
+        let winnerLabels = gameInfo.winners.join(", ");
+        let tokens = gameInfo.winners.map(w =>
+            <span key={w} className={`win-token token-right player${w}-bg`} />);
 
         let streamUrl = Paths.gameStream(gameHref, gameInfo.gameId, { compId: info.compId });
         winnerElem = winnerLabels.length > 0 ?
-            <Link to={streamUrl}>Won by {winnerLabels}</Link> :
+            <Link to={streamUrl}>Won by {winnerLabels} {tokens}</Link> :
             <Link to={streamUrl}>Draw</Link>;
       }
       return (
           <Col xs={6} sm={4} md={3} key={gameInfo.gameId}>
             <div className="match-game panel panel-default">
-              {i + 1}.
+              {i + 1}.&nbsp;
               <Link to={Paths.gameInfo(gameHref, gameInfo.gameId)}>
-                <GameStatusLabel status={gameInfo.status} showLabels={false}/>
                 {gameInfo.name || "#" + gameInfo.gameId.substr(0, 8)}
+                <GameStatusLabel status={gameInfo.status} showLabels={false} />
               </Link>
               <br />
               {winnerElem}
@@ -53,13 +59,33 @@ let Match = React.createClass({
     return (
         <div id="match">
           <Row>
-            <Col md={12}>
-              <h4>Progress</h4>
-            </Col>
-          </Row>
-          <Row>
             <Col md={6}>
-              {progressBar}
+              <Row>
+                <Col md={12}>
+                  <h4>Score</h4>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <Table condensed>
+                    <tbody>
+                      {scores}
+                    </tbody>
+                  </Table>
+                </Col>
+              </Row>
+            </Col>
+            <Col md={6}>
+              <Row>
+                <Col md={12}>
+                  <h4>Progress</h4>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  {progressBar}
+                </Col>
+              </Row>
             </Col>
           </Row>
           <Row>
