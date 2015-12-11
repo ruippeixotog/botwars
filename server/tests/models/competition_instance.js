@@ -1,10 +1,9 @@
 import assert from "assert";
-
 import { EventEmitter } from "events";
 
-const Competition = require.main.require("server/models/competitions/competition");
-const CompetitionInstance = require.main.require("server/models/competition_instance");
-const Registry = require.main.require("server/models/registry");
+import Competition from "../../models/competitions/competition";
+import CompetitionInstance from "../../models/competition_instance";
+import Registry from "../../models/registry";
 
 class DummyCompetition extends Competition {
   constructor(params) {

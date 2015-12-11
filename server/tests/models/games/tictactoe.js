@@ -1,6 +1,6 @@
 import assert from "assert";
 
-const TicTacToe = require.main.require("server/models/games/tictactoe");
+import TicTacToe from "../../../models/games/tictactoe";
 
 describe("TicTacToe", function () {
   let game;

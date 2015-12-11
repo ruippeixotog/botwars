@@ -19,11 +19,12 @@ import PageNotFound from "./components/PageNotFound";
 import config from "../../config.json";
 
 let games = _.map(config.games, (gameInfo, gameId) => {
-  let GameComponent = require(gameInfo.clientComponent);
+  let GameComponent = require(gameInfo.clientComponent).default;
   return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
 });
 
-let compTypes = _.mapObject(config.competitions, compInfo => require(compInfo.clientComponent));
+let compTypes = _.mapObject(config.competitions, compInfo =>
+    require(compInfo.clientComponent).default);
 
 let gameRoutes = games.map(game =>
     <Route path={game.href} component={GameLayout} game={game} key={game.href}>

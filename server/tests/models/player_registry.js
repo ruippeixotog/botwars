@@ -1,6 +1,6 @@
 import assert from "assert";
 
-const PlayerRegistry = require.main.require("server/models/player_registry");
+import PlayerRegistry from "../../models/player_registry";
 
 describe("PlayerRegistry", function () {
   let registry;

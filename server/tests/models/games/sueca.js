@@ -1,7 +1,7 @@
 import assert from "assert";
 import _ from "underscore";
 
-const Sueca = require.main.require("server/models/games/sueca");
+import Sueca from "../../../models/games/sueca";
 
 describe("Sueca", function () {
   let game;

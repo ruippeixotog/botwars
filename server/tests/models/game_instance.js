@@ -1,7 +1,7 @@
 import assert from "assert";
 
-const GameInstance = require.main.require("server/models/game_instance");
-const Game = require.main.require("server/models/games/game");
+import GameInstance from "../../models/game_instance";
+import Game from "../../models/games/game";
 
 class DummyGame extends Game {
   constructor(params) {
