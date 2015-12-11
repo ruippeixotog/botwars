@@ -2,8 +2,14 @@ $player-colors: #F15854, #60BD68, #5DA5DA, #FAA43A,
                 #4D4D4D, #B276B2, #FAA43A, #F17CB0;
 
 #match {
+  @keyframes fadeIn {
+    from { opacity: 0 }
+    to { opacity: 1 }
+  }
+
   .match-game {
     padding: 8px;
+    animation: fadeIn 0.2s ease-in;
   }
 
   .game-status {
