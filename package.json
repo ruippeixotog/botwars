@@ -58,6 +58,6 @@
   "scripts": {
     "start": "GULP_ENV=development gulp server",
     "lint": "eslint --ext .js,.jsx server client",
-    "test": "mocha --require babel-register --recursive server/tests"
+    "test": "npm run lint && mocha --require babel-register --recursive server/tests"
   }
 }
