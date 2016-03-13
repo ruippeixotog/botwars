@@ -1,4 +1,5 @@
 import PlayerRegistry from "./player_registry";
+import _ from "underscore";
 
 const CompStatus = Object.freeze({
   NOT_STARTED: "not_started",
@@ -70,16 +71,18 @@ class CompetitionInstance {
     return this.hasStarted() ? this.comp.getWinners() : null;
   }
 
-  _createNewGame(gameInfo) {
+  _createNewGame(gameInfo, lastGame) {
     if (gameInfo) {
-      let gameId = this.gameEngine.create(gameInfo.gameParams);
+      let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, 'params') } : {};
+      let gameParams = Object.assign({}, gameInfo.gameParams, lastGameState);
+      let gameId = this.gameEngine.create(gameParams);
       let game = this.currentGame = this.gameEngine.get(gameId);
       gameInfo.players.forEach(p => game.registerNewPlayer(p, this.playerReg.getPlayerToken(p)));
 
       this.games.push(game);
 
       this.comp.onGameStart(game);
-      game.on("end", () => this._createNewGame(this.comp.onGameEnd(game)));
+      game.on("end", () => this._createNewGame(this.comp.onGameEnd(game), game));
 
     } else {
       this.currentGame = null;

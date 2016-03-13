@@ -27,7 +27,11 @@ class MiniSueca extends Game {
     for (let i = 0; i < 4; i++) {
       this.hands[i] = deck.slice(cardNumber * i, cardNumber * (i + 1));
     }
-    this.trumpPlayer = Math.floor(Math.random() * 4 + 1);
+    if (params.lastGame && params.lastGame.trumpPlayer) {
+      this.trumpPlayer = ( params.lastGame.trumpPlayer % 4 ) + 1;
+    } else {
+      this.trumpPlayer = Math.floor(Math.random() * 4 + 1);
+    }
     this.trump = this.hands[this.trumpPlayer - 1][0];
 
     this.nextPlayer = MiniSueca.getPlayerAfter(this.trumpPlayer);
