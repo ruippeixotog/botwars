@@ -5,6 +5,7 @@ class Game {
     }
     this.name = name;
     this.params = params;
+    this.gameClass = this.constructor.name;
   }
 
   getName() {

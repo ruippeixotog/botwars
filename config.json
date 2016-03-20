@@ -22,5 +22,10 @@
       "serverModule": "./models/competitions/match",
       "clientComponent": "./components/competitions/Match"
     }
+  },
+
+  "couchbase": {
+    "cluster": "http://localhost:8091/",
+    "bucket": "default"
   }
 }

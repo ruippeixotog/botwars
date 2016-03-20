@@ -3,6 +3,11 @@ import deepcopy from "./utils/deepcopy";
 import { EventEmitter } from "events";
 import PlayerRegistry from "./player_registry";
 import Timer from "./utils/timer";
+import _ from "underscore";
+import lodash from "lodash";
+import db from "./utils/database";
+import fs from "fs";
+const config = JSON.parse(fs.readFileSync("config.json"));
 
 const GameStatus = Object.freeze({
   NOT_STARTED: "not_started",
@@ -38,6 +43,15 @@ class GameInstance extends EventEmitter {
       }
       this.history.events.push({ eventType: "move", player, move });
     });
+  }
+
+  static restore(storedObject) {
+    let storedGame = storedObject.game;
+    let gameClassModule = _.find(config.games, { name: storedGame.gameClass }).serverModule;
+    let GameClass = require('../' + gameClassModule).default;
+    let game = new GameClass();
+    let newGameInstance = new GameInstance(storedObject.id, game);
+    return lodash.merge(newGameInstance, storedObject);
   }
 
   getInfo() {
@@ -120,6 +134,7 @@ class GameInstance extends EventEmitter {
     } else {
       this.status = this.game.isError() ? GameStatus.ERROR : GameStatus.ENDED;
       this.emit("end");
+      db.games.save(this);
     }
   }
 

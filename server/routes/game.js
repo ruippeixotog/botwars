@@ -7,12 +7,12 @@ import competitionsRoutes from "./game_competitions";
 import gamesRoutes from "./game_games";
 
 export default function (Game, compTypes) {
-  let engine = new GameRegistry(Game);
+  let gameRegistry = new GameRegistry(Game);
   let router = new express.Router();
 
   router.use(bodyParser.json());
-  router.use("/games", gamesRoutes(engine));
-  router.use("/competitions", competitionsRoutes(engine, compTypes));
+  router.use("/games", gamesRoutes(gameRegistry));
+  router.use("/competitions", competitionsRoutes(gameRegistry, compTypes));
 
   return router;
 }
