@@ -19,6 +19,7 @@
 
   "competitions": {
     "match": {
+      "name": "Match",
       "serverModule": "./models/competitions/match",
       "clientComponent": "./components/competitions/Match"
     }

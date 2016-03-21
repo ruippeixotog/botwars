@@ -7,10 +7,9 @@ import db from "../models/utils/database"
 class GameRegistry extends Registry {
   constructor(Game) {
     super((id, params) => new GameInstance(id, new Game(params)));
-    this.restoreAllGames(Game);
   }
 
-  restoreAllGames(Game) {
+  restoreAllStoredGames(Game) {
     var gameRegistry = this;
     db.games.getAll(Game.name, function(err, games) {
       if (err) {

@@ -46,8 +46,7 @@ class GameInstance extends EventEmitter {
   }
 
   static restore(storedObject) {
-    let storedGame = storedObject.game;
-    let gameClassModule = _.find(config.games, { name: storedGame.gameClass }).serverModule;
+    let gameClassModule = _.find(config.games, { name: storedObject.game.gameClass }).serverModule;
     let GameClass = require('../' + gameClassModule).default;
     let game = new GameClass();
     let newGameInstance = new GameInstance(storedObject.id, game);
@@ -134,8 +133,8 @@ class GameInstance extends EventEmitter {
     } else {
       this.status = this.game.isError() ? GameStatus.ERROR : GameStatus.ENDED;
       this.emit("end");
-      db.games.save(this);
     }
+    db.games.save(this);
   }
 
   _onMoveTimeout() {

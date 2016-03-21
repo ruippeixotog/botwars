@@ -5,6 +5,7 @@ class Competition {
     }
     this.name = name;
     this.params = params;
+    this.compClass = this.constructor.name;
   }
 
   getName() {

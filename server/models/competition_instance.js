@@ -1,5 +1,9 @@
+import db from "../models/utils/database"
 import PlayerRegistry from "./player_registry";
 import _ from "underscore";
+import lodash from "lodash";
+import fs from "fs";
+const config = JSON.parse(fs.readFileSync("config.json"));
 
 const CompStatus = Object.freeze({
   NOT_STARTED: "not_started",
@@ -9,15 +13,26 @@ const CompStatus = Object.freeze({
 });
 
 class CompetitionInstance {
-  constructor(id, comp, gameEngine) {
+  constructor(id, comp, gameRegistry) {
     this.id = id;
     this.comp = comp;
-    this.gameEngine = gameEngine;
+    this.gameRegistry = gameRegistry;
 
     this.playerReg = new PlayerRegistry(comp.getPlayerCount());
     this.status = CompStatus.NOT_STARTED;
     this.currentGame = null;
     this.games = [];
+  }
+
+  static restore(storedObject) {
+    let competitionClassModule = _.find(config.competitions, { name: storedObject.comp.compClass }).serverModule;
+    let CompetitionClass = require('../' + competitionClassModule).default;
+    let competition = new CompetitionClass();
+    let competitionInstance = new CompetitionInstance(storedObject.id, competition, storedObject.gameRegistry);
+    competitionInstance.games = storedObject.games.map(function(game) {
+      return competitionInstance.gameRegistry.instances[game.id];
+    });
+    return lodash.merge(competitionInstance, lodash.omit(storedObject, ['gameRegistry', 'games']));
   }
 
   getInfo() {
@@ -75,8 +90,8 @@ class CompetitionInstance {
     if (gameInfo) {
       let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, 'params') } : {};
       let gameParams = Object.assign({}, gameInfo.gameParams, lastGameState);
-      let gameId = this.gameEngine.create(gameParams);
-      let game = this.currentGame = this.gameEngine.get(gameId);
+      let gameId = this.gameRegistry.create(gameParams);
+      let game = this.currentGame = this.gameRegistry.get(gameId);
       gameInfo.players.forEach(p => game.registerNewPlayer(p, this.playerReg.getPlayerToken(p)));
 
       this.games.push(game);
@@ -88,6 +103,7 @@ class CompetitionInstance {
       this.currentGame = null;
       this.status = this.comp.isEnded() ? CompStatus.ENDED : CompStatus.ERROR;
     }
+    db.competitions.save(this);
   }
 }
 
