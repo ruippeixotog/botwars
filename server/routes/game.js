@@ -11,9 +11,9 @@ export default function (Game, compTypes) {
   let gameRegistry = new GameRegistry(Game);
   let compRegistry = new CompetitionRegistry(gameRegistry, compTypes);
 
-  // TODO promisify and use then()
-  gameRegistry.restoreAllStoredGames(Game);
-  compRegistry.restoreAllStoredCompetitions(Game, gameRegistry);
+  gameRegistry.restoreAllStoredGames(Game).then(
+      () => compRegistry.restoreAllStoredCompetitions(Game, gameRegistry)
+  );
 
   let router = new express.Router();
 

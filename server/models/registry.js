@@ -12,7 +12,7 @@ class Registry {
     this.instances[id] = this.instanceFactory(id, params || {});
     return this.instances[id] ? id : null;
   }
-  
+
   restore(storedObject) {
     let id = storedObject.id;
     this.instances[id] = this.constructor.getInstanceClass().restore(storedObject);

@@ -25,14 +25,18 @@ class CompetitionInstance {
   }
 
   static restore(storedObject) {
-    let competitionClassModule = _.find(config.competitions, { name: storedObject.comp.compClass }).serverModule;
-    let CompetitionClass = require('../' + competitionClassModule).default;
+    let compClass = storedObject.comp.compClass;
+    let competitionClassModule = _.find(config.competitions, { name: compClass }).serverModule;
+    let CompetitionClass = require("../" + competitionClassModule).default;
     let competition = new CompetitionClass();
-    let competitionInstance = new CompetitionInstance(storedObject.id, competition, storedObject.gameRegistry);
-    competitionInstance.games = storedObject.games.map(function(game) {
-      return competitionInstance.gameRegistry.instances[game.id];
-    });
-    return lodash.merge(competitionInstance, lodash.omit(storedObject, ['gameRegistry', 'games']));
+    let competitionInstance = new CompetitionInstance(
+        storedObject.id, competition, storedObject.gameRegistry);
+
+    competitionInstance.games = storedObject.games.map(
+      game => competitionInstance.gameRegistry.instances[game.id]
+    );
+
+    return lodash.merge(competitionInstance, lodash.omit(storedObject, ["gameRegistry", "games"]));
   }
 
   getInfo() {
@@ -88,7 +92,7 @@ class CompetitionInstance {
 
   _createNewGame(gameInfo, lastGame) {
     if (gameInfo) {
-      let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, 'params') } : {};
+      let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, "params") } : {};
       let gameParams = Object.assign({}, gameInfo.gameParams, lastGameState);
       let gameId = this.gameRegistry.create(gameParams);
       let game = this.currentGame = this.gameRegistry.get(gameId);

@@ -10,7 +10,7 @@ const cardData = {
   // "6": { index: 4, points: 0 },
   "Q": { index: 5, points: 2 },
   // "J": { index: 6, points: 3 },
-  "K": { index: 7, points: 4 },
+  "K": { index: 7, points: 4 }
   // "7": { index: 8, points: cardNumber },
   // "A": { index: 9, points: 11 }
 };

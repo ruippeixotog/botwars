@@ -47,7 +47,7 @@ class GameInstance extends EventEmitter {
 
   static restore(storedObject) {
     let gameClassModule = _.find(config.games, { name: storedObject.game.gameClass }).serverModule;
-    let GameClass = require('../' + gameClassModule).default;
+    let GameClass = require("../" + gameClassModule).default;
     let game = new GameClass();
     let newGameInstance = new GameInstance(storedObject.id, game);
     return lodash.merge(newGameInstance, storedObject);

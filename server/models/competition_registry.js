@@ -14,17 +14,14 @@ class CompetitionRegistry extends Registry {
   }
 
   restoreAllStoredCompetitions(Game, gameRegistry) {
-    var compRegistry = this;
-    db.competitions.getAll(Game.name, function(err, competitions) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      competitions.forEach(function(competition) {
-        competition.gameRegistry = gameRegistry;
-        compRegistry.restore(competition);
-      });
-    });
+    let compRegistry = this;
+    db.competitions.getAll(Game.name)
+        .then(competitions =>
+            competitions.forEach(competition => {
+              competition.gameRegistry = gameRegistry;
+              compRegistry.restore(competition);
+            })
+        );
   }
 
   getAllCompetitionsInfo() {
