@@ -32,7 +32,7 @@
     "ws": "0.8.1"
   },
   "devDependencies": {
-    "babel-eslint": "4.1.6",
+    "babel-eslint": "5.0.0",
     "babel-loader": "6.2.0",
     "babel-plugin-syntax-object-rest-spread": "6.3.13",
     "babel-plugin-transform-object-rest-spread": "6.3.13",
