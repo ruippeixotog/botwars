@@ -24,7 +24,7 @@ class DummyCompetition extends Competition {
 
   start() { return { players: [1, 2], gameParams: {} }; }
   onGameEnd() { return null; }
-  getExtraInfo() { return { extra: 42 } }
+  getExtraInfo() { return { extra: 42 }; }
 }
 
 class DummyGameInstance extends EventEmitter {

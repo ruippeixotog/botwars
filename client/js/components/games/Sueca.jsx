@@ -114,7 +114,7 @@ const Hands = ({ player, nextPlayer, handCards, tricksDone, currentTrick, rot, o
     if (i === player - 1) {
       hands.push(<Hand player={i + 1} nextPlayer={nextPlayer} cards={handCards}
                        cardCount={handCards.length} key={`hand${i}`} rot={rot}
-                       onCardClick={onCardClick ? card => onCardClick(card, i) : null} />)
+                       onCardClick={onCardClick ? card => onCardClick(card, i) : null} />);
     } else {
       let cardCount = 10 - tricksDone - (currentTrick[i] ? 1 : 0);
       hands.push(<Hand player={i + 1} nextPlayer={nextPlayer} cardCount={cardCount}

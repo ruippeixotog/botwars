@@ -47,7 +47,7 @@ function gameIdRoute(host, baseUri, gameId) {
 
       return cb(null, new WebSocket(uri(host, `${path}/stream?${query}`, "ws")));
     }
-  }
+  };
 }
 
 function compIdRoute(host, baseUri, compId) {
@@ -61,7 +61,7 @@ function compIdRoute(host, baseUri, compId) {
       if (_.isFunction(player)) { cb = player; } else { payload.player = player; }
       return httpPost(uri(host, `${path}/register`), payload, cb);
     }
-  }
+  };
 }
 
 function gamesRoute(host, baseUri) {
@@ -69,7 +69,7 @@ function gamesRoute(host, baseUri) {
   return {
     all: cb => httpGet(uri(host, path), cb),
     gameId: gameId => gameIdRoute(host, path, gameId)
-  }
+  };
 }
 
 function compsRoute(host, baseUri) {
@@ -77,7 +77,7 @@ function compsRoute(host, baseUri) {
   return {
     all: cb => httpGet(uri(host, path), cb),
     compId: compId => compIdRoute(host, path, compId)
-  }
+  };
 }
 
 function gameHrefRoute(host, baseUri, gameHref) {

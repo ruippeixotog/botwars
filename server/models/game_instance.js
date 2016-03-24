@@ -51,7 +51,7 @@ class GameInstance extends EventEmitter {
       status: this.status,
       ...(this.status === GameStatus.STARTED ? { nextPlayer: this.getNextPlayer() } : {}),
       ...(this.status === GameStatus.ENDED ? { winners: this.getWinners() } : {})
-    }
+    };
   }
 
   registerNewPlayer(player, playerToken) {

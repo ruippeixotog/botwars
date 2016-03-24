@@ -32,7 +32,7 @@ class CompetitionInstance {
       ...(this.status === CompStatus.STARTED ? { currentGame: this.currentGame.id } : {}),
       ...(this.status === CompStatus.ENDED ? { winners: this.getWinners() } : {}),
       ...this.comp.getExtraInfo()
-    }
+    };
   }
 
   registerNewPlayer(player, playerToken) {
