@@ -19,17 +19,13 @@ class CompetitionRegistry extends Registry {
         .then(competitions =>
             competitions.forEach(competition => {
               competition.gameRegistry = gameRegistry;
-              compRegistry.restore(competition);
+              compRegistry.restore(competition, CompetitionInstance);
             })
         );
   }
 
   getAllCompetitionsInfo() {
     return _(this.instances).map(comp => comp.getInfo());
-  }
-
-  static getInstanceClass() {
-    return CompetitionInstance;
   }
 }
 

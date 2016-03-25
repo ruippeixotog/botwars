@@ -13,18 +13,14 @@ class Registry {
     return this.instances[id] ? id : null;
   }
 
-  restore(storedObject) {
+  restore(storedObject, InstanceClass) {
     let id = storedObject.id;
-    this.instances[id] = this.constructor.getInstanceClass().restore(storedObject);
+    this.instances[id] = InstanceClass.restore(storedObject);
     return this.instances[id] ? id : null;
   }
 
   get(id) {
     return this.instances[id];
-  }
-
-  static getInstanceClass() {
-    throw new Error(this.constructor.name + ".getInstanceClass not implemented");
   }
 }
 

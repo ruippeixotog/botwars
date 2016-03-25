@@ -93,7 +93,7 @@ class CompetitionInstance {
   _createNewGame(gameInfo, lastGame) {
     if (gameInfo) {
       let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, "params") } : {};
-      let gameParams = Object.assign({}, gameInfo.gameParams, lastGameState);
+      let gameParams = { ...gameInfo.gameParams, ...lastGameState };
       let gameId = this.gameRegistry.create(gameParams);
       let game = this.currentGame = this.gameRegistry.get(gameId);
       gameInfo.players.forEach(p => game.registerNewPlayer(p, this.playerReg.getPlayerToken(p)));
