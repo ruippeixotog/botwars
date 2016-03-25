@@ -4,13 +4,11 @@ import Promise from "bluebird";
 
 const config = JSON.parse(fs.readFileSync("config.json"));
 
-function getNoopFunction (value) {
-  return function() {
-    return value;
-  }
+function getNoopFunction(value) {
+  return () => value;
 }
 
-var database = {
+let database = {
   games: {
     save: getNoopFunction(),
     getAll: getNoopFunction(Promise.resolve([]))
