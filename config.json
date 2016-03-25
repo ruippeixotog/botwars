@@ -9,11 +9,6 @@
       "name": "Sueca",
       "serverModule": "./models/games/sueca",
       "clientComponent": "./components/games/Sueca"
-    },
-    "mini-sueca": {
-      "name": "MiniSueca",
-      "serverModule": "./models/games/mini-sueca",
-      "clientComponent": "./components/games/MiniSueca"
     }
   },
 
