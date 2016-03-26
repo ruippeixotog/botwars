@@ -14,8 +14,15 @@
 
   "competitions": {
     "match": {
+      "name": "Match",
       "serverModule": "./models/competitions/match",
       "clientComponent": "./components/competitions/Match"
     }
+  },
+
+  "couchbase": {
+    "enabled": false,
+    "cluster": "http://localhost:8091/",
+    "bucket": "default"
   }
 }

@@ -25,7 +25,11 @@ class Sueca extends Game {
     for (let i = 0; i < 4; i++) {
       this.hands[i] = deck.slice(10 * i, 10 * (i + 1));
     }
-    this.trumpPlayer = Math.floor(Math.random() * 4 + 1);
+    if (params.lastGame && params.lastGame.trumpPlayer) {
+      this.trumpPlayer = Sueca.getPlayerAfter(params.lastGame.trumpPlayer);
+    } else {
+      this.trumpPlayer = Math.floor(Math.random() * 4 + 1);
+    }
     this.trump = this.hands[this.trumpPlayer - 1][0];
 
     this.nextPlayer = Sueca.getPlayerAfter(this.trumpPlayer);

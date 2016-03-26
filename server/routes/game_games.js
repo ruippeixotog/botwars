@@ -1,14 +1,14 @@
 import express from "express";
 import expressWs from "../models/utils/express-ws";
 
-export default function (gameEngine) {
+export default function (gameRegistry) {
   let router = expressWs(new express.Router());
 
   // TODO game only for debugging purposes
-  gameEngine.create({ name: "Test game" }, "0");
+  gameRegistry.create({ name: "Test game" }, "0");
 
   router.param("gameId", function (req, res, next, gameId) {
-    let game = gameEngine.get(gameId);
+    let game = gameRegistry.get(gameId);
     if (!game) { res.status(404).send("The requested game does not exist"); return; }
     req.game = game;
 
@@ -22,11 +22,11 @@ export default function (gameEngine) {
   });
 
   router.get("/", function (req, res) {
-    res.json(gameEngine.getAllGamesInfo());
+    res.json(gameRegistry.getAllGamesInfo());
   });
 
   router.post("/", function (req, res) {
-    let gameId = gameEngine.create(req.body);
+    let gameId = gameRegistry.create(req.body);
 
     if (!gameId) res.status(400).send("Could not create new game");
     else res.json({ gameId });

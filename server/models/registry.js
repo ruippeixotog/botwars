@@ -13,6 +13,12 @@ class Registry {
     return this.instances[id] ? id : null;
   }
 
+  restore(storedObject, InstanceClass) {
+    let id = storedObject.id;
+    this.instances[id] = InstanceClass.restore(storedObject);
+    return this.instances[id] ? id : null;
+  }
+
   get(id) {
     return this.instances[id];
   }

@@ -1,4 +1,9 @@
+import db from "../models/utils/database"
 import PlayerRegistry from "./player_registry";
+import _ from "underscore";
+import lodash from "lodash";
+import fs from "fs";
+const config = JSON.parse(fs.readFileSync("config.json"));
 
 const CompStatus = Object.freeze({
   NOT_STARTED: "not_started",
@@ -8,15 +13,30 @@ const CompStatus = Object.freeze({
 });
 
 class CompetitionInstance {
-  constructor(id, comp, gameEngine) {
+  constructor(id, comp, gameRegistry) {
     this.id = id;
     this.comp = comp;
-    this.gameEngine = gameEngine;
+    this.gameRegistry = gameRegistry;
 
     this.playerReg = new PlayerRegistry(comp.getPlayerCount());
     this.status = CompStatus.NOT_STARTED;
     this.currentGame = null;
     this.games = [];
+  }
+
+  static restore(storedObject) {
+    let compClass = storedObject.comp.compClass;
+    let competitionClassModule = _.find(config.competitions, { name: compClass }).serverModule;
+    let CompetitionClass = require("../" + competitionClassModule).default;
+    let competition = new CompetitionClass();
+    let competitionInstance = new CompetitionInstance(
+        storedObject.id, competition, storedObject.gameRegistry);
+
+    competitionInstance.games = storedObject.games.map(
+      game => competitionInstance.gameRegistry.instances[game.id]
+    );
+
+    return lodash.merge(competitionInstance, lodash.omit(storedObject, ["gameRegistry", "games"]));
   }
 
   getInfo() {
@@ -70,21 +90,24 @@ class CompetitionInstance {
     return this.hasStarted() ? this.comp.getWinners() : null;
   }
 
-  _createNewGame(gameInfo) {
+  _createNewGame(gameInfo, lastGame) {
     if (gameInfo) {
-      let gameId = this.gameEngine.create(gameInfo.gameParams);
-      let game = this.currentGame = this.gameEngine.get(gameId);
+      let lastGameState = lastGame ? { lastGame: _.omit(lastGame.game, "params") } : {};
+      let gameParams = { ...gameInfo.gameParams, ...lastGameState };
+      let gameId = this.gameRegistry.create(gameParams);
+      let game = this.currentGame = this.gameRegistry.get(gameId);
       gameInfo.players.forEach(p => game.registerNewPlayer(p, this.playerReg.getPlayerToken(p)));
 
       this.games.push(game);
 
       this.comp.onGameStart(game);
-      game.on("end", () => this._createNewGame(this.comp.onGameEnd(game)));
+      game.on("end", () => this._createNewGame(this.comp.onGameEnd(game), game));
 
     } else {
       this.currentGame = null;
       this.status = this.comp.isEnded() ? CompStatus.ENDED : CompStatus.ERROR;
     }
+    db.competitions.save(this);
   }
 }
 

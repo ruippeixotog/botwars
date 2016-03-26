@@ -1,16 +1,13 @@
 import express from "express";
 
-import CompetitionRegistry from "../models/competition_registry";
-
-export default function (gameEngine, compTypes) {
-  let compEngine = new CompetitionRegistry(compTypes, gameEngine);
+export default function (gameRegistry, compRegistry) {
   let router = new express.Router();
 
   // TODO competition only for debugging purposes
-  compEngine.create({ name: "Test match", type: "match" }, "0");
+  compRegistry.create({ name: "Test match 2", type: "match", gameCount: 1 }, "0");
 
   router.param("compId", function (req, res, next, compId) {
-    let comp = compEngine.get(compId);
+    let comp = compRegistry.get(compId);
     if (!comp) { res.status(404).send("The requested competition does not exist"); return; }
     req.comp = comp;
 
@@ -24,11 +21,11 @@ export default function (gameEngine, compTypes) {
   });
 
   router.get("/", function (req, res) {
-    res.json(compEngine.getAllCompetitionsInfo());
+    res.json(compRegistry.getAllCompetitionsInfo());
   });
 
   router.post("/", function (req, res) {
-    let compId = compEngine.create(req.body);
+    let compId = compRegistry.create(req.body);
 
     if (!compId) res.status(400).send("Could not create new competition");
     else res.json({ compId });
