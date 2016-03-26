@@ -21,7 +21,7 @@
   },
 
   "couchbase": {
-    "enabled": true,
+    "enabled": false,
     "cluster": "http://localhost:8091/",
     "bucket": "default"
   }

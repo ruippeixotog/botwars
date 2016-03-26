@@ -1,5 +1,5 @@
 import fs from "fs";
-import couchbase from "couchbase";
+import { Cluster, N1qlQuery } from "couchbase"
 import Promise from "bluebird";
 
 const config = JSON.parse(fs.readFileSync("config.json"));
@@ -21,13 +21,11 @@ let database = {
 
 if (config.couchbase.enabled) {
 
-  let cluster = new couchbase.Cluster(config.couchbase.cluster);
+  let cluster = new Cluster(config.couchbase.cluster);
   let bucket = cluster.openBucket(config.couchbase.bucket);
 
   let bucketQuery = Promise.promisify(bucket.query, { context: bucket });
   let bucketUpsert = Promise.promisify(bucket.upsert, { context: bucket });
-
-  let N1qlQuery = require("couchbase").N1qlQuery;
 
   database.games.save = function (object) {
     object.type = "game";
