@@ -2,7 +2,7 @@ import _ from "underscore";
 
 import GameInstance from "./game_instance";
 import Registry from "./registry";
-import db from "../models/utils/database"
+import db from "../models/utils/database";
 
 class GameRegistry extends Registry {
   constructor(Game) {

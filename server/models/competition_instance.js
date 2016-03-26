@@ -1,4 +1,4 @@
-import db from "../models/utils/database"
+import db from "../models/utils/database";
 import PlayerRegistry from "./player_registry";
 import _ from "underscore";
 import lodash from "lodash";

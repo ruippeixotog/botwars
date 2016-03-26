@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Cluster, N1qlQuery } from "couchbase"
+import { Cluster, N1qlQuery } from "couchbase";
 import Promise from "bluebird";
 
 const dbConfig = JSON.parse(fs.readFileSync("config.json")).couchbase;
@@ -18,7 +18,7 @@ function getNoopDatabase() {
       save: getNoopFunction(),
       getAll: getNoopFunction(Promise.resolve([]))
     }
-  }
+  };
 }
 
 function getWorkingDatabase(bucket) {
@@ -64,7 +64,7 @@ function getWorkingDatabase(bucket) {
       save: saveCompetition,
       getAll: getAllCompetitions
     }
-  }
+  };
 }
 
 let databaseInstancePromise = new Promise(function (resolve /*, reject*/) {

@@ -1,5 +1,5 @@
 import _ from "underscore";
-import db from "../models/utils/database"
+import db from "../models/utils/database";
 import CompetitionInstance from "./competition_instance";
 import Registry from "./registry";
 
