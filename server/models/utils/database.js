@@ -19,8 +19,14 @@ function getNoopDatabase() {
 }
 
 function getCouchbaseDatabase(bucket) {
-  let bucketQuery = Promise.promisify(bucket.query, { context: bucket });
-  let bucketUpsert = Promise.promisify(bucket.upsert, { context: bucket });
+  let bucketQueryDirect = Promise.promisify(bucket.query, { context: bucket });
+  let bucketUpsertDirect = Promise.promisify(bucket.upsert, { context: bucket });
+
+  let createIndexQuery = N1qlQuery.fromString(`CREATE PRIMARY INDEX ON \`${dbConfig.bucket}\``);
+  let createIndexPromise = bucketQueryDirect(createIndexQuery);
+
+  let bucketQuery = query => createIndexPromise.then(() => bucketQueryDirect(query));
+  let bucketUpsert = (id, obj) => createIndexPromise.then(() => bucketUpsertDirect(id, obj));
 
   function saveGame(object) {
     object.type = "game";
@@ -30,7 +36,7 @@ function getCouchbaseDatabase(bucket) {
   function getAllGames(gameClassName) {
     let query = N1qlQuery.fromString(`
       SELECT default.* FROM default
-      where type = "game" and game.gameClass = "${gameClassName}"
+      WHERE type = "game" AND game.gameClass = "${gameClassName}"
     `);
     return bucketQuery(query);
   }
@@ -42,10 +48,10 @@ function getCouchbaseDatabase(bucket) {
 
   function getAllCompetitions(gameClassName) {
     let query = N1qlQuery.fromString(`
-      select default.*
-      from default
-      where type = "competition"
-      and ANY gameInstance IN OBJECT_VALUES(gameRegistry.instances)
+      SELECT default.*
+      FROM default
+      WHERE type = "competition"
+      AND ANY gameInstance IN OBJECT_VALUES(gameRegistry.instances)
       SATISFIES gameInstance.game.gameClass = "${gameClassName}" END
     `);
     return bucketQuery(query);
@@ -69,14 +75,16 @@ let dbPromise = new Promise(function (resolve /*, reject*/) {
     return;
   }
 
-  let cluster = new Cluster(dbConfig.cluster);
+  function printDbError(error) {
+    console.error(`Error setting up the database: ${error.message}`);
+    console.error("Data will not be persisted on shutdown.");
+  }
 
+  let cluster = new Cluster(`${dbConfig.cluster}?detailed_errcodes=1`);
+  
   let bucket = cluster.openBucket(dbConfig.bucket, dbConfig.password, function (error) {
-
     if (error) {
-      console.error(`Please create the bucket in your couchbase server first
-        Don't forget to create index as well!
-        Cancelling database use for this run.`);
+      printDbError(error);
       resolve(getNoopDatabase());
       return;
     }
