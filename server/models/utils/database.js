@@ -1,28 +1,24 @@
 import fs from "fs";
 import { Cluster, N1qlQuery } from "couchbase";
 import Promise from "bluebird";
+import _ from "lodash";
 
 const dbConfig = JSON.parse(fs.readFileSync("config.json")).couchbase;
-
-function getNoopFunction(value) {
-  return () => value;
-}
 
 function getNoopDatabase() {
   return {
     games: {
-      save: getNoopFunction(),
-      getAll: getNoopFunction(Promise.resolve([]))
+      save: _.constant(),
+      getAll: _.constant(Promise.resolve([]))
     },
     competitions: {
-      save: getNoopFunction(),
-      getAll: getNoopFunction(Promise.resolve([]))
+      save: _.constant(),
+      getAll: _.constant(Promise.resolve([]))
     }
   };
 }
 
-function getWorkingDatabase(bucket) {
-
+function getCouchbaseDatabase(bucket) {
   let bucketQuery = Promise.promisify(bucket.query, { context: bucket });
   let bucketUpsert = Promise.promisify(bucket.upsert, { context: bucket });
 
@@ -67,8 +63,7 @@ function getWorkingDatabase(bucket) {
   };
 }
 
-let databaseInstancePromise = new Promise(function (resolve /*, reject*/) {
-
+let dbPromise = new Promise(function (resolve /*, reject*/) {
   if (!dbConfig.enabled) {
     resolve(getNoopDatabase());
     return;
@@ -86,27 +81,18 @@ let databaseInstancePromise = new Promise(function (resolve /*, reject*/) {
       return;
     }
 
-    resolve(getWorkingDatabase(bucket));
+    resolve(getCouchbaseDatabase(bucket));
   });
 });
 
 let database = {
   games: {
-    save: function (object) {
-      return databaseInstancePromise.then(dbInstance => dbInstance.games.save(object));
-    },
-    getAll: function (gameClassName) {
-      return databaseInstancePromise.then(dbInstance => dbInstance.games.getAll(gameClassName));
-    }
+    save: obj => dbPromise.then(db => db.games.save(obj)),
+    getAll: gameClassName => dbPromise.then(db => db.games.getAll(gameClassName))
   },
   competitions: {
-    save: function (object) {
-      return databaseInstancePromise.then(dbInstance => dbInstance.competitions.save(object));
-    },
-    getAll: function (gameClassName) {
-      return databaseInstancePromise
-        .then(dbInstance => dbInstance.competitions.getAll(gameClassName));
-    }
+    save: obj => dbPromise.then(db => db.competitions.save(obj)),
+    getAll: gameClassName => dbPromise.then(db => db.competitions.getAll(gameClassName))
   }
 };
 
