@@ -1,5 +1,4 @@
 import React from "react";
-import { History } from "react-router";
 import { Row, Col, Pagination, Pager, PageItem } from "react-bootstrap";
 
 import GameStatus from "../constants/GameStatus";
@@ -15,7 +14,9 @@ import GameStatusLabel from "./GameStatusLabel";
 import Paths from "../utils/RouterPaths";
 
 let GameStream = React.createClass({
-  mixins: [History],
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
 
   getGameId: function () {
     return this.props.params.gameId;
@@ -203,7 +204,7 @@ let GameStream = React.createClass({
     let compControls = [];
 
     if (this.getCompId()) {
-      let goTo = href => () => { this.history.pushState(null, href); };
+      let goTo = href => () => { this.context.router.push(href); };
 
       let pathOpts = { playerToken: this.getPlayerToken(), compId: this.getCompId() };
       let prevGamePath = Paths.gameStream(game.href, prevGameId, pathOpts);

@@ -1,5 +1,5 @@
 import React from "react";
-import { History, Link } from "react-router";
+import { Link } from "react-router";
 import { Row, Col, Input, Button, Table } from "react-bootstrap";
 
 import CompsActions from "../actions/CompsActions";
@@ -17,7 +17,9 @@ const JoinModes = Object.freeze({
 });
 
 let CompInfo = React.createClass({
-  mixins: [History],
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
 
   getCompId: function () {
     return this.props.params.compId;
@@ -104,7 +106,7 @@ let CompInfo = React.createClass({
       // TODO a game may not exist yet and it must be handled properly
       let gameId = compInfo.currentGame || compGames[compGames.length - 1];
 
-      this.history.pushState(null, Paths.gameStream(gameHref, gameId, { compId, playerToken }));
+      this.context.router.push(Paths.gameStream(gameHref, gameId, { compId, playerToken }));
       this.removeRegisterListeners();
     }
   },
@@ -133,7 +135,7 @@ let CompInfo = React.createClass({
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH: {
-        this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId }));
+        this.context.router.push(Paths.gameStream(game.href, gameId, { compId }));
         break;
       }
       case JoinModes.REGISTER_AND_PLAY: {
@@ -145,7 +147,7 @@ let CompInfo = React.createClass({
       }
       case JoinModes.PLAY: {
         let playerToken = this.refs.playerToken.getValue();
-        this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId, playerToken }));
+        this.context.router.push(Paths.gameStream(game.href, gameId, { compId, playerToken }));
         break;
       }
     }

@@ -2,8 +2,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Router, IndexRoute, IndexRedirect } from "react-router";
-import createBrowserHistory from "history/lib/createBrowserHistory";
+import { Route, Router, IndexRoute, IndexRedirect, browserHistory } from "react-router";
 import _ from "lodash";
 
 import App from "./components/App";
@@ -50,5 +49,5 @@ let routes = (
 );
 
 ReactDOM.render(
-    <Router routes={routes} history={createBrowserHistory()} />,
+    <Router routes={routes} history={browserHistory} />,
     document.getElementById("main"));

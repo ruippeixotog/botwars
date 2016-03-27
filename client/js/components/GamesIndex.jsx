@@ -1,5 +1,4 @@
 import React from "react";
-import { History } from "react-router";
 import { Row, Col, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
@@ -11,7 +10,9 @@ import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
 let GamesIndex = React.createClass({
-  mixins: [History],
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
 
   getGame: function () {
     return this.props.route.game;
@@ -68,7 +69,7 @@ let GamesIndex = React.createClass({
 
   handleGameOpen: function (e, gameId) {
     e.preventDefault();
-    this.history.pushState(null, Paths.gameInfo(this.getGame().href, gameId));
+    this.context.router.push(Paths.gameInfo(this.getGame().href, gameId));
   },
 
   render: function () {

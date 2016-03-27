@@ -1,5 +1,4 @@
 import React from "react";
-import { History } from "react-router";
 import { Row, Col, Table } from "react-bootstrap";
 
 import CompsActions from "../actions/CompsActions";
@@ -11,7 +10,9 @@ import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
 let CompsIndex = React.createClass({
-  mixins: [History],
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
 
   getGame: function () {
     return this.props.route.game;
@@ -68,7 +69,7 @@ let CompsIndex = React.createClass({
 
   handleCompOpen: function (e, compId) {
     e.preventDefault();
-    this.history.pushState(null, Paths.compInfo(this.getGame().href, compId));
+    this.context.router.push(Paths.compInfo(this.getGame().href, compId));
   },
 
   render: function () {

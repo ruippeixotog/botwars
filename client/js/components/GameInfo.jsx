@@ -1,5 +1,4 @@
 import React from "react";
-import { History } from "react-router";
 import { Row, Col, Input, Button, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
@@ -16,7 +15,9 @@ const JoinModes = Object.freeze({
 });
 
 let GameInfo = React.createClass({
-  mixins: [History],
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
 
   getGameId: function () {
     return this.props.params.gameId;
@@ -75,7 +76,7 @@ let GameInfo = React.createClass({
     let pageGameId = this.props.params.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
-      this.history.pushState(null, Paths.gameStream(gameHref, gameId, { playerToken }));
+      this.context.router.push(Paths.gameStream(gameHref, gameId, { playerToken }));
       this.removeRegisterListeners();
     }
   },
@@ -102,7 +103,7 @@ let GameInfo = React.createClass({
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH: {
-        this.history.pushState(null, Paths.gameStream(game.href, gameId));
+        this.context.router.push(Paths.gameStream(game.href, gameId));
         break;
       }
       case JoinModes.REGISTER_AND_PLAY: {
@@ -114,7 +115,7 @@ let GameInfo = React.createClass({
       }
       case JoinModes.PLAY: {
         let playerToken = this.refs.playerToken.getValue();
-        this.history.pushState(null, Paths.gameStream(game.href, gameId, { playerToken }));
+        this.context.router.push(Paths.gameStream(game.href, gameId, { playerToken }));
         break;
       }
     }
