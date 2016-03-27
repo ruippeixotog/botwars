@@ -1,5 +1,5 @@
 import assert from "assert";
-import _ from "underscore";
+import _ from "lodash";
 
 import Sueca from "../../../models/games/sueca";
 
@@ -26,12 +26,12 @@ describe("Sueca", function () {
 
   let validCard = function () {
     let state = game.getState(game.getNextPlayer());
-    return _(state.hand).find(c => c.suit === state.trickSuit) || state.hand[0];
+    return _.find(state.hand, c => c.suit === state.trickSuit) || state.hand[0];
   };
 
   let invalidCard = function () {
     let state = game.getState(game.getNextPlayer());
-    let invalidCards = _(state.hand).filter(c => c.suit !== state.trickSuit);
+    let invalidCards = _.filter(state.hand, c => c.suit !== state.trickSuit);
     return invalidCards.length === state.hand.length ? null : invalidCards[0];
   };
 
@@ -64,8 +64,7 @@ describe("Sueca", function () {
 
     assert.equal(initialState.trumpPlayer, prevPlayer(player));
     assert(isCard(initialState.trump));
-    assert(_(game.getState(initialState.trumpPlayer).hand)
-        .some(isSameCard(initialState.trump)));
+    assert(_.some(game.getState(initialState.trumpPlayer).hand, isSameCard(initialState.trump)));
 
     assert.equal(initialState.lastTrick, null);
     assert.deepEqual(initialState.currentTrick, [null, null, null, null]);
@@ -157,7 +156,7 @@ describe("Sueca", function () {
   it("update correctly the score after a move", function () {
     quickPlay(4);
 
-    let trickPoints = _(game.getFullState().lastTrick).reduce((sum, c) => {
+    let trickPoints = _.reduce(game.getFullState().lastTrick, (sum, c) => {
       switch (c.value) {
         case "A": return sum + 11;
         case "7": return sum + 10;

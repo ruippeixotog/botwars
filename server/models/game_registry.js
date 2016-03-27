@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 
 import GameInstance from "./game_instance";
 import Registry from "./registry";
@@ -16,7 +16,7 @@ class GameRegistry extends Registry {
   }
 
   getAllGamesInfo() {
-    return _(this.instances).map(game => game.getInfo());
+    return _.map(this.instances, game => game.getInfo());
   }
 }
 

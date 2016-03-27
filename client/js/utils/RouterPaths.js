@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 
 function games(gameHref) {
   return `${gameHref}/games`;

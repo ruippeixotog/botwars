@@ -1,6 +1,6 @@
 import lazy from "lazy.js";
 import { EventEmitter } from "events";
-import _ from "underscore";
+import _ from "lodash";
 
 import AppDispatcher from "../AppDispatcher";
 import GameStatus from "../constants/GameStatus";

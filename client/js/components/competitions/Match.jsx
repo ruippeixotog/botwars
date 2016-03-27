@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { Row, Col, Table, ProgressBar } from "react-bootstrap";
-import _ from "underscore";
+import _ from "lodash";
 
 import GameStatus from "../../constants/GameStatus";
 

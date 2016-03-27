@@ -34,7 +34,6 @@
     "react-dom": "0.14.7",
     "react-router": "2.0.1",
     "superagent": "1.8.3",
-    "underscore": "1.8.3",
     "ws": "1.0.1"
   },
   "devDependencies": {

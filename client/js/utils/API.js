@@ -1,5 +1,5 @@
 import request from "superagent";
-import _ from "underscore";
+import _ from "lodash";
 
 // --- Request utils ---
 

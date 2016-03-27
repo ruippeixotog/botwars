@@ -3,7 +3,7 @@ import deepcopy from "./utils/deepcopy";
 import { EventEmitter } from "events";
 import PlayerRegistry from "./player_registry";
 import Timer from "./utils/timer";
-import _ from "underscore";
+import _ from "lodash";
 import lodash from "lodash";
 import db from "./utils/database";
 import fs from "fs";

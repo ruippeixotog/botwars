@@ -1,7 +1,6 @@
 import db from "../models/utils/database";
 import PlayerRegistry from "./player_registry";
-import _ from "underscore";
-import lodash from "lodash";
+import _ from "lodash";
 import fs from "fs";
 const config = JSON.parse(fs.readFileSync("config.json"));
 
@@ -36,7 +35,7 @@ class CompetitionInstance {
       game => competitionInstance.gameRegistry.instances[game.id]
     );
 
-    return lodash.merge(competitionInstance, lodash.omit(storedObject, ["gameRegistry", "games"]));
+    return _.merge(competitionInstance, _.omit(storedObject, ["gameRegistry", "games"]));
   }
 
   getInfo() {

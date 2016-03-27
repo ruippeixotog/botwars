@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 
 import Game from "./game";
 
@@ -59,7 +59,7 @@ class Sueca extends Game {
     } else {
       this.trickSuit = this.trickSuit || card.suit;
       this.currentTrick[player - 1] = card;
-      this.hands[player - 1] = _(this.hands[player - 1]).reject(Sueca.cardEquals(card));
+      this.hands[player - 1] = _.reject(this.hands[player - 1], Sueca.cardEquals(card));
 
       this.nextPlayer = Sueca.getPlayerAfter(player);
       if (this.currentTrick[this.nextPlayer - 1])
@@ -98,15 +98,15 @@ class Sueca extends Game {
   }
 
   _canPlay(player, card) {
-    if (!_(this.hands[player - 1]).some(Sueca.cardEquals(card))) return false;
+    if (!_.some(this.hands[player - 1], Sueca.cardEquals(card))) return false;
     if (!this.trickSuit) return true;
     return card.suit === this.trickSuit
-        || _(this.hands[player - 1]).every(c => c.suit !== this.trickSuit);
+        || _.every(this.hands[player - 1], c => c.suit !== this.trickSuit);
   }
 
   _endTrick() {
     const trickCardsWhere = props =>
-        _.chain(this.currentTrick).where(props).sortBy(c => -cardData[c.value].index).value();
+        _.chain(this.currentTrick).filter(props).sortBy(c => -cardData[c.value].index).value();
 
     let winnerCard;
     let trumpCards = trickCardsWhere({ suit: this.trump.suit });
@@ -119,7 +119,7 @@ class Sueca extends Game {
 
     let winnerPlayer = this.currentTrick.findIndex(Sueca.cardEquals(winnerCard)) + 1;
     this.score[Sueca.getTeam(winnerPlayer) - 1] +=
-        _(this.currentTrick).reduce((acc, c) => acc + cardData[c.value].points, 0);
+        _.reduce(this.currentTrick, (acc, c) => acc + cardData[c.value].points, 0);
 
     this.trickSuit = null;
     this.lastTrick = this.currentTrick;
@@ -139,7 +139,7 @@ class Sueca extends Game {
 
   static generateDeck() {
     return _.chain(["clubs", "diamonds", "hearts", "spades"]).map(suit =>
-        _(cardData).keys().map(value => ({ suit, value }))
+        _.keys(cardData).map(value => ({ suit, value }))
     ).flatten().shuffle().value();
   }
 

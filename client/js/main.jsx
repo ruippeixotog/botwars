@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Route, Router, IndexRoute, IndexRedirect } from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
-import _ from "underscore";
+import _ from "lodash";
 
 import App from "./components/App";
 import Index from "./components/Index";
@@ -23,7 +23,7 @@ let games = _.map(config.games, (gameInfo, gameId) => {
   return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
 });
 
-let compTypes = _.mapObject(config.competitions, compInfo =>
+let compTypes = _.mapValues(config.competitions, compInfo =>
     require(compInfo.clientComponent).default);
 
 let gameRoutes = games.map(game =>

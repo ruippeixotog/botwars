@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 import db from "../models/utils/database";
 import CompetitionInstance from "./competition_instance";
 import Registry from "./registry";
@@ -25,7 +25,7 @@ class CompetitionRegistry extends Registry {
   }
 
   getAllCompetitionsInfo() {
-    return _(this.instances).map(comp => comp.getInfo());
+    return _.map(this.instances, comp => comp.getInfo());
   }
 }
 

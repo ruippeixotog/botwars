@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 
-import _ from "underscore";
+import _ from "lodash";
 
 const playerInfo = [
   { x: 0, y: 1, labelTop: 90, labelLeft: 32 },
@@ -36,7 +36,7 @@ class Card extends React.Component {
 const CurrentTrick = ({ cards, lastTrickCards, delta = 10, rot }) => {
   if (!cards) return <div className="curr-trick" />;
 
-  if (_(cards).every(c => c == null) && lastTrickCards)
+  if (_.every(cards, c => c == null) && lastTrickCards)
     cards = lastTrickCards;
 
   let cardElems = [];

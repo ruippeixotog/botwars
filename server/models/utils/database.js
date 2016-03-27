@@ -81,7 +81,7 @@ let dbPromise = new Promise(function (resolve /*, reject*/) {
   }
 
   let cluster = new Cluster(`${dbConfig.cluster}?detailed_errcodes=1`);
-  
+
   let bucket = cluster.openBucket(dbConfig.bucket, dbConfig.password, function (error) {
     if (error) {
       printDbError(error);

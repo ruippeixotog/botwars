@@ -1,4 +1,4 @@
-import _ from "underscore";
+import _ from "lodash";
 
 import Game from "./game";
 
@@ -78,21 +78,21 @@ class TicTacToe extends Game {
   }
 
   _checkColumn(col) {
-    return this._checkCells(_(this.grid).pluck(col));
+    return this._checkCells(_.map(this.grid, col));
   }
 
   _checkDiag(row, col) {
     let colCount = this.grid[0].length;
 
     return row === col &&
-        this._checkCells(_(this.grid).map((r, i) => r[i])) ||
+        this._checkCells(_.map(this.grid, (r, i) => r[i])) ||
         row === colCount - col - 1 &&
-        this._checkCells(_(this.grid).map((r, i) => r[colCount - i - 1]));
+        this._checkCells(_.map(this.grid, (r, i) => r[colCount - i - 1]));
   }
 
   _checkCells(cells) {
     let winner = cells[0];
-    return winner > 0 && _(cells).every(e => e === winner) ? winner : null;
+    return winner > 0 && _.every(cells, e => e === winner) ? winner : null;
   }
 }
 
