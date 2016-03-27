@@ -3,7 +3,7 @@ var eslint = require("gulp-eslint");
 var gulp = require("gulp");
 var gutil = require("gulp-util");
 var merge = require('merge-stream');
-var minifyCss = require("gulp-minify-css");
+var cleanCss = require("gulp-clean-css");
 var nodemon = require("gulp-nodemon");
 var sass = require("gulp-sass");
 var sourcemaps = require("gulp-sourcemaps");
@@ -100,7 +100,7 @@ gulp.task("sass", function () {
 
 gulp.task("minify-css", ["sass"], function () {
   return gulp.src(dirs.dist + "/" + files.mainCssDist)
-      .pipe(minifyCss())
+      .pipe(cleanCss())
       .pipe(gulp.dest(dirs.dist));
 });
 
@@ -161,7 +161,7 @@ gulp.task('server:run', ["client:build"], function () {
 });
 
 var clientTasks = ["eslint", "webpack", "sass", "images", "fonts", "index"];
-if (process.env.GULP_ENV === "production") {
+if (!isDev) {
   clientTasks.push("minify-css", "minify-js");
 }
 

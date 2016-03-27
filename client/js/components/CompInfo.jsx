@@ -132,21 +132,22 @@ let CompInfo = React.createClass({
     let gameId = compInfo.currentGame || compGames[compGames.length - 1];
 
     switch (this.state.joinMode) {
-      case JoinModes.WATCH:
+      case JoinModes.WATCH: {
         this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId }));
         break;
-
-      case JoinModes.REGISTER_AND_PLAY:
+      }
+      case JoinModes.REGISTER_AND_PLAY: {
         CompsActions.register(game.href, compId);
         CompsStore.on(CompsEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
         CompsStore.on(CompsEvents.REGISTER_ERROR, this.onRegisterError);
         this.setState({ registering: true });
         break;
-
-      case JoinModes.PLAY:
+      }
+      case JoinModes.PLAY: {
         let playerToken = this.refs.playerToken.getValue();
         this.history.pushState(null, Paths.gameStream(game.href, gameId, { compId, playerToken }));
         break;
+      }
     }
   },
 

@@ -101,21 +101,22 @@ let GameInfo = React.createClass({
     let gameId = this.props.params.gameId;
 
     switch (this.state.joinMode) {
-      case JoinModes.WATCH:
+      case JoinModes.WATCH: {
         this.history.pushState(null, Paths.gameStream(game.href, gameId));
         break;
-
-      case JoinModes.REGISTER_AND_PLAY:
+      }
+      case JoinModes.REGISTER_AND_PLAY: {
         GamesActions.register(game.href, gameId);
         GamesStore.on(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
         GamesStore.on(GamesEvents.REGISTER_ERROR, this.onRegisterError);
         this.setState({ registering: true });
         break;
-
-      case JoinModes.PLAY:
+      }
+      case JoinModes.PLAY: {
         let playerToken = this.refs.playerToken.getValue();
         this.history.pushState(null, Paths.gameStream(game.href, gameId, { playerToken }));
         break;
+      }
     }
   },
 
