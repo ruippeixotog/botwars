@@ -20,7 +20,7 @@
     "body-parser": "1.15.0",
     "bootstrap": "3.3.6",
     "classnames": "2.2.3",
-    "couchbase": "2.1.5",
+    "couchbase": "2.1.4",
     "deck-of-cards": "0.1.6",
     "express": "4.13.4",
     "flux": "2.1.1",
