@@ -1,18 +1,18 @@
-var autoprefixer = require("gulp-autoprefixer");
-var eslint = require("gulp-eslint");
-var gulp = require("gulp");
-var gutil = require("gulp-util");
-var merge = require('merge-stream');
-var cleanCss = require("gulp-clean-css");
-var nodemon = require("gulp-nodemon");
-var sass = require("gulp-sass");
-var sourcemaps = require("gulp-sourcemaps");
-var uglify = require("gulp-uglify");
-var webpack = require("webpack");
+const autoprefixer = require("gulp-autoprefixer");
+const eslint = require("gulp-eslint");
+const gulp = require("gulp");
+const gutil = require("gulp-util");
+const merge = require('merge-stream');
+const cleanCss = require("gulp-clean-css");
+const nodemon = require("gulp-nodemon");
+const sass = require("gulp-sass");
+const sourcemaps = require("gulp-sourcemaps");
+const uglify = require("gulp-uglify");
+const webpack = require("webpack");
 
-var isDev = process.env.GULP_ENV === "development";
+const isDev = process.env.GULP_ENV === "development";
 
-var dirs = {
+const dirs = {
   src: "./client",
   js: "./client/js",
   styles: "./client/css",
@@ -27,10 +27,10 @@ var dirs = {
   dist: "./dist",
   imgDist: "./img",
   fontsDist: "./fonts",
-  node_modules: "./node_modules"
+  nodeModules: "./node_modules"
 };
 
-var files = {
+const files = {
   mainJs: "main.jsx",
   mainJsDist: "main.js",
   mainSass: "main.scss",
@@ -38,7 +38,7 @@ var files = {
   index: "index.html"
 };
 
-var webpackConfig = {
+const webpackConfig = {
   entry: dirs.js + "/" + files.mainJs,
   output: {
     path: dirs.dist,
@@ -56,6 +56,13 @@ var webpackConfig = {
         loader: "json-loader",
         exclude: /node_modules/
       }
+    ],
+    preLoaders: !isDev ? [] : [
+      {
+        test: /\.js$/,
+        loader: "source-map-loader",
+        exclude: /node_modules/
+      }
     ]
   },
   resolve: {
@@ -64,17 +71,6 @@ var webpackConfig = {
 };
 
 gulp.task("webpack", function (callback) {
-  if (isDev) {
-    webpackConfig.devtool = "source-map";
-    webpackConfig.module.preLoaders = [
-      {
-        test: /\.js$/,
-        loader: "source-map-loader",
-        exclude: /node_modules/
-      }
-    ];
-  }
-
   webpack(webpackConfig, function (err) {
     if (err) console.error(err.stack);
     callback();
@@ -83,52 +79,52 @@ gulp.task("webpack", function (callback) {
 
 gulp.task("eslint", function () {
   return gulp.src([dirs.js + "/**/*.?(js|jsx)"])
-      .pipe(eslint())
-      .pipe(eslint.formatEach("stylish", process.stderr));
+    .pipe(eslint())
+    .pipe(eslint.formatEach("stylish", process.stderr));
 });
 
 gulp.task("sass", function () {
   return gulp.src(dirs.styles + "/" + files.mainSass)
-      .pipe(isDev ? sourcemaps.init() : gutil.noop())
-      .pipe(sass({
-        includePaths: [dirs.styles, dirs.node_modules]
-      }).on("error", sass.logError))
-      .pipe(autoprefixer())
-      .pipe(isDev ? sourcemaps.write(".") : gutil.noop())
-      .pipe(gulp.dest(dirs.dist));
+    .pipe(isDev ? sourcemaps.init() : gutil.noop())
+    .pipe(sass({
+      includePaths: [dirs.styles, dirs.nodeModules]
+    }).on("error", sass.logError))
+    .pipe(autoprefixer())
+    .pipe(isDev ? sourcemaps.write(".") : gutil.noop())
+    .pipe(gulp.dest(dirs.dist));
 });
 
 gulp.task("minify-css", ["sass"], function () {
   return gulp.src(dirs.dist + "/" + files.mainCssDist)
-      .pipe(cleanCss())
-      .pipe(gulp.dest(dirs.dist));
+    .pipe(cleanCss())
+    .pipe(gulp.dest(dirs.dist));
 });
 
 gulp.task("minify-js", ["webpack"], function () {
   return gulp.src(dirs.dist + "/" + files.mainJsDist)
-      .pipe(uglify())
-      .pipe(gulp.dest(dirs.dist));
+    .pipe(uglify())
+    .pipe(gulp.dest(dirs.dist));
 });
 
 gulp.task("images", function () {
-  var streams = dirs.img.map(function(entry) {
+  const streams = dirs.img.map(function (entry) {
     return gulp.src(entry[0] + "/**/*.*")
-        .pipe(gulp.dest(dirs.dist + "/" + dirs.imgDist + "/" + entry[1]));
+      .pipe(gulp.dest(dirs.dist + "/" + dirs.imgDist + "/" + entry[1]));
   });
   return merge(streams);
 });
 
 gulp.task("fonts", function () {
-  var streams = dirs.fonts.map(function(entry) {
+  const streams = dirs.fonts.map(function (entry) {
     return gulp.src(entry[0] + "/**/*.*")
-        .pipe(gulp.dest(dirs.dist + "/" + dirs.fontsDist + "/" + entry[1]));
+      .pipe(gulp.dest(dirs.dist + "/" + dirs.fontsDist + "/" + entry[1]));
   });
   return merge(streams);
 });
 
 gulp.task("index", function () {
   return gulp.src(dirs.src + "/" + files.index)
-      .pipe(gulp.dest(dirs.dist));
+    .pipe(gulp.dest(dirs.dist));
 });
 
 gulp.task("client:watch", function () {
@@ -140,19 +136,19 @@ gulp.task("client:watch", function () {
   gulp.watch(dirs.src + "/" + files.index, ["index"]);
 });
 
-gulp.task('server:run', ["client:build"], function () {
-  var monitor = nodemon({
+gulp.task("server:run", ["client:build"], function () {
+  const monitor = nodemon({
     nodeArgs: ["-r", "babel-register"],
-    script: 'server/main.js',
-    ext: 'js',
-    ignore: ['*'],
+    script: "server/main.js",
+    ext: "js",
+    ignore: ["*"],
     env: { NODE_ENV: process.env.GULP_ENV }
   });
 
   // without this, a bug in gulp-nodemon requires the user to send Ctrl+C twice
   // See https://github.com/JacksonGariety/gulp-nodemon/issues/33
-  process.once('SIGINT', function () {
-    monitor.once('exit', function () {
+  process.once("SIGINT", function () {
+    monitor.once("exit", function () {
       process.exit();
     });
   });
@@ -160,7 +156,7 @@ gulp.task('server:run', ["client:build"], function () {
   return monitor;
 });
 
-var clientTasks = ["eslint", "webpack", "sass", "images", "fonts", "index"];
+const clientTasks = ["eslint", "webpack", "sass", "images", "fonts", "index"];
 if (!isDev) {
   clientTasks.push("minify-css", "minify-js");
 }
