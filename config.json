@@ -20,9 +20,9 @@
     }
   },
 
-  "couchbase": {
+  "database": {
     "enabled": false,
-    "cluster": "http://localhost:8091/",
-    "bucket": "default"
+    "type": "sequelize",
+    "uri": "sqlite://data.db"
   }
 }

@@ -4,7 +4,7 @@ export default function (gameRegistry, compRegistry) {
   let router = new express.Router();
 
   // TODO competition only for debugging purposes
-  compRegistry.create({ name: "Test match 2", type: "match", gameCount: 1 }, "0");
+  compRegistry.create({ name: "Test match 2", type: "match", gameCount: 2 }, "0");
 
   router.param("compId", function (req, res, next, compId) {
     let comp = compRegistry.get(compId);
