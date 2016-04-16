@@ -1,16 +1,25 @@
 const autoprefixer = require("gulp-autoprefixer");
+const browserSync = require("browser-sync");
+const cleanCss = require("gulp-clean-css");
 const eslint = require("gulp-eslint");
 const gulp = require("gulp");
 const gutil = require("gulp-util");
+const historyApiFallback = require("connect-history-api-fallback");
 const merge = require('merge-stream');
-const cleanCss = require("gulp-clean-css");
 const nodemon = require("gulp-nodemon");
+const path = require("path");
+const proxyMiddleware = require("proxy-middleware");
 const sass = require("gulp-sass");
 const sourcemaps = require("gulp-sourcemaps");
 const uglify = require("gulp-uglify");
+const url = require("url");
 const webpack = require("webpack");
+const webpackDevMiddleware = require("webpack-dev-middleware");
+const webpackHotMiddleware = require("webpack-hot-middleware");
 
-const isDev = process.env.GULP_ENV === "development";
+process.env.NODE_ENV = process.env.NODE_ENV || process.env.GULP_ENV;
+
+const isDev = process.env.GULP_ENV !== "production";
 
 const dirs = {
   src: "./client",
@@ -39,16 +48,19 @@ const files = {
 };
 
 const webpackConfig = {
-  entry: dirs.js + "/" + files.mainJs,
+  entry: [
+    path.resolve(dirs.js + "/" + files.mainJs)
+  ],
   output: {
-    path: dirs.dist,
-    filename: files.mainJsDist
+    path: path.resolve(dirs.dist),
+    filename: files.mainJsDist,
+    publicPath: "/"
   },
   module: {
     loaders: [
       {
         test: /\.(js|jsx)$/,
-        loader: "babel-loader",
+        loaders: ["babel"],
         exclude: /node_modules/
       },
       {
@@ -65,6 +77,9 @@ const webpackConfig = {
       }
     ]
   },
+  plugins: [
+    new webpack.EnvironmentPlugin(["NODE_ENV"])
+  ],
   resolve: {
     extensions: ["", ".jsx", ".js"]
   }
@@ -91,7 +106,8 @@ gulp.task("sass", function () {
     }).on("error", sass.logError))
     .pipe(autoprefixer())
     .pipe(isDev ? sourcemaps.write(".") : gutil.noop())
-    .pipe(gulp.dest(dirs.dist));
+    .pipe(gulp.dest(dirs.dist))
+    .pipe(browserSync.stream());
 });
 
 gulp.task("minify-css", ["sass"], function () {
@@ -136,7 +152,52 @@ gulp.task("client:watch", function () {
   gulp.watch(dirs.src + "/" + files.index, ["index"]);
 });
 
-gulp.task("server:run", ["client:build"], function () {
+gulp.task("client:browsersync", function () {
+  if (isDev) {
+    webpackConfig.entry = ["webpack/hot/dev-server", "webpack-hot-middleware/client"]
+      .concat(webpackConfig.entry);
+
+    webpackConfig.module.loaders[0].loaders = ["react-hot"]
+      .concat(webpackConfig.module.loaders[0].loaders);
+
+    webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+    webpackConfig.devtool = "eval";
+  }
+
+  const proxyConfig = url.parse("http://localhost:3000/api");
+  proxyConfig.route = "/api";
+
+  const compiler = webpack(webpackConfig);
+
+  browserSync.init({
+    port: 3001,
+    ui: { port: 3002 },
+    server: {
+      baseDir: path.resolve(dirs.dist),
+
+      middleware: [
+        proxyMiddleware(proxyConfig),
+        webpackDevMiddleware(compiler, {
+          publicPath: webpackConfig.output.publicPath,
+          stats: { colors: true, chunkModules: false }
+        }),
+        webpackHotMiddleware(compiler),
+        historyApiFallback()
+      ]
+    }
+  });
+});
+
+gulp.task("client:watch-nowebpack", function () {
+  gulp.watch("./config.json", ["eslint"]);
+  gulp.watch(dirs.styles + "/**/*", ["sass"]);
+  gulp.watch(dirs.js + "/**/*.?(js|jsx)", ["eslint"]);
+  gulp.watch(dirs.img[0][0] + "/**/*.*", ["images"]);
+  gulp.watch(dirs.fonts[0][0] + "/**/*.*", ["fonts"]);
+  gulp.watch(dirs.src + "/" + files.index, ["index"]);
+});
+
+gulp.task("server:run", function () {
   const monitor = nodemon({
     nodeArgs: ["-r", "babel-register"],
     script: "server/main.js",
@@ -157,12 +218,16 @@ gulp.task("server:run", ["client:build"], function () {
 });
 
 const clientTasks = ["eslint", "webpack", "sass", "images", "fonts", "index"];
-if (!isDev) {
-  clientTasks.push("minify-css", "minify-js");
-}
+if (!isDev) clientTasks.push("minify-css", "minify-js");
 
 gulp.task("client:build", clientTasks);
 gulp.task("client", ["client:build", "client:watch"]);
 gulp.task("server", ["client", "server:run"]);
+
+gulp.task("client:hotload",
+  clientTasks.filter(task => task !== "webpack").concat(
+    ["client:browsersync", "client:watch-nowebpack"]));
+
+gulp.task("server:hotload", ["client:hotload", "server:run"]);
 
 gulp.task("default", ["client:build"]);
