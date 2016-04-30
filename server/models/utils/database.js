@@ -45,7 +45,7 @@ function getSqlDatabase(db) {
       },
 
       getAll: gameClassName => ddlPromise.then(() =>
-        Game.findAll({ where: { gameClass: gameClassName }})
+        Game.findAll({ where: { gameClass: gameClassName } })
           .map(res => JSON.parse(res.dataValues.object))
       )
     },
