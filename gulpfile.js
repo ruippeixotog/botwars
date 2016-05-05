@@ -172,6 +172,7 @@ gulp.task("client:browsersync", function () {
   browserSync.init({
     port: 3001,
     ui: { port: 3002 },
+    ghostMode: false,
     server: {
       baseDir: path.resolve(dirs.dist),
 
