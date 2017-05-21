@@ -1,10 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router";
 
 let SideNav = React.createClass({
 
   propTypes: {
-    games: React.PropTypes.array.isRequired
+    games: PropTypes.array.isRequired
   },
 
   render: function () {

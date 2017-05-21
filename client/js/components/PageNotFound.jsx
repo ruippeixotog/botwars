@@ -1,9 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 let PageNotFound = React.createClass({
 
   propTypes: {
-    location: React.PropTypes.object.isRequired
+    location: PropTypes.object.isRequired
   },
 
   render: function () {

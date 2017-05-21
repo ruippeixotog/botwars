@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Nav, NavItem } from "react-bootstrap";
 
 const Tabs = [
@@ -8,7 +9,7 @@ const Tabs = [
 
 const GameTabsNav = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
 
   onTabClick: function (tabDef) {

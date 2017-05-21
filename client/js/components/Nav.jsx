@@ -1,11 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import SideNav from "./SideNav";
 import HeaderNav from "./HeaderNav";
 
 let Nav = React.createClass({
 
   propTypes: {
-    games: React.PropTypes.array.isRequired
+    games: PropTypes.array.isRequired
   },
 
   render: function () {

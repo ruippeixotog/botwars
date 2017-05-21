@@ -1,9 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 let DebugGame = React.createClass({
 
   propTypes: {
-    gameId: React.PropTypes.string.isRequired
+    gameId: PropTypes.string.isRequired
   },
 
   render: function () {

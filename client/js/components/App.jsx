@@ -1,10 +1,11 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Nav from "./Nav";
 
 let App = React.createClass({
 
   propTypes: {
-    children: React.PropTypes.element.isRequired
+    children: PropTypes.element.isRequired
   },
 
   render: function () {

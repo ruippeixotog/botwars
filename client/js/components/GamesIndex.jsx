@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Row, Col, Table } from "react-bootstrap";
 
 import GamesActions from "../actions/GamesActions";
@@ -11,7 +12,7 @@ import Paths from "../utils/RouterPaths";
 
 let GamesIndex = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
 
   getGame: function () {

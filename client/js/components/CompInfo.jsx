@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router";
 import { Row, Col, Button, Table } from "react-bootstrap";
 import { FormGroup, InputGroup, ControlLabel, Radio, FormControl } from "react-bootstrap";
@@ -19,7 +20,7 @@ const JoinModes = Object.freeze({
 
 let CompInfo = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
 
   getCompId: function () {
@@ -257,11 +258,13 @@ let CompInfo = React.createClass({
                            checked={joinMode === JoinModes.PLAY}
                            onChange={setJoinMode(JoinModes.PLAY)}>
                       play the competition as the player with token
-                      <FormControl type="text" ref="playerToken" bsSize="small"
-                             groupClassName="player-token-form-group"
-                             disabled={registering || joinMode !== JoinModes.PLAY}
-                             placeholder="playerToken"
-                             defaultValue={this.state.lastPlayerToken} />
+                      <FormControl type="text"
+                                   ref="playerToken"
+                                   bsSize="small"
+                                   className="player-token-form-group"
+                                   disabled={registering || joinMode !== JoinModes.PLAY}
+                                   placeholder="playerToken"
+                                   defaultValue={this.state.lastPlayerToken} />
                     </Radio>
                   </InputGroup>
                 </FormGroup>

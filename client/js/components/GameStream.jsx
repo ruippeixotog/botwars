@@ -1,5 +1,6 @@
 import React from "react";
-import { Row, Col, Pagination, Pager, PageItem } from "react-bootstrap";
+import PropTypes from "prop-types";
+import { Row, Col, Pagination, Pager } from "react-bootstrap";
 
 import GameStatus from "../constants/GameStatus";
 import ConnStatus from "../constants/ConnStatus";
@@ -15,7 +16,7 @@ import Paths from "../utils/RouterPaths";
 
 let GameStream = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
 
   getGameId: function () {
@@ -213,17 +214,17 @@ let GameStream = React.createClass({
 
       compControls.push(
           <Pager key="comp-nav">
-            <PageItem disabled={!prevGameId} onSelect={goTo(prevGamePath)}
-                      href={prevGameId ? prevGamePath : null}>
+            <Pager.Item disabled={!prevGameId} onSelect={goTo(prevGamePath)}
+                        href={prevGameId ? prevGamePath : null}>
               &lt; Previous
-            </PageItem>
-            <PageItem onSelect={goTo(compInfoPath)} href={compInfoPath}>
+            </Pager.Item>
+            <Pager.Item onSelect={goTo(compInfoPath)} href={compInfoPath}>
               Back
-            </PageItem>
-            <PageItem disabled={!nextGameId} onSelect={goTo(nextGamePath)}
-                      href={nextGameId ? nextGamePath : null}>
+            </Pager.Item>
+            <Pager.Item disabled={!nextGameId} onSelect={goTo(nextGamePath)}
+                        href={nextGameId ? nextGamePath : null}>
               Next &gt;
-            </PageItem>
+            </Pager.Item>
           </Pager>
       );
     }

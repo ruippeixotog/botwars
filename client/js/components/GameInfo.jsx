@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Row, Col, Button, Table } from "react-bootstrap";
 import { FormGroup, InputGroup, ControlLabel, Radio, FormControl } from "react-bootstrap";
 
@@ -17,7 +18,7 @@ const JoinModes = Object.freeze({
 
 let GameInfo = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
   },
 
   getGameId: function () {
