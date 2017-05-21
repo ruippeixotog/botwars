@@ -1,8 +1,8 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 
-const CellX = React.createClass({
-  render: function () {
+class CellX extends React.Component {
+  render() {
     let dx = this.props.col * 200;
     let dy = this.props.row * 200;
     return (
@@ -14,21 +14,20 @@ const CellX = React.createClass({
         </g>
     );
   }
-});
+}
 
-const CellO = React.createClass({
-  render: function () {
+class CellO extends React.Component {
+  render() {
     let dx = this.props.col * 200 + 100;
     let dy = this.props.row * 200 + 100;
     return (
         <circle cx={dx} cy={dy} r="72" style={{ strokeWidth: 10, stroke: "green", fill: "none" }} />
     );
   }
-});
+}
 
-const Grid = React.createClass({
-
-  handleClick: function (evt) {
+class Grid extends React.Component {
+  handleClick = (evt) => {
     let uupos = evt.target.createSVGPoint();
     uupos.x = evt.clientX;
     uupos.y = evt.clientY;
@@ -36,9 +35,9 @@ const Grid = React.createClass({
     if (ctm) uupos = uupos.matrixTransform(ctm);
 
     this.props.onMove({ row: Math.floor(uupos.y / 200), col: Math.floor(uupos.x / 200) });
-  },
+  };
 
-  render: function () {
+  render() {
     let grid = this.props.grid;
     let cells = [];
 
@@ -64,7 +63,7 @@ const Grid = React.createClass({
         </svg>
     );
   }
-});
+}
 
 const PlayerTextRepr = ({ player }) => (
     player === 1 ?
@@ -82,12 +81,11 @@ const GameStatusMessage = ({ gameState }) => {
     return <span>Player {winner} (<PlayerTextRepr player={winner} />) wins!</span>;
   if (isError)
     return <span>An error occurred</span>;
-  return <span>It's a draw!</span>;
+  return <span>It&apos;s a draw!</span>;
 };
 
-let TicTacToe = React.createClass({
-
-  render: function () {
+class TicTacToe extends React.Component {
+  render() {
     let gameState = this.props.gameState;
     let onMove = this.props.isLastState ? this.props.onMove : () => {};
 
@@ -104,6 +102,6 @@ let TicTacToe = React.createClass({
         </Row>
     );
   }
-});
+}
 
 export default TicTacToe;

@@ -10,31 +10,32 @@ import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
-let CompsIndex = React.createClass({
-  contextTypes: {
+class CompsIndex extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  getGame: function () {
-    return this.props.route.game;
-  },
-
-  isThisGame: function (gameHref) {
-    return gameHref === this.getGame().href;
-  },
-
-  getInitialState: function () {
+  constructor(props, context) {
+    super(props, context);
     let compStores = CompsStore.getAllComps(this.getGame().href);
-    return { comps: compStores.map(c => c.getInfo()) };
-  },
+    this.state = { comps: compStores.map(c => c.getInfo()) };
+  }
 
-  componentWillMount: function () {
+  getGame = () => {
+    return this.props.route.game;
+  };
+
+  isThisGame = (gameHref) => {
+    return gameHref === this.getGame().href;
+  };
+
+  componentWillMount() {
     CompsStore.on(CompsEvents.COMPS_LIST, this.onCompsListUpdate);
     CompsStore.on(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
     this.retrieveCompsList();
-  },
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.isThisGame(nextProps.route.game.href)) {
       let compStores = CompsStore.getAllComps(nextProps.route.game.href);
 
@@ -42,38 +43,38 @@ let CompsIndex = React.createClass({
       clearInterval(this._compsPollTimeout);
       this.retrieveGamesList(nextProps.route.game.href);
     }
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this._compsPollTimeout);
     CompsStore.removeListener(CompsEvents.COMPS_LIST, this.onCompsListUpdate);
     CompsStore.removeListener(CompsEvents.COMPS_LIST_ERROR, this.onCompsListError);
-  },
+  }
 
-  onCompsListUpdate: function (gameHref) {
+  onCompsListUpdate = (gameHref) => {
     if (this.isThisGame(gameHref)) {
       let compStores = CompsStore.getAllComps(gameHref);
       this.setState({ comps: compStores.map(c => c.info) });
     }
-  },
+  };
 
-  onCompsListError: function (gameHref) {
+  onCompsListError = (gameHref) => {
     if (this.isThisGame(gameHref)) {
       // TODO handle error
     }
-  },
+  };
 
-  retrieveCompsList: function (nextGameHref) {
+  retrieveCompsList = (nextGameHref) => {
     CompsActions.retrieveCompsList(nextGameHref || this.getGame().href);
     this._compsPollTimeout = setTimeout(this.retrieveCompsList, 5000);
-  },
+  };
 
-  handleCompOpen: function (e, compId) {
+  handleCompOpen = (e, compId) => {
     e.preventDefault();
     this.context.router.push(Paths.compInfo(this.getGame().href, compId));
-  },
+  };
 
-  render: function () {
+  render() {
     let tableRows = this.state.comps.map(info => {
       let nameCell = info.name || <span className="no-name">{"#" + info.compId}</span>;
 
@@ -120,6 +121,6 @@ let CompsIndex = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default CompsIndex;

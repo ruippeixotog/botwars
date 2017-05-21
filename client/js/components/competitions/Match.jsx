@@ -8,9 +8,8 @@ import GameStatus from "../../constants/GameStatus";
 import GameStatusLabel from "../GameStatusLabel";
 import Paths from "../../utils/RouterPaths";
 
-let Match = React.createClass({
-
-  render: function () {
+class Match extends React.Component {
+  render() {
     let { gameHref, info, games } = this.props;
 
     let sortedWinCount = _(info.winCount.map((cnt, i) => [cnt, i + 1])).sortBy(e => -e[0]);
@@ -99,6 +98,6 @@ let Match = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default Match;

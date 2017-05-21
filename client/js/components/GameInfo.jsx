@@ -16,64 +16,66 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-let GameInfo = React.createClass({
-  contextTypes: {
+class GameInfo extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  getGameId: function () {
-    return this.props.params.gameId;
-  },
-
-  getGame: function () {
-    return this.props.route.game;
-  },
-
-  isThisGame: function (gameHref, gameId) {
-    return gameHref === this.getGame().href && gameId === this.getGameId();
-  },
-
-  getInitialState: function () {
+  constructor(props, context) {
+    super(props, context);
     let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
-    return {
+
+    this.state = {
       gameInfo: gameStore.getInfo(),
       joinMode: gameStore.getLastToken() ? JoinModes.PLAY : JoinModes.WATCH,
       registering: false,
       lastPlayerToken: gameStore.getLastToken()
     };
-  },
+  }
 
-  componentWillMount: function () {
+  getGameId = () => {
+    return this.props.params.gameId;
+  };
+
+  getGame = () => {
+    return this.props.route.game;
+  };
+
+  isThisGame = (gameHref, gameId) => {
+    return gameHref === this.getGame().href && gameId === this.getGameId();
+  };
+
+  componentWillMount() {
     GamesStore.on(GamesEvents.GAME_INFO, this.onGameInfoUpdate);
     GamesStore.on(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
     this.retrieveGameInfo();
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this._gamePollTimeout);
     GamesStore.removeListener(GamesEvents.GAME_INFO, this.onGameInfoUpdate);
     GamesStore.removeListener(GamesEvents.GAME_INFO_ERROR, this.onGameInfoError);
     this.removeRegisterListeners();
-  },
+  }
 
-  onGameInfoUpdate: function (gameHref, gameId) {
+  onGameInfoUpdate = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       this.setState({ gameInfo: GamesStore.getGame(gameHref, gameId).getInfo() });
     }
-  },
+  };
 
-  onGameInfoError: function (gameHref, gameId) {
+  onGameInfoError = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       // TODO handle error
     }
-  },
+  };
 
-  retrieveGameInfo: function () {
+  retrieveGameInfo = () => {
     GamesActions.retrieveGameInfo(this.getGame().href, this.getGameId());
     this._gamePollTimeout = setTimeout(this.retrieveGameInfo, 5000);
-  },
+  };
 
-  onRegisterSuccess: function (gameHref, gameId, playerToken) {
+  onRegisterSuccess = (gameHref, gameId, playerToken) => {
     let game = this.props.route.game;
     let pageGameId = this.props.params.gameId;
 
@@ -81,9 +83,9 @@ let GameInfo = React.createClass({
       this.context.router.push(Paths.gameStream(gameHref, gameId, { playerToken }));
       this.removeRegisterListeners();
     }
-  },
+  };
 
-  onRegisterError: function (gameHref, gameId) {
+  onRegisterError = (gameHref, gameId) => {
     let game = this.props.route.game;
     let pageGameId = this.props.params.gameId;
 
@@ -91,14 +93,14 @@ let GameInfo = React.createClass({
       this.setState({ registering: false });
       this.removeRegisterListeners();
     }
-  },
+  };
 
-  removeRegisterListeners: function () {
+  removeRegisterListeners = () => {
     GamesStore.removeListener(GamesEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
     GamesStore.removeListener(GamesEvents.REGISTER_ERROR, this.onRegisterError);
-  },
+  };
 
-  handleGameFormSubmit: function (e) {
+  handleGameFormSubmit = (e) => {
     e.preventDefault();
     let game = this.props.route.game;
     let gameId = this.props.params.gameId;
@@ -116,14 +118,14 @@ let GameInfo = React.createClass({
         break;
       }
       case JoinModes.PLAY: {
-        let playerToken = this.refs.playerToken.getValue();
+        let playerToken = this.playerTokenInput.getValue();
         this.context.router.push(Paths.gameStream(game.href, gameId, { playerToken }));
         break;
       }
     }
-  },
+  };
 
-  render: function () {
+  render() {
     let { joinMode, registering, gameInfo } = this.state;
     let isGameFull = gameInfo.registeredPlayers === gameInfo.players;
 
@@ -206,7 +208,9 @@ let GameInfo = React.createClass({
                            checked={joinMode === JoinModes.PLAY}
                            onChange={setJoinMode(JoinModes.PLAY)}>
                       play the game as the player with token
-                      <FormControl type="text" ref="playerToken" bsSize="small"
+                      <FormControl type="text"
+                                   ref={elem => { this.playerTokenInput = elem; }}
+                                   bsSize="small"
                                    className="player-token-form-group"
                                    disabled={registering || joinMode !== JoinModes.PLAY}
                                    placeholder="playerToken"
@@ -222,6 +226,6 @@ let GameInfo = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default GameInfo;

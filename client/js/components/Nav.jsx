@@ -3,13 +3,12 @@ import PropTypes from "prop-types";
 import SideNav from "./SideNav";
 import HeaderNav from "./HeaderNav";
 
-let Nav = React.createClass({
-
-  propTypes: {
+class Nav extends React.Component {
+  static propTypes = {
     games: PropTypes.array.isRequired
-  },
+  };
 
-  render: function () {
+  render() {
     return (
         <nav className="navbar navbar-default navbar-static-top" role="navigation"
              style={{ marginBottom: 0 }}>
@@ -18,6 +17,6 @@ let Nav = React.createClass({
         </nav>
     );
   }
-});
+}
 
 export default Nav;

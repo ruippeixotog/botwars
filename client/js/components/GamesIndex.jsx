@@ -10,31 +10,32 @@ import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
-let GamesIndex = React.createClass({
-  contextTypes: {
+class GamesIndex extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  getGame: function () {
-    return this.props.route.game;
-  },
-
-  isThisGame: function (gameHref) {
-    return gameHref === this.getGame().href;
-  },
-
-  getInitialState: function () {
+  constructor(props, context) {
+    super(props, context);
     let gameStores = GamesStore.getAllGames(this.getGame().href);
-    return { games: gameStores.map(g => g.info) };
-  },
+    this.state = { games: gameStores.map(g => g.info) };
+  }
 
-  componentWillMount: function () {
+  getGame = () => {
+    return this.props.route.game;
+  };
+
+  isThisGame = (gameHref) => {
+    return gameHref === this.getGame().href;
+  };
+
+  componentWillMount() {
     GamesStore.on(GamesEvents.GAMES_LIST, this.onGamesListUpdate);
     GamesStore.on(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
     this.retrieveGamesList();
-  },
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.isThisGame(nextProps.route.game.href)) {
       let gameStores = GamesStore.getAllGames(this.getGame().href);
 
@@ -42,38 +43,38 @@ let GamesIndex = React.createClass({
       clearInterval(this._gamesPollTimeout);
       this.retrieveGamesList(nextProps.route.game.href);
     }
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this._gamesPollTimeout);
     GamesStore.removeListener(GamesEvents.GAMES_LIST, this.onGamesListUpdate);
     GamesStore.removeListener(GamesEvents.GAMES_LIST_ERROR, this.onGamesListError);
-  },
+  }
 
-  onGamesListUpdate: function (gameHref) {
+  onGamesListUpdate = (gameHref) => {
     if (this.isThisGame(gameHref)) {
       let gameStores = GamesStore.getAllGames(this.getGame().href);
       this.setState({ games: gameStores.map(g => g.info) });
     }
-  },
+  };
 
-  onGamesListError: function (gameHref) {
+  onGamesListError = (gameHref) => {
     if (this.isThisGame(gameHref)) {
       // TODO handle error
     }
-  },
+  };
 
-  retrieveGamesList: function (nextGameHref) {
+  retrieveGamesList = (nextGameHref) => {
     GamesActions.retrieveGamesList(nextGameHref || this.getGame().href);
     this._gamesPollTimeout = setTimeout(this.retrieveGamesList, 5000);
-  },
+  };
 
-  handleGameOpen: function (e, gameId) {
+  handleGameOpen = (e, gameId) => {
     e.preventDefault();
     this.context.router.push(Paths.gameInfo(this.getGame().href, gameId));
-  },
+  };
 
-  render: function () {
+  render() {
     let tableRows = this.state.games.map(info => {
       let nameCell = info.name || <span className="no-name">{"#" + info.gameId}</span>;
 
@@ -118,6 +119,6 @@ let GamesIndex = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default GamesIndex;

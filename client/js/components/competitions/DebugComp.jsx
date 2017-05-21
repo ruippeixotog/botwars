@@ -1,8 +1,7 @@
 import React from "react";
 
-let DebugComp = React.createClass({
-
-  render: function () {
+class DebugComp extends React.Component {
+  render() {
     let { info, games } = this.props;
     return (
         <div>
@@ -11,6 +10,6 @@ let DebugComp = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default DebugComp;

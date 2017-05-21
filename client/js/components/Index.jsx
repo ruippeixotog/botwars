@@ -1,8 +1,7 @@
 import React from "react";
 
-let Index = React.createClass({
-
-  render: function () {
+class Index extends React.Component {
+  render() {
     return (
         <div>
           <div className="row">
@@ -14,6 +13,6 @@ let Index = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default Index;

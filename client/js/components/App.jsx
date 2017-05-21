@@ -2,13 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import Nav from "./Nav";
 
-let App = React.createClass({
-
-  propTypes: {
+class App extends React.Component {
+  static propTypes = {
     children: PropTypes.element.isRequired
-  },
+  };
 
-  render: function () {
+  render() {
     let games = this.props.route.games;
 
     return (
@@ -20,6 +19,6 @@ let App = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default App;

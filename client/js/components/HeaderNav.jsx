@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router";
 
-let HeaderNav = React.createClass({
-
-  render: function () {
+class HeaderNav extends React.Component {
+  render() {
     return (
         <div>
           <div className="navbar-header">
@@ -46,6 +45,6 @@ let HeaderNav = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default HeaderNav;

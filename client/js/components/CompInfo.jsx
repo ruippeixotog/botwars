@@ -18,64 +18,66 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-let CompInfo = React.createClass({
-  contextTypes: {
+class CompInfo extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  getCompId: function () {
-    return this.props.params.compId;
-  },
-
-  getGame: function () {
-    return this.props.route.game;
-  },
-
-  isThisGame: function (gameHref, compId) {
-    return gameHref === this.getGame().href && compId === this.getCompId();
-  },
-
-  getInitialState: function () {
+  constructor(props, context) {
+    super(props, context);
     let compStore = CompsStore.getComp(this.getGame().href, this.getCompId());
-    return {
+
+    this.state = {
       compInfo: compStore.getInfo(),
       compGames: [],
       joinMode: compStore.getLastToken() ? JoinModes.PLAY : JoinModes.WATCH,
       registering: false,
       lastPlayerToken: compStore.getLastToken()
     };
-  },
+  }
 
-  componentWillMount: function () {
+  getCompId = () => {
+    return this.props.params.compId;
+  };
+
+  getGame = () => {
+    return this.props.route.game;
+  };
+
+  isThisGame = (gameHref, compId) => {
+    return gameHref === this.getGame().href && compId === this.getCompId();
+  };
+
+  componentWillMount() {
     CompsStore.on(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
     CompsStore.on(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
     CompsStore.on(CompsEvents.COMP_GAMES, this.onCompGamesUpdate);
     CompsStore.on(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
     this.retrieveCompInfo();
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this._compPollTimeout);
     CompsStore.removeListener(CompsEvents.COMP_INFO, this.onCompInfoUpdate);
     CompsStore.removeListener(CompsEvents.COMP_INFO_ERROR, this.onCompInfoError);
     CompsStore.removeListener(CompsEvents.COMP_GAMES, this.onCompGamesUpdate);
     CompsStore.removeListener(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
     this.removeRegisterListeners();
-  },
+  }
 
-  onCompInfoUpdate: function (gameHref, compId) {
+  onCompInfoUpdate = (gameHref, compId) => {
     if (this.isThisGame(gameHref, compId)) {
       this.setState({ compInfo: CompsStore.getComp(gameHref, compId).getInfo() });
     }
-  },
+  };
 
-  onCompInfoError: function (gameHref, gameId) {
+  onCompInfoError = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       // TODO handle error
     }
-  },
+  };
 
-  onCompGamesUpdate: function (gameHref, compId) {
+  onCompGamesUpdate = (gameHref, compId) => {
     if (this.isThisGame(gameHref, compId)) {
       let compGameIds = CompsStore.getComp(gameHref, compId).getGames();
       let compGames = compGameIds.map(gameId => {
@@ -85,21 +87,21 @@ let CompInfo = React.createClass({
 
       this.setState({ compGames });
     }
-  },
+  };
 
-  onCompGamesError: function (gameHref, gameId) {
+  onCompGamesError = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       // TODO handle error
     }
-  },
+  };
 
-  retrieveCompInfo: function () {
+  retrieveCompInfo = () => {
     CompsActions.retrieveCompInfo(this.getGame().href, this.getCompId());
     CompsActions.retrieveCompGames(this.getGame().href, this.getCompId());
     this._compPollTimeout = setTimeout(this.retrieveCompInfo, 5000);
-  },
+  };
 
-  onRegisterSuccess: function (gameHref, compId, playerToken) {
+  onRegisterSuccess = (gameHref, compId, playerToken) => {
     let game = this.props.route.game;
     let pageCompId = this.props.params.compId;
 
@@ -111,9 +113,9 @@ let CompInfo = React.createClass({
       this.context.router.push(Paths.gameStream(gameHref, gameId, { compId, playerToken }));
       this.removeRegisterListeners();
     }
-  },
+  };
 
-  onRegisterError: function (gameHref, compId) {
+  onRegisterError = (gameHref, compId) => {
     let game = this.props.route.game;
     let pageCompId = this.props.params.compId;
 
@@ -121,14 +123,14 @@ let CompInfo = React.createClass({
       this.setState({ registering: false });
       this.removeRegisterListeners();
     }
-  },
+  };
 
-  removeRegisterListeners: function () {
+  removeRegisterListeners = () => {
     CompsStore.removeListener(CompsEvents.REGISTER_SUCCESS, this.onRegisterSuccess);
     CompsStore.removeListener(CompsEvents.REGISTER_ERROR, this.onRegisterError);
-  },
+  };
 
-  handleCompFormSubmit: function (e) {
+  handleCompFormSubmit = (e) => {
     e.preventDefault();
     let game = this.props.route.game;
     let compId = this.props.params.compId;
@@ -148,14 +150,14 @@ let CompInfo = React.createClass({
         break;
       }
       case JoinModes.PLAY: {
-        let playerToken = this.refs.playerToken.getValue();
+        let playerToken = this.playerTokenInput.getValue();
         this.context.router.push(Paths.gameStream(game.href, gameId, { compId, playerToken }));
         break;
       }
     }
-  },
+  };
 
-  render: function () {
+  render() {
     let { game, compTypes } = this.props.route;
     let { joinMode, registering, compInfo, compGames } = this.state;
     let isGameFull = compInfo.registeredPlayers === compInfo.players;
@@ -259,7 +261,7 @@ let CompInfo = React.createClass({
                            onChange={setJoinMode(JoinModes.PLAY)}>
                       play the competition as the player with token
                       <FormControl type="text"
-                                   ref="playerToken"
+                                   ref={elem => { this.playerTokenInput = elem; }}
                                    bsSize="small"
                                    className="player-token-form-group"
                                    disabled={registering || joinMode !== JoinModes.PLAY}
@@ -276,6 +278,6 @@ let CompInfo = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default CompInfo;

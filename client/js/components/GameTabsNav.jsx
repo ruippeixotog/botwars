@@ -7,20 +7,20 @@ const Tabs = [
   { key: "competitions", path: "competitions", label: "Competitions" }
 ];
 
-const GameTabsNav = React.createClass({
-  contextTypes: {
+class GameTabsNav extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  onTabClick: function (tabDef) {
+  onTabClick = (tabDef) => {
     return e => {
       e.preventDefault();
       if (tabDef.key !== this.props.activeKey)
         this.context.router.push(`${this.props.gameHref}/${tabDef.path}`);
     };
-  },
+  };
 
-  render: function () {
+  render() {
     let navItems = Tabs.map(tabDef =>
         <NavItem key={tabDef.key} eventKey={tabDef.key} onClick={this.onTabClick(tabDef)}>
           {tabDef.label}
@@ -32,6 +32,6 @@ const GameTabsNav = React.createClass({
         </Nav>
     );
   }
-});
+}
 
 export default GameTabsNav;

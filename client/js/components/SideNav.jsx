@@ -2,13 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router";
 
-let SideNav = React.createClass({
-
-  propTypes: {
+class SideNav extends React.Component {
+  static propTypes = {
     games: PropTypes.array.isRequired
-  },
+  };
 
-  render: function () {
+  render() {
     let gameLinks = this.props.games.map(game =>
       <li key={game.href}>
         <Link to={game.href}><i className="fa fa-gamepad fa-fw" /> {game.name}</Link>
@@ -35,6 +34,6 @@ let SideNav = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default SideNav;

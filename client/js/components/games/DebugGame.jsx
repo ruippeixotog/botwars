@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-let DebugGame = React.createClass({
-
-  propTypes: {
+class DebugGame extends React.Component {
+  static propTypes = {
     gameId: PropTypes.string.isRequired
-  },
+  };
 
-  render: function () {
+  render() {
     let gameRepr = JSON.stringify(this.props.gameState, null, 2);
 
     return (
@@ -18,6 +17,6 @@ let DebugGame = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default DebugGame;

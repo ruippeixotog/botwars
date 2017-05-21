@@ -1,13 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-let PageNotFound = React.createClass({
-
-  propTypes: {
+class PageNotFound extends React.Component {
+  static propTypes = {
     location: PropTypes.object.isRequired
-  },
+  };
 
-  render: function () {
+  render() {
     return (
         <div>
           <div className="row">
@@ -19,6 +18,6 @@ let PageNotFound = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default PageNotFound;

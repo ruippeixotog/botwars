@@ -14,59 +14,59 @@ import CompsEvents from "../events/CompsEvents";
 import GameStatusLabel from "./GameStatusLabel";
 import Paths from "../utils/RouterPaths";
 
-let GameStream = React.createClass({
-  contextTypes: {
+const initialState = {
+  connStatus: ConnStatus.NOT_CONNECTED,
+  gameStatus: GameStatus.NOT_STARTED,
+  player: null,
+  gameState: null,
+  gameStateCount: 0,
+  gameStateIndex: null,
+  followCurrentState: true,
+  prevGameId: null,
+  nextGameId: null
+};
+
+class GameStream extends React.Component {
+  static contextTypes = {
     router: PropTypes.object.isRequired
-  },
+  };
 
-  getGameId: function () {
+  state = initialState;
+
+  getGameId = () => {
     return this.props.params.gameId;
-  },
+  };
 
-  getGame: function () {
+  getGame = () => {
     return this.props.route.game;
-  },
+  };
 
-  getPlayerToken: function () {
+  getPlayerToken = () => {
     return this.props.location.query.playerToken;
-  },
+  };
 
-  getCompId: function () {
+  getCompId = () => {
     return this.props.location.query.compId;
-  },
+  };
 
-  isThisGame: function (gameHref, gameId) {
+  isThisGame = (gameHref, gameId) => {
     return gameHref === this.getGame().href && gameId === this.getGameId();
-  },
+  };
 
-  getInitialState: function () {
-    return {
-      connStatus: ConnStatus.NOT_CONNECTED,
-      gameStatus: GameStatus.NOT_STARTED,
-      player: null,
-      gameState: null,
-      gameStateCount: 0,
-      gameStateIndex: null,
-      followCurrentState: true,
-      prevGameId: null,
-      nextGameId: null
-    };
-  },
-
-  componentWillMount: function () {
+  componentWillMount() {
     GamesStore.on(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.on(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
     GamesStore.on(GamesEvents.CONNECTION_ERROR, this.onConnectionError);
     GamesStore.on(GamesEvents.INFO, this.onGameInfoReceived);
     GamesStore.on(GamesEvents.NEW_STATE, this.onNewGameState);
-  },
+  }
 
-  componentDidMount: function () {
+  componentDidMount() {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
     this.retrieveCompGames();
-  },
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (!this.isThisGame(nextProps.route.game.href, nextProps.params.gameId)) {
       clearInterval(this._connRetryTimeout);
       GamesActions.closeGameStream(this.getGame().href, this.getGameId());
@@ -75,11 +75,11 @@ let GameStream = React.createClass({
           nextProps.params.gameId,
           nextProps.location.query.playerToken);
       this.retrieveCompGames();
-      this.setState(this.getInitialState());
+      this.setState(initialState);
     }
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount() {
     clearInterval(this._connRetryTimeout);
     GamesStore.removeListener(GamesEvents.CONNECTION_OPENED, this.onConnectionOpened);
     GamesStore.removeListener(GamesEvents.CONNECTION_CLOSED, this.onConnectionClosed);
@@ -87,41 +87,41 @@ let GameStream = React.createClass({
     GamesStore.removeListener(GamesEvents.INFO, this.onGameInfoReceived);
     GamesStore.removeListener(GamesEvents.NEW_STATE, this.onNewGameState);
     GamesActions.closeGameStream(this.getGame().href, this.getGameId());
-  },
+  }
 
-  onConnectionOpened: function (gameHref, gameId) {
+  onConnectionOpened = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       this.setState({ connStatus: ConnStatus.CONNECTED });
     }
-  },
+  };
 
-  onConnectionClosed: function (gameHref, gameId) {
+  onConnectionClosed = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       this.setState({ connStatus: ConnStatus.FINISHED });
     }
-  },
+  };
 
-  onConnectionError: function (gameHref, gameId) {
+  onConnectionError = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       if (this.state.connStatus === ConnStatus.CONNECTED) {
         this.setState({ connStatus: ConnStatus.CONNECTION_DOWN });
       }
       this._connRetryTimeout = setTimeout(this.retryConnection, 3000);
     }
-  },
+  };
 
-  retryConnection: function () {
+  retryConnection = () => {
     GamesActions.requestGameStream(this.getGame().href, this.getGameId(), this.getPlayerToken());
-  },
+  };
 
-  onGameInfoReceived: function (gameHref, gameId) {
+  onGameInfoReceived = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       let gameStore = GamesStore.getGame(gameHref, gameId);
       this.setState({ player: gameStore.getPlayer() });
     }
-  },
+  };
 
-  onNewGameState: function (gameHref, gameId) {
+  onNewGameState = (gameHref, gameId) => {
     if (this.isThisGame(gameHref, gameId)) {
       let gameStore = GamesStore.getGame(gameHref, gameId);
       let newStateCount = gameStore.getStateCount();
@@ -140,9 +140,9 @@ let GameStream = React.createClass({
       if (gameStore.getStatus() === GameStatus.ENDED)
         this.retrieveCompGames();
     }
-  },
+  };
 
-  retrieveCompGames: function () {
+  retrieveCompGames = () => {
     if (this.getCompId()) {
       if (this.getPlayerToken()) {
         CompsActions.enter(this.getGame().href, this.getCompId(), this.getPlayerToken());
@@ -151,9 +151,9 @@ let GameStream = React.createClass({
       CompsStore.on(CompsEvents.COMP_GAMES, this.onCompGamesReceived);
       CompsStore.on(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
     }
-  },
+  };
 
-  onCompGamesReceived: function (gameHref, compId) {
+  onCompGamesReceived = (gameHref, compId) => {
     if (gameHref === this.getGame().href && compId === this.getCompId()) {
       let compGames = CompsStore.getComp(gameHref, compId).getGames();
       let gameIdx = compGames.indexOf(this.getGameId());
@@ -163,25 +163,25 @@ let GameStream = React.createClass({
       });
       this.removeCompGamesListeners();
     }
-  },
+  };
 
-  onCompGamesError: function (gameHref, compId) {
+  onCompGamesError = (gameHref, compId) => {
     if (gameHref === this.getGame().href && compId === this.getCompId()) {
       // TODO handle error
       this.removeCompGamesListeners();
     }
-  },
+  };
 
-  removeCompGamesListeners: function () {
+  removeCompGamesListeners = () => {
     CompsStore.removeListener(CompsEvents.COMP_GAMES, this.onCompGamesReceived);
     CompsStore.removeListener(CompsEvents.COMP_GAMES_ERROR, this.onCompGamesError);
-  },
+  };
 
-  handleMove: function (move) {
+  handleMove = (move) => {
     GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
-  },
+  };
 
-  handleGameStateSelect: function (eventKey, e) {
+  handleGameStateSelect = (eventKey, e) => {
     e.preventDefault();
     if (eventKey !== this.state.gameStateIndex + 1) {
       let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());
@@ -192,9 +192,9 @@ let GameStream = React.createClass({
         followCurrentState: eventKey === this.state.gameStateCount
       });
     }
-  },
+  };
 
-  render: function () {
+  render() {
     let gameId = this.getGameId();
     let game = this.getGame();
     let GameComponent = game.component;
@@ -250,6 +250,6 @@ let GameStream = React.createClass({
         </div>
     );
   }
-});
+}
 
 export default GameStream;
