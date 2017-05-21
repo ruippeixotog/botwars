@@ -3,12 +3,12 @@
     "tictactoe": {
       "name": "TicTacToe",
       "serverModule": "./models/games/tictactoe",
-      "clientComponent": "./components/games/TicTacToe"
+      "clientComponent": "TicTacToe"
     },
     "sueca": {
       "name": "Sueca",
       "serverModule": "./models/games/sueca",
-      "clientComponent": "./components/games/Sueca"
+      "clientComponent": "Sueca"
     }
   },
 
@@ -16,7 +16,7 @@
     "match": {
       "name": "Match",
       "serverModule": "./models/competitions/match",
-      "clientComponent": "./components/competitions/Match"
+      "clientComponent": "Match"
     }
   },
 

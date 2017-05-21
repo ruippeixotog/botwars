@@ -5,7 +5,7 @@ const eslint = require("gulp-eslint");
 const gulp = require("gulp");
 const gutil = require("gulp-util");
 const historyApiFallback = require("connect-history-api-fallback");
-const merge = require('merge-stream');
+const merge = require("merge-stream");
 const nodemon = require("gulp-nodemon");
 const path = require("path");
 const proxyMiddleware = require("proxy-middleware");
@@ -57,21 +57,15 @@ const webpackConfig = {
     publicPath: "/"
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(js|jsx)$/,
-        loaders: ["babel"],
+        use: [{ loader: "babel-loader" }],
         exclude: /node_modules/
       },
-      {
-        test: /\.json$/,
-        loader: "json-loader",
-        exclude: /node_modules/
-      }
-    ],
-    preLoaders: !isDev ? [] : [
-      {
+      !isDev ? {} : {
         test: /\.js$/,
+        enforce: "pre",
         loader: "source-map-loader",
         exclude: /node_modules/
       }
@@ -81,7 +75,7 @@ const webpackConfig = {
     new webpack.EnvironmentPlugin(["NODE_ENV"])
   ],
   resolve: {
-    extensions: ["", ".jsx", ".js"]
+    extensions: [".jsx", ".js"]
   }
 };
 
@@ -157,8 +151,8 @@ gulp.task("client:browsersync", function () {
     webpackConfig.entry = ["webpack/hot/dev-server", "webpack-hot-middleware/client"]
       .concat(webpackConfig.entry);
 
-    webpackConfig.module.loaders[0].loaders = ["react-hot"]
-      .concat(webpackConfig.module.loaders[0].loaders);
+    webpackConfig.module.rules[0].use = [{ loader: "react-hot-loader" }]
+      .concat(webpackConfig.module.rules[0].use);
 
     webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
     webpackConfig.devtool = "eval";
