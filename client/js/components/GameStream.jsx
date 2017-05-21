@@ -180,7 +180,7 @@ let GameStream = React.createClass({
     GamesActions.sendMove(this.getGame().href, this.getGameId(), move);
   },
 
-  handleGameStateSelect: function (e, { eventKey }) {
+  handleGameStateSelect: function (eventKey, e) {
     e.preventDefault();
     if (eventKey !== this.state.gameStateIndex + 1) {
       let gameStore = GamesStore.getGame(this.getGame().href, this.getGameId());

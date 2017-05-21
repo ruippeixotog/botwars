@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
-import { Row, Col, Input, Button, Table } from "react-bootstrap";
+import { Row, Col, Button, Table } from "react-bootstrap";
+import { FormGroup, InputGroup, ControlLabel, Radio, FormControl } from "react-bootstrap";
 
 import CompsActions from "../actions/CompsActions";
 import CompsEvents from "../events/CompsEvents";
@@ -237,35 +238,33 @@ let CompInfo = React.createClass({
           <Row>
             <Col lg={12}>
               <form onSubmit={this.handleCompFormSubmit}>
-                <Input label="I want to:">
-                  <Input name="action" type="radio" label="watch the competition as a spectator"
-                         disabled={registering}
-                         checked={joinMode === JoinModes.WATCH}
-                         onChange={setJoinMode(JoinModes.WATCH)} />
+                <FormGroup>
+                  <InputGroup>
+                    <ControlLabel>I want to:</ControlLabel>
+                    <Radio disabled={registering}
+                           checked={joinMode === JoinModes.WATCH}
+                           onChange={setJoinMode(JoinModes.WATCH)}>
+                      watch the game as a spectator
+                    </Radio>
 
-                  <Input name="action" type="radio" label="enter the competition as a new player"
-                         disabled={registering || isGameFull}
-                         checked={joinMode === JoinModes.REGISTER_AND_PLAY}
-                         onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)} />
+                    <Radio disabled={registering || isGameFull}
+                           checked={joinMode === JoinModes.REGISTER_AND_PLAY}
+                           onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
+                      enter the competition as a new player
+                    </Radio>
 
-                  <Input>
-                    <div className="radio">
-                      <label>
-                        <input name="action" type="radio"
-                               label="play the competition as the player with token"
-                               disabled={registering}
-                               checked={joinMode === JoinModes.PLAY}
-                               onChange={setJoinMode(JoinModes.PLAY)} />
-                        <span>play the competition as the player with token</span>
-                        <Input type="text" ref="playerToken" bsSize="small"
-                               groupClassName="player-token-form-group"
-                               disabled={registering || joinMode !== JoinModes.PLAY}
-                               placeholder="playerToken"
-                               defaultValue={this.state.lastPlayerToken} />
-                      </label>
-                    </div>
-                  </Input>
-                </Input>
+                    <Radio disabled={registering}
+                           checked={joinMode === JoinModes.PLAY}
+                           onChange={setJoinMode(JoinModes.PLAY)}>
+                      play the competition as the player with token
+                      <FormControl type="text" ref="playerToken" bsSize="small"
+                             groupClassName="player-token-form-group"
+                             disabled={registering || joinMode !== JoinModes.PLAY}
+                             placeholder="playerToken"
+                             defaultValue={this.state.lastPlayerToken} />
+                    </Radio>
+                  </InputGroup>
+                </FormGroup>
 
                 <Button type="submit">Start!</Button>
               </form>

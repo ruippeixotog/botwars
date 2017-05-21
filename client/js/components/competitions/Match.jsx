@@ -27,7 +27,7 @@ let Match = React.createClass({
 
     let progressBar = <ProgressBar active={info.status === GameStatus.STARTED}
                                    now={info.gamesPlayed} max={info.gamesTotal}
-                                   label={"%(now)s / %(max)s"} />;
+                                   label={`${info.gamesPlayed} / ${info.gamesTotal}`} />;
 
     let gameElems = games.map((gameInfo, i) => {
       let winnerElem = <span>&nbsp;</span>;
