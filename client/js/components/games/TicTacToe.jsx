@@ -1,30 +1,19 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 
-class CellX extends React.Component {
-  render() {
-    let dx = this.props.col * 200;
-    let dy = this.props.row * 200;
-    return (
-        <g transform={`translate(${dx},${dy})`}>
-          <line x1="30" x2="170" y1="30" y2="170"
-                style={{ strokeWidth: 10, stroke: "red", strokeLinecap: "round" }} />
-          <line x1="30" x2="170" y1="170" y2="30"
-                style={{ strokeWidth: 10, stroke: "red", strokeLinecap: "round" }} />
-        </g>
-    );
-  }
-}
+const CellX = ({ col, row }) => (
+  <g transform={`translate(${col * 200},${row * 200})`}>
+    <line x1="30" x2="170" y1="30" y2="170"
+          style={{ strokeWidth: 10, stroke: "red", strokeLinecap: "round" }} />
+    <line x1="30" x2="170" y1="170" y2="30"
+          style={{ strokeWidth: 10, stroke: "red", strokeLinecap: "round" }} />
+  </g>
+);
 
-class CellO extends React.Component {
-  render() {
-    let dx = this.props.col * 200 + 100;
-    let dy = this.props.row * 200 + 100;
-    return (
-        <circle cx={dx} cy={dy} r="72" style={{ strokeWidth: 10, stroke: "green", fill: "none" }} />
-    );
-  }
-}
+const CellO = ({ col, row }) => (
+  <circle cx={col * 200 + 100} cy={row * 200 + 100} r="72"
+          style={{ strokeWidth: 10, stroke: "green", fill: "none" }} />
+);
 
 class Grid extends React.Component {
   handleClick = (evt) => {
@@ -66,9 +55,9 @@ class Grid extends React.Component {
 }
 
 const PlayerTextRepr = ({ player }) => (
-    player === 1 ?
-        <span style={{ color: "green", fontWeight: "bold" }}>O</span> :
-        <span style={{ color: "red", fontWeight: "bold" }}>X</span>
+  player === 1 ?
+    <span style={{ color: "green", fontWeight: "bold" }}>O</span> :
+    <span style={{ color: "red", fontWeight: "bold" }}>X</span>
 );
 
 const GameStatusMessage = ({ gameState }) => {
@@ -84,24 +73,18 @@ const GameStatusMessage = ({ gameState }) => {
   return <span>It&apos;s a draw!</span>;
 };
 
-class TicTacToe extends React.Component {
-  render() {
-    let gameState = this.props.gameState;
-    let onMove = this.props.isLastState ? this.props.onMove : () => {};
-
-    return (
-        <Row>
-          <Col lg={6}>
-            <Grid grid={gameState ? gameState.grid : null} onMove={onMove} />
-          </Col>
-          <Col lg={6}>
-            <h3>
-              <GameStatusMessage gameState={gameState} />
-            </h3>
-          </Col>
-        </Row>
-    );
-  }
-}
+const TicTacToe = ({ gameState, isLastState, onMove }) => (
+  <Row>
+    <Col lg={6}>
+      <Grid grid={gameState ? gameState.grid : null}
+            onMove={isLastState ? onMove : () => {}} />
+    </Col>
+    <Col lg={6}>
+      <h3>
+        <GameStatusMessage gameState={gameState} />
+      </h3>
+    </Col>
+  </Row>
+);
 
 export default TicTacToe;

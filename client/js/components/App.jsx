@@ -2,23 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import Nav from "./Nav";
 
-class App extends React.Component {
-  static propTypes = {
-    children: PropTypes.element.isRequired
-  };
+const App = ({ route, children }) => (
+  <div className="fill flex">
+    <Nav games={route.games} />
+    <div id="page-wrapper" className="flex">
+      {children}
+    </div>
+  </div>
+);
 
-  render() {
-    let games = this.props.route.games;
-
-    return (
-        <div className="fill flex">
-          <Nav games={games} />
-          <div id="page-wrapper" className="flex">
-            {this.props.children}
-          </div>
-        </div>
-    );
-  }
-}
+App.propTypes = {
+  children: PropTypes.element.isRequired
+};
 
 export default App;

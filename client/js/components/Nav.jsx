@@ -3,20 +3,16 @@ import PropTypes from "prop-types";
 import SideNav from "./SideNav";
 import HeaderNav from "./HeaderNav";
 
-class Nav extends React.Component {
-  static propTypes = {
-    games: PropTypes.array.isRequired
-  };
+const Nav = props => (
+  <nav className="navbar navbar-default navbar-static-top" role="navigation"
+       style={{ marginBottom: 0 }}>
+    <HeaderNav {...props} />
+    <SideNav {...props} />
+  </nav>
+);
 
-  render() {
-    return (
-        <nav className="navbar navbar-default navbar-static-top" role="navigation"
-             style={{ marginBottom: 0 }}>
-          <HeaderNav {...this.props} />
-          <SideNav {...this.props} />
-        </nav>
-    );
-  }
-}
+Nav.propTypes = {
+  games: PropTypes.array.isRequired
+};
 
 export default Nav;
