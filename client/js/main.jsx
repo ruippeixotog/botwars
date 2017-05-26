@@ -26,28 +26,28 @@ let compTypes = _.mapValues(config.competitions, compInfo =>
     require("./components/competitions/" + compInfo.clientComponent).default);
 
 let gameRoutes = games.map(game =>
-    <Route path={game.href} component={GameLayout} game={game} key={game.href}>
-      <IndexRedirect to="games" />
-      <Route path="games">
-        <IndexRoute component={GamesIndex} game={game} />
-        <Route path=":gameId" component={GameInfo} game={game} />
-        <Route path=":gameId/stream" component={GameStream} game={game} />
-      </Route>
-      <Route path="competitions">
-        <IndexRoute component={CompsIndex} game={game} />
-        <Route path=":compId" component={CompInfo} game={game} compTypes={compTypes} />
-      </Route>
+  <Route path={game.href} component={GameLayout} game={game} key={game.href}>
+    <IndexRedirect to="games" />
+    <Route path="games">
+      <IndexRoute component={GamesIndex} game={game} />
+      <Route path=":gameId" component={GameInfo} game={game} />
+      <Route path=":gameId/stream" component={GameStream} game={game} />
     </Route>
+    <Route path="competitions">
+      <IndexRoute component={CompsIndex} game={game} />
+      <Route path=":compId" component={CompInfo} game={game} compTypes={compTypes} />
+    </Route>
+  </Route>
 );
 
 let routes = (
-    <Route path="/" component={App} games={games}>
-      <IndexRoute component={Index} />
-      {gameRoutes}
-      <Route path="*" component={PageNotFound} />
-    </Route>
+  <Route path="/" component={App} games={games}>
+    <IndexRoute component={Index} />
+    {gameRoutes}
+    <Route path="*" component={PageNotFound} />
+  </Route>
 );
 
 ReactDOM.render(
-    <Router routes={routes} history={browserHistory} />,
+  <Router routes={routes} history={browserHistory} />,
     document.getElementById("main"));

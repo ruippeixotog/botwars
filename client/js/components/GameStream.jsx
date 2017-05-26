@@ -213,41 +213,41 @@ class GameStream extends React.Component {
       let nextGamePath = Paths.gameStream(game.href, nextGameId, pathOpts);
 
       compControls.push(
-          <Pager key="comp-nav">
-            <Pager.Item disabled={!prevGameId} onSelect={goTo(prevGamePath)}
-                        href={prevGameId ? prevGamePath : null}>
+        <Pager key="comp-nav">
+          <Pager.Item disabled={!prevGameId} onSelect={goTo(prevGamePath)}
+            href={prevGameId ? prevGamePath : null}>
               &lt; Previous
             </Pager.Item>
-            <Pager.Item onSelect={goTo(compInfoPath)} href={compInfoPath}>
+          <Pager.Item onSelect={goTo(compInfoPath)} href={compInfoPath}>
               Back
             </Pager.Item>
-            <Pager.Item disabled={!nextGameId} onSelect={goTo(nextGamePath)}
-                        href={nextGameId ? nextGamePath : null}>
+          <Pager.Item disabled={!nextGameId} onSelect={goTo(nextGamePath)}
+            href={nextGameId ? nextGamePath : null}>
               Next &gt;
             </Pager.Item>
-          </Pager>
+        </Pager>
       );
     }
 
     return (
-        <div className="flex">
-          <Row className="game-stream">
-            <Col md={6}>
-              <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
-                          ellipsis={false} items={this.state.gameStateCount}
-                          activePage={this.state.gameStateIndex + 1}
-                          onSelect={this.handleGameStateSelect} />
-            </Col>
-            <Col md={3} className="game-comp-nav">
-              {compControls}
-            </Col>
-            <Col md={3} className="game-status-col">
-              <GameStatusLabel status={gameStatus} connStatus={connStatus} />
-            </Col>
-          </Row>
-          <GameComponent gameId={gameId} player={this.state.player} onMove={this.handleMove}
-                         gameState={this.state.gameState} isLastState={isLastState} />
-        </div>
+      <div className="flex">
+        <Row className="game-stream">
+          <Col md={6}>
+            <Pagination className="game-state-nav" maxButtons={5} next={true} prev={true}
+              ellipsis={false} items={this.state.gameStateCount}
+              activePage={this.state.gameStateIndex + 1}
+              onSelect={this.handleGameStateSelect} />
+          </Col>
+          <Col md={3} className="game-comp-nav">
+            {compControls}
+          </Col>
+          <Col md={3} className="game-status-col">
+            <GameStatusLabel status={gameStatus} connStatus={connStatus} />
+          </Col>
+        </Row>
+        <GameComponent gameId={gameId} player={this.state.player} onMove={this.handleMove}
+          gameState={this.state.gameState} isLastState={isLastState} />
+      </div>
     );
   }
 }

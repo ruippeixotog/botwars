@@ -22,14 +22,14 @@ class GameTabsNav extends React.Component {
 
   render() {
     let navItems = Tabs.map(tabDef =>
-        <NavItem key={tabDef.key} eventKey={tabDef.key} onClick={this.onTabClick(tabDef)}>
-          {tabDef.label}
-        </NavItem>
+      <NavItem key={tabDef.key} eventKey={tabDef.key} onClick={this.onTabClick(tabDef)}>
+        {tabDef.label}
+      </NavItem>
     );
     return (
-        <Nav bsStyle="tabs" activeKey={this.props.activeKey}>
-          {navItems}
-        </Nav>
+      <Nav bsStyle="tabs" activeKey={this.props.activeKey}>
+        {navItems}
+      </Nav>
     );
   }
 }

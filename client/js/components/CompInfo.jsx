@@ -178,26 +178,26 @@ class CompInfo extends React.Component {
     let currentGameCell = "N/A";
     if (compInfo.currentGame) {
       currentGameCell =
-          <Link to={Paths.gameInfo(game.href, compInfo.currentGame)}>{compInfo.currentGame}</Link>;
+        <Link to={Paths.gameInfo(game.href, compInfo.currentGame)}>{compInfo.currentGame}</Link>;
     }
 
     let CompComponent = compTypes[compInfo.type];
     let compCol = CompComponent ?
-        <Col lg={9}><CompComponent gameHref={game.href} info={compInfo} games={compGames} /></Col> :
-        <Col lg={0} />;
+      <Col lg={9}><CompComponent gameHref={game.href} info={compInfo} games={compGames} /></Col> :
+      <Col lg={0} />;
 
     return (
-        <div>
-          <Row>
-            <Col lg={12}>
-              <h3>{title}</h3>
-            </Col>
-          </Row>
-          <Row>
-            {compCol}
-            <Col lg={CompComponent ? 3 : 12}>
-              <Table>
-                <tbody>
+      <div>
+        <Row>
+          <Col lg={12}>
+            <h3>{title}</h3>
+          </Col>
+        </Row>
+        <Row>
+          {compCol}
+          <Col lg={CompComponent ? 3 : 12}>
+            <Table>
+              <tbody>
                 <tr>
                   <th>Competition ID</th>
                   <td>{compInfo.compId}</td>
@@ -234,48 +234,48 @@ class CompInfo extends React.Component {
                   <th>Winners</th>
                   <td>{winnerCell}</td>
                 </tr>
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={12}>
-              <form onSubmit={this.handleCompFormSubmit}>
-                <FormGroup>
-                  <InputGroup>
-                    <ControlLabel>I want to:</ControlLabel>
-                    <Radio disabled={registering}
-                           checked={joinMode === JoinModes.WATCH}
-                           onChange={setJoinMode(JoinModes.WATCH)}>
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={12}>
+            <form onSubmit={this.handleCompFormSubmit}>
+              <FormGroup>
+                <InputGroup>
+                  <ControlLabel>I want to:</ControlLabel>
+                  <Radio disabled={registering}
+                    checked={joinMode === JoinModes.WATCH}
+                    onChange={setJoinMode(JoinModes.WATCH)}>
                       watch the game as a spectator
                     </Radio>
 
-                    <Radio disabled={registering || isGameFull}
-                           checked={joinMode === JoinModes.REGISTER_AND_PLAY}
-                           onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
+                  <Radio disabled={registering || isGameFull}
+                    checked={joinMode === JoinModes.REGISTER_AND_PLAY}
+                    onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
                       enter the competition as a new player
                     </Radio>
 
-                    <Radio disabled={registering}
-                           checked={joinMode === JoinModes.PLAY}
-                           onChange={setJoinMode(JoinModes.PLAY)}>
+                  <Radio disabled={registering}
+                    checked={joinMode === JoinModes.PLAY}
+                    onChange={setJoinMode(JoinModes.PLAY)}>
                       play the competition as the player with token
                       <FormControl type="text"
-                                   ref={elem => { this.playerTokenInput = elem; }}
-                                   bsSize="small"
-                                   className="player-token-form-group"
-                                   disabled={registering || joinMode !== JoinModes.PLAY}
-                                   placeholder="playerToken"
-                                   defaultValue={this.state.lastPlayerToken} />
-                    </Radio>
-                  </InputGroup>
-                </FormGroup>
+                        ref={elem => { this.playerTokenInput = elem; }}
+                        bsSize="small"
+                        className="player-token-form-group"
+                        disabled={registering || joinMode !== JoinModes.PLAY}
+                        placeholder="playerToken"
+                        defaultValue={this.state.lastPlayerToken} />
+                  </Radio>
+                </InputGroup>
+              </FormGroup>
 
-                <Button type="submit">Start!</Button>
-              </form>
-            </Col>
-          </Row>
-        </div>
+              <Button type="submit">Start!</Button>
+            </form>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

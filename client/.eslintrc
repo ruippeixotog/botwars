@@ -16,6 +16,8 @@
   },
 
   "rules": {
+    "react/jsx-indent": [1, 2],
+    "react/jsx-indent-props": [1, 2],
     "react/jsx-uses-react": 2,
     "react/prop-types": 0,
     "react/react-in-jsx-scope": 2

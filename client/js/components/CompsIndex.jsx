@@ -88,37 +88,37 @@ class CompsIndex extends React.Component {
       }
 
       return (
-          <tr key={info.compId} onClick={e => this.handleCompOpen(e, info.compId)}>
-            <td>{nameCell}</td>
-            <td>{info.type}</td>
-            <td>{info.registeredPlayers}/{info.players}</td>
-            <td><GameStatusLabel status={info.status}/></td>
-            <td>{winnerCell}</td>
-          </tr>);
+        <tr key={info.compId} onClick={e => this.handleCompOpen(e, info.compId)}>
+          <td>{nameCell}</td>
+          <td>{info.type}</td>
+          <td>{info.registeredPlayers}/{info.players}</td>
+          <td><GameStatusLabel status={info.status}/></td>
+          <td>{winnerCell}</td>
+        </tr>);
     });
 
     return (
-        <div>
-          <GameTabsNav gameHref={this.getGame().href} activeKey="competitions" />
-          <Row>
-            <Col lg={9}>
-              <Table className="games-list" responsive hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Players</th>
-                    <th>Status</th>
-                    <th>Winners</th>
-                  </tr>
-                </thead>
-                <tbody>
+      <div>
+        <GameTabsNav gameHref={this.getGame().href} activeKey="competitions" />
+        <Row>
+          <Col lg={9}>
+            <Table className="games-list" responsive hover>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Players</th>
+                  <th>Status</th>
+                  <th>Winners</th>
+                </tr>
+              </thead>
+              <tbody>
                 {tableRows}
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
-        </div>
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

@@ -143,87 +143,87 @@ class GameInfo extends React.Component {
     }
 
     return (
-        <div>
-          <Row>
-            <Col lg={12}>
-              <h3>{title}</h3>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg={6}>
-              <Table>
-                <tbody>
-                  <tr>
-                    <th>Game ID</th>
-                    <td>{gameInfo.gameId}</td>
-                  </tr>
-                  <tr>
-                    <th>Name</th>
-                    <td>{gameInfo.name || "N/A"}</td>
-                  </tr>
-                  <tr>
-                    <th>Players</th>
-                    <td>{gameInfo.registeredPlayers}/{gameInfo.players}</td>
-                  </tr>
-                  <tr>
-                    <th>Status</th>
-                    <td><GameStatusLabel status={gameInfo.status} /></td>
-                  </tr>
-                  <tr>
-                    <th>Parameters</th>
-                    <td>
-                      <pre>
-                        {JSON.stringify(gameInfo.params, null, 2)}
-                      </pre>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Next player</th>
-                    <td>{gameInfo.nextPlayer || "N/A"}</td>
-                  </tr>
-                  <tr>
-                    <th>Winners</th>
-                    <td>{winnerCell}</td>
-                  </tr>
-                </tbody>
-              </Table>
+      <div>
+        <Row>
+          <Col lg={12}>
+            <h3>{title}</h3>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={6}>
+            <Table>
+              <tbody>
+                <tr>
+                  <th>Game ID</th>
+                  <td>{gameInfo.gameId}</td>
+                </tr>
+                <tr>
+                  <th>Name</th>
+                  <td>{gameInfo.name || "N/A"}</td>
+                </tr>
+                <tr>
+                  <th>Players</th>
+                  <td>{gameInfo.registeredPlayers}/{gameInfo.players}</td>
+                </tr>
+                <tr>
+                  <th>Status</th>
+                  <td><GameStatusLabel status={gameInfo.status} /></td>
+                </tr>
+                <tr>
+                  <th>Parameters</th>
+                  <td>
+                    <pre>
+                      {JSON.stringify(gameInfo.params, null, 2)}
+                    </pre>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Next player</th>
+                  <td>{gameInfo.nextPlayer || "N/A"}</td>
+                </tr>
+                <tr>
+                  <th>Winners</th>
+                  <td>{winnerCell}</td>
+                </tr>
+              </tbody>
+            </Table>
 
-              <form onSubmit={this.handleGameFormSubmit}>
-                <FormGroup>
-                  <InputGroup>
-                    <ControlLabel>I want to:</ControlLabel>
-                    <Radio disabled={registering}
-                           checked={joinMode === JoinModes.WATCH}
-                           onChange={setJoinMode(JoinModes.WATCH)}>
+            <form onSubmit={this.handleGameFormSubmit}>
+              <FormGroup>
+                <InputGroup>
+                  <ControlLabel>I want to:</ControlLabel>
+                  <Radio disabled={registering}
+                    checked={joinMode === JoinModes.WATCH}
+                    onChange={setJoinMode(JoinModes.WATCH)}>
                       watch the game as a spectator
                     </Radio>
 
-                    <Radio disabled={registering || isGameFull}
-                           checked={joinMode === JoinModes.REGISTER_AND_PLAY}
-                           onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
+                  <Radio disabled={registering || isGameFull}
+                    checked={joinMode === JoinModes.REGISTER_AND_PLAY}
+                    onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
                       enter the game as a new player
                     </Radio>
 
-                    <Radio disabled={registering}
-                           checked={joinMode === JoinModes.PLAY}
-                           onChange={setJoinMode(JoinModes.PLAY)}>
+                  <Radio disabled={registering}
+                    checked={joinMode === JoinModes.PLAY}
+                    onChange={setJoinMode(JoinModes.PLAY)}>
                       play the game as the player with token
                       <FormControl type="text"
-                                   ref={elem => { this.playerTokenInput = elem; }}
-                                   bsSize="small"
-                                   className="player-token-form-group"
-                                   disabled={registering || joinMode !== JoinModes.PLAY}
-                                   placeholder="playerToken"
-                                   defaultValue={this.state.lastPlayerToken} />
-                    </Radio>
-                  </InputGroup>
-                </FormGroup>
+                        ref={elem => { this.playerTokenInput = elem; }}
+                        bsSize="small"
+                        className="player-token-form-group"
+                        disabled={registering || joinMode !== JoinModes.PLAY}
+                        placeholder="playerToken"
+                        defaultValue={this.state.lastPlayerToken} />
+                  </Radio>
+                </InputGroup>
+              </FormGroup>
 
-                <Button type="submit">Start!</Button>
-              </form>
-            </Col>
-          </Row>
-        </div>
+              <Button type="submit">Start!</Button>
+            </form>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

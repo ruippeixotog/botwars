@@ -88,35 +88,35 @@ class GamesIndex extends React.Component {
       }
 
       return (
-          <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
-            <td>{nameCell}</td>
-            <td>{info.connectedPlayers}/{info.players}</td>
-            <td><GameStatusLabel status={info.status}/></td>
-            <td>{winnerCell}</td>
-          </tr>);
+        <tr key={info.gameId} onClick={e => this.handleGameOpen(e, info.gameId)}>
+          <td>{nameCell}</td>
+          <td>{info.connectedPlayers}/{info.players}</td>
+          <td><GameStatusLabel status={info.status}/></td>
+          <td>{winnerCell}</td>
+        </tr>);
     });
 
     return (
-        <div>
-          <GameTabsNav gameHref={this.getGame().href} activeKey="games" />
-          <Row>
-            <Col lg={9}>
-              <Table className="games-list" responsive hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Players</th>
-                    <th>Status</th>
-                    <th>Winners</th>
-                  </tr>
-                </thead>
-                <tbody>
+      <div>
+        <GameTabsNav gameHref={this.getGame().href} activeKey="games" />
+        <Row>
+          <Col lg={9}>
+            <Table className="games-list" responsive hover>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Players</th>
+                  <th>Status</th>
+                  <th>Winners</th>
+                </tr>
+              </thead>
+              <tbody>
                 {tableRows}
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
-        </div>
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

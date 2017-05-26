@@ -5,7 +5,7 @@ import HeaderNav from "./HeaderNav";
 
 const Nav = props => (
   <nav className="navbar navbar-default navbar-static-top" role="navigation"
-       style={{ marginBottom: 0 }}>
+    style={{ marginBottom: 0 }}>
     <HeaderNav {...props} />
     <SideNav {...props} />
   </nav>
