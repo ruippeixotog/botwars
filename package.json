@@ -20,7 +20,7 @@
     "body-parser": "1.17.2",
     "bootstrap": "3.3.7",
     "classnames": "2.2.5",
-    "couchbase": "2.3.3",
+    "couchbase": "2.5.1",
     "deck-of-cards": "0.1.8",
     "express": "4.15.3",
     "flux": "3.1.2",
@@ -34,7 +34,7 @@
     "react-dom": "15.5.4",
     "react-router": "2.8.1",
     "sequelize": "3.30.4",
-    "sqlite3": "3.1.8",
+    "sqlite3": "4.0.2",
     "superagent": "3.5.2",
     "ws": "1.1.0"
   },
