@@ -8,20 +8,20 @@ class CompetitionRegistry extends Registry {
     super((id, { type, ...params }) => {
       let Competition = compTypes[type];
       return Competition ?
-          new CompetitionInstance(id, new Competition(params), gameRegistry) :
-          null;
+        new CompetitionInstance(id, new Competition(params), gameRegistry) :
+        null;
     });
   }
 
   restoreAllStoredCompetitions(Game, gameRegistry) {
     let compRegistry = this;
     db.competitions.getAll(Game.name)
-        .then(competitions =>
-            competitions.forEach(competition => {
-              competition.gameRegistry = gameRegistry;
-              compRegistry.restore(competition, CompetitionInstance);
-            })
-        );
+      .then(competitions =>
+        competitions.forEach(competition => {
+          competition.gameRegistry = gameRegistry;
+          compRegistry.restore(competition, CompetitionInstance);
+        })
+      );
   }
 
   getAllCompetitionsInfo() {

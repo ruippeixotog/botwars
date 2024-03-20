@@ -97,7 +97,7 @@ AppDispatcher.register(function (action) {
 
     case GamesEvents.HISTORY:
       store._setAllStates(
-          lazy(data).filter(e => e.eventType === "state").map(e => e.state).value());
+        lazy(data).filter(e => e.eventType === "state").map(e => e.state).value());
       break;
 
     case GamesEvents.START:

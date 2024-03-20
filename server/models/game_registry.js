@@ -12,7 +12,7 @@ class GameRegistry extends Registry {
   restoreAllStoredGames(Game) {
     let gameRegistry = this;
     return db.games.getAll(Game.name)
-        .then(games => games.forEach(game => gameRegistry.restore(game, GameInstance)));
+      .then(games => games.forEach(game => gameRegistry.restore(game, GameInstance)));
   }
 
   getAllGamesInfo() {

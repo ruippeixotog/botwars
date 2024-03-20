@@ -1,6 +1,6 @@
 {
   "root": true,
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": "eslint:recommended",
 
   "env": {
@@ -8,7 +8,7 @@
   },
 
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 11,
     "sourceType": "module"
   },
 

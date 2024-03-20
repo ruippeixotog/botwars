@@ -42,10 +42,10 @@ const Match = ({ gameHref, info, games }) => {
       <Col xs={6} sm={4} md={3} key={gameInfo.gameId}>
         <div className="match-game panel panel-default">
           {i + 1}.&nbsp;
-            <Link to={Paths.gameInfo(gameHref, gameInfo.gameId)}>
-              {gameInfo.name || "#" + gameInfo.gameId.substr(0, 8)}
-              <GameStatusLabel status={gameInfo.status} showLabels={false} />
-            </Link>
+          <Link to={Paths.gameInfo(gameHref, gameInfo.gameId)}>
+            {gameInfo.name || "#" + gameInfo.gameId.substr(0, 8)}
+            <GameStatusLabel status={gameInfo.status} showLabels={false} />
+          </Link>
           <br />
           {winnerElem}
         </div>

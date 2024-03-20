@@ -93,7 +93,8 @@ class GamesIndex extends React.Component {
           <td>{info.connectedPlayers}/{info.players}</td>
           <td><GameStatusLabel status={info.status}/></td>
           <td>{winnerCell}</td>
-        </tr>);
+        </tr>
+      );
     });
 
     return (

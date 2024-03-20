@@ -106,7 +106,7 @@ class Sueca extends Game {
 
   _endTrick() {
     const trickCardsWhere = props =>
-        _.chain(this.currentTrick).filter(props).sortBy(c => -cardData[c.value].index).value();
+      _.chain(this.currentTrick).filter(props).sortBy(c => -cardData[c.value].index).value();
 
     let winnerCard;
     let trumpCards = trickCardsWhere({ suit: this.trump.suit });
@@ -139,7 +139,7 @@ class Sueca extends Game {
 
   static generateDeck() {
     return _.chain(["clubs", "diamonds", "hearts", "spades"]).map(suit =>
-        _.keys(cardData).map(value => ({ suit, value }))
+      _.keys(cardData).map(value => ({ suit, value }))
     ).flatten().shuffle().value();
   }
 

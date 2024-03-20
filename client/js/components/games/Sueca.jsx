@@ -65,7 +65,7 @@ const PlayerLabel = ({ player, nextPlayer, top, left }) => {
 };
 
 const Hand = ({ player, nextPlayer, cards, cardCount, deltaX = 40, deltaY = 35,
-    deltaCx = 2, deltaCy = 3, onCardClick, rot }) => {
+  deltaCx = 2, deltaCy = 3, onCardClick, rot }) => {
 
   let info = playerInfo[((player - 1) + rot) % 4];
   let x = 50 + info.x * deltaX - info.y * deltaCx * 4.5;
@@ -168,7 +168,7 @@ const Scoreboard = ({ score }) => (
 
 const Sueca = ({ player, gameState, isLastState, onMove }) => {
   let { nextPlayer, hand, currentTrick, lastTrick, tricksDone,
-      trump, trumpPlayer, score } = gameState || {};
+    trump, trumpPlayer, score } = gameState || {};
 
   let rot = player ? (5 - player) % 4 : 0;
   let onCardClick = isLastState && player === nextPlayer ? onMove : null;

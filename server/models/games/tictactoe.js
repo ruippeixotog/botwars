@@ -11,7 +11,7 @@ class TicTacToe extends Game {
 
     this.nextPlayer = 1;
     this.grid = _.times(this.rowCount, () =>
-        _.times(this.colCount, _.constant(0))
+      _.times(this.colCount, _.constant(0))
     );
     this.error = false;
     this.winner = null;

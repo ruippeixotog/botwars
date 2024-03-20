@@ -67,7 +67,7 @@ let GamesActions = {
 
       ws.onclose = function () {
         dispatchEvent(hasEnded || ws.closeRequested ?
-            GamesEvents.CONNECTION_CLOSED : GamesEvents.CONNECTION_ERROR);
+          GamesEvents.CONNECTION_CLOSED : GamesEvents.CONNECTION_ERROR);
         delete streams[gameHref][gameId];
       };
 

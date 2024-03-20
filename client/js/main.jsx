@@ -23,7 +23,7 @@ let games = _.map(config.games, (gameInfo, gameId) => {
 });
 
 let compTypes = _.mapValues(config.competitions, compInfo =>
-    require("./components/competitions/" + compInfo.clientComponent).default);
+  require("./components/competitions/" + compInfo.clientComponent).default);
 
 let gameRoutes = games.map(game =>
   <Route path={game.href} component={GameLayout} game={game} key={game.href}>
@@ -50,4 +50,4 @@ let routes = (
 
 ReactDOM.render(
   <Router routes={routes} history={browserHistory} />,
-    document.getElementById("main"));
+  document.getElementById("main"));

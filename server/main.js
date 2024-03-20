@@ -12,7 +12,7 @@ const config = JSON.parse(fs.readFileSync("config.json"));
 app.use(morgan("dev"));
 
 let compTypes = _.mapValues(config.competitions, compInfo =>
-    require(compInfo.serverModule).default);
+  require(compInfo.serverModule).default);
 
 _.forEach(config.games, (gameInfo, gameId) => {
   let Game = require(gameInfo.serverModule).default;

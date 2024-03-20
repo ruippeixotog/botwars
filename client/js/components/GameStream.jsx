@@ -71,9 +71,9 @@ class GameStream extends React.Component {
       clearInterval(this._connRetryTimeout);
       GamesActions.closeGameStream(this.getGame().href, this.getGameId());
       GamesActions.requestGameStream(
-          nextProps.route.game.href,
-          nextProps.params.gameId,
-          nextProps.location.query.playerToken);
+        nextProps.route.game.href,
+        nextProps.params.gameId,
+        nextProps.location.query.playerToken);
       this.retrieveCompGames();
       this.setState(initialState);
     }
@@ -216,15 +216,15 @@ class GameStream extends React.Component {
         <Pager key="comp-nav">
           <Pager.Item disabled={!prevGameId} onSelect={goTo(prevGamePath)}
             href={prevGameId ? prevGamePath : null}>
-              &lt; Previous
-            </Pager.Item>
+            &lt; Previous
+          </Pager.Item>
           <Pager.Item onSelect={goTo(compInfoPath)} href={compInfoPath}>
-              Back
-            </Pager.Item>
+            Back
+          </Pager.Item>
           <Pager.Item disabled={!nextGameId} onSelect={goTo(nextGamePath)}
             href={nextGameId ? nextGamePath : null}>
-              Next &gt;
-            </Pager.Item>
+            Next &gt;
+          </Pager.Item>
         </Pager>
       );
     }

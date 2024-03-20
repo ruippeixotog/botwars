@@ -12,7 +12,7 @@ export default function (Game, compTypes) {
   let compRegistry = new CompetitionRegistry(gameRegistry, compTypes);
 
   gameRegistry.restoreAllStoredGames(Game).then(
-      () => compRegistry.restoreAllStoredCompetitions(Game, gameRegistry)
+    () => compRegistry.restoreAllStoredCompetitions(Game, gameRegistry)
   );
 
   let router = new express.Router();

@@ -136,7 +136,7 @@ describe("Sueca", function () {
 
     // card not in player's hand
     assert.equal(game.isValidMove(game.getNextPlayer(),
-        game.getState(nextPlayer(game.getNextPlayer())).hand[0]), false);
+      game.getState(nextPlayer(game.getNextPlayer())).hand[0]), false);
 
     // not the correct player
     assert.equal(game.isValidMove(nextPlayer(game.getNextPlayer()), validCard()), false);

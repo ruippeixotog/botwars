@@ -29,7 +29,7 @@ class CompetitionInstance {
     let CompetitionClass = require("../" + competitionClassModule).default;
     let competition = new CompetitionClass();
     let competitionInstance = new CompetitionInstance(
-        storedObject.id, competition, storedObject.gameRegistry);
+      storedObject.id, competition, storedObject.gameRegistry);
 
     competitionInstance.games = storedObject.games.map(
       game => competitionInstance.gameRegistry.instances[game.id]

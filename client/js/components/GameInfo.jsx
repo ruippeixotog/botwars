@@ -195,26 +195,26 @@ class GameInfo extends React.Component {
                   <Radio disabled={registering}
                     checked={joinMode === JoinModes.WATCH}
                     onChange={setJoinMode(JoinModes.WATCH)}>
-                      watch the game as a spectator
-                    </Radio>
+                    watch the game as a spectator
+                  </Radio>
 
                   <Radio disabled={registering || isGameFull}
                     checked={joinMode === JoinModes.REGISTER_AND_PLAY}
                     onChange={setJoinMode(JoinModes.REGISTER_AND_PLAY)}>
-                      enter the game as a new player
-                    </Radio>
+                    enter the game as a new player
+                  </Radio>
 
                   <Radio disabled={registering}
                     checked={joinMode === JoinModes.PLAY}
                     onChange={setJoinMode(JoinModes.PLAY)}>
-                      play the game as the player with token
-                      <FormControl type="text"
-                        ref={elem => { this.playerTokenInput = elem; }}
-                        bsSize="small"
-                        className="player-token-form-group"
-                        disabled={registering || joinMode !== JoinModes.PLAY}
-                        placeholder="playerToken"
-                        defaultValue={this.state.lastPlayerToken} />
+                    play the game as the player with token
+                    <FormControl type="text"
+                      ref={elem => { this.playerTokenInput = elem; }}
+                      bsSize="small"
+                      className="player-token-form-group"
+                      disabled={registering || joinMode !== JoinModes.PLAY}
+                      placeholder="playerToken"
+                      defaultValue={this.state.lastPlayerToken} />
                   </Radio>
                 </InputGroup>
               </FormGroup>

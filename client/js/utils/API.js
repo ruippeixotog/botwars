@@ -13,9 +13,9 @@ function uri(host, path, protocol = "http") {
 
 function exec(method, uri, data, cb) {
   return request(method, uri)
-      .send(data)
-      .set("Accept", "application/json")
-      .end((err, res) => cb(err, res.body));
+    .send(data)
+    .set("Accept", "application/json")
+    .end((err, res) => cb(err, res.body));
 }
 
 function httpGet(uri, cb) {

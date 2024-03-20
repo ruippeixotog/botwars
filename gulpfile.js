@@ -194,7 +194,7 @@ gulp.task("client:watch-nowebpack", function () {
 
 gulp.task("server:run", function () {
   const monitor = nodemon({
-    nodeArgs: ["-r", "babel-register"],
+    nodeArgs: ["-r", "@babel/register"],
     script: "server/main.js",
     ext: "js",
     ignore: ["*"],
