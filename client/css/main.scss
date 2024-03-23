@@ -1,5 +1,9 @@
 @import "bootstrap/dist/css/bootstrap";
-@import "font-awesome/css/font-awesome";
+
+$fa-font-path: 'fonts';
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import '@fortawesome/fontawesome-free/scss/solid.scss';
+
 @import "vars";
 @import "cards";
 
@@ -286,7 +290,7 @@ body {
   }
 
   &.not-started:before {
-    @extend .fa, .fa-clock-o;
+    @extend .fa, .fa-clock;
     margin-right: 3px;
   }
 

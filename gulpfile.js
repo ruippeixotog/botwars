@@ -27,7 +27,7 @@ const dirs = {
   styles: "./client/css",
   fonts: [
     ["./client/fonts", ""],
-    ["./node_modules/font-awesome/fonts", ""]
+    ["./node_modules/@fortawesome/fontawesome-free/webfonts", ""]
   ],
   img: [
     ["./client/img", ""],
