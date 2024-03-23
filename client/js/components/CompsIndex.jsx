@@ -94,7 +94,8 @@ class CompsIndex extends React.Component {
           <td>{info.registeredPlayers}/{info.players}</td>
           <td><GameStatusLabel status={info.status}/></td>
           <td>{winnerCell}</td>
-        </tr>);
+        </tr>
+      );
     });
 
     return (
