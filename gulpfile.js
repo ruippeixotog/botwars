@@ -80,9 +80,18 @@ const webpackConfig = {
 };
 
 gulp.task("webpack", function (callback) {
-  webpack(webpackConfig, function (err) {
-    if (err) console.error(err.stack);
-    callback();
+  webpack(webpackConfig, function (err, stats) {
+    if (err) callback(err);
+    else if (stats.hasErrors()) {
+      let statsJs = stats.toJson();
+      statsJs.errors.forEach(err => {
+        console.error(`At ${err.moduleName}:${err.loc}:`);
+        console.error(err.message);
+        console.error(err.details);
+      });
+      callback(new Error(`${statsJs.errorsCount} webpack compilation errors`));
+    }
+    else callback();
   });
 });
 
