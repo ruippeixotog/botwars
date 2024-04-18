@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Row, Col, Table } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 import GamesActions from "../actions/GamesActions";
 import GamesEvents from "../events/GamesEvents";
@@ -10,10 +10,12 @@ import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
-class GamesIndex extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
+const GamesIndex = props => {
+  const navigate = useNavigate();
+  return <GamesIndexLegacy navigate={navigate} {...props} />;
+};
+
+class GamesIndexLegacy extends React.Component {
 
   constructor(props, context) {
     super(props, context);
@@ -22,7 +24,7 @@ class GamesIndex extends React.Component {
   }
 
   getGame = () => {
-    return this.props.route.game;
+    return this.props.game;
   };
 
   isThisGame = (gameHref) => {
@@ -36,12 +38,12 @@ class GamesIndex extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.isThisGame(nextProps.route.game.href)) {
+    if (!this.isThisGame(nextProps.game.href)) {
       let gameStores = GamesStore.getAllGames(this.getGame().href);
 
       this.setState({ games: gameStores.map(g => g.info) });
       clearInterval(this._gamesPollTimeout);
-      this.retrieveGamesList(nextProps.route.game.href);
+      this.retrieveGamesList(nextProps.game.href);
     }
   }
 
@@ -71,7 +73,7 @@ class GamesIndex extends React.Component {
 
   handleGameOpen = (e, gameId) => {
     e.preventDefault();
-    this.context.router.push(Paths.gameInfo(this.getGame().href, gameId));
+    this.props.navigate(Paths.gameInfo(this.getGame().href, gameId));
   };
 
   render() {

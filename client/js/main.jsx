@@ -2,7 +2,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Router, IndexRoute, IndexRedirect, browserHistory } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import _ from "lodash";
 
 import App from "./components/App";
@@ -26,28 +26,33 @@ let compTypes = _.mapValues(config.competitions, compInfo =>
   require("./components/competitions/" + compInfo.clientComponent).default);
 
 let gameRoutes = games.map(game =>
-  <Route path={game.href} component={GameLayout} game={game} key={game.href}>
-    <IndexRedirect to="games" />
+  <Route path={game.href} element={<GameLayout game={game} />} key={game.href}>
+    <Route index element={<Navigate to="games" replace />} />
     <Route path="games">
-      <IndexRoute component={GamesIndex} game={game} />
-      <Route path=":gameId" component={GameInfo} game={game} />
-      <Route path=":gameId/stream" component={GameStream} game={game} />
+      <Route index element={<GamesIndex game={game} />} />
+      <Route path=":gameId" element={<GameInfo game={game} />} />
+      <Route path=":gameId/stream" element={<GameStream game={game} />} />
     </Route>
     <Route path="competitions">
-      <IndexRoute component={CompsIndex} game={game} />
-      <Route path=":compId" component={CompInfo} game={game} compTypes={compTypes} />
+      <Route index element={<CompsIndex game={game} />} />
+      <Route path=":compId" element={<CompInfo game={game} compTypes={compTypes} />} />
     </Route>
   </Route>
 );
 
-let routes = (
-  <Route path="/" component={App} games={games}>
-    <IndexRoute component={Index} />
-    {gameRoutes}
-    <Route path="*" component={PageNotFound} />
-  </Route>
+let router = (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App games={games} />}>
+        <Route index element={<Index />} />
+        {gameRoutes}
+        <Route path="*" element={<PageNotFound />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>
 );
 
 ReactDOM.render(
-  <Router routes={routes} history={browserHistory} />,
-  document.getElementById("main"));
+  router,
+  document.getElementById("main")
+);

@@ -1,14 +1,15 @@
 import React from "react";
 import { Row, Col, PageHeader } from "react-bootstrap";
+import { Outlet } from "react-router-dom";
 
-const GameLayout = ({ route, children }) => (
+const GameLayout = ({ game }) => (
   <div className="flex">
     <Row>
       <Col lg={12}>
-        <PageHeader>{route.game.name}</PageHeader>
+        <PageHeader>{game.name}</PageHeader>
       </Col>
     </Row>
-    {children}
+    <Outlet />
   </div>
 );
 

@@ -19,6 +19,7 @@ let deepcopy = function (obj) {
   if (obj instanceof Object) {
     copy = {};
     for (let attr in obj) {
+      // eslint-disable-next-line no-prototype-builtins
       if (obj.hasOwnProperty(attr)) {
         copy[attr] = deepcopy(obj[attr]);
       }

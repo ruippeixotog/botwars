@@ -1,18 +1,14 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
 
-const App = ({ route, children }) => (
+const App = ({ games }) => (
   <div className="fill flex">
-    <Nav games={route.games} />
+    <Nav games={games} />
     <div id="page-wrapper" className="flex">
-      {children}
+      <Outlet />
     </div>
   </div>
 );
-
-App.propTypes = {
-  children: PropTypes.element.isRequired
-};
 
 export default App;

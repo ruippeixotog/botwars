@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Row, Col, Table } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 import CompsActions from "../actions/CompsActions";
 import CompsEvents from "../events/CompsEvents";
@@ -10,10 +10,12 @@ import GameStatusLabel from "./GameStatusLabel";
 import GameTabsNav from "./GameTabsNav";
 import Paths from "../utils/RouterPaths";
 
-class CompsIndex extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
+const CompsIndex = props => {
+  const navigate = useNavigate();
+  return <CompsIndexLegacy navigate={navigate} {...props} />;
+};
+
+class CompsIndexLegacy extends React.Component {
 
   constructor(props, context) {
     super(props, context);
@@ -22,7 +24,7 @@ class CompsIndex extends React.Component {
   }
 
   getGame = () => {
-    return this.props.route.game;
+    return this.props.game;
   };
 
   isThisGame = (gameHref) => {
@@ -36,12 +38,12 @@ class CompsIndex extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.isThisGame(nextProps.route.game.href)) {
-      let compStores = CompsStore.getAllComps(nextProps.route.game.href);
+    if (!this.isThisGame(nextProps.game.href)) {
+      let compStores = CompsStore.getAllComps(nextProps.game.href);
 
       this.setState({ comps: compStores.map(c => c.getInfo()) });
       clearInterval(this._compsPollTimeout);
-      this.retrieveGamesList(nextProps.route.game.href);
+      this.retrieveGamesList(nextProps.game.href);
     }
   }
 

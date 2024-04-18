@@ -1,8 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router";
 import { Row, Col, Button, Table } from "react-bootstrap";
 import { FormGroup, InputGroup, ControlLabel, Radio, FormControl } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import CompsActions from "../actions/CompsActions";
 import CompsEvents from "../events/CompsEvents";
@@ -18,10 +17,13 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-class CompInfo extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
+const CompInfo = props => {
+  const { compId } = useParams();
+  const navigate = useNavigate();
+  return <CompInfoLegacy compId={compId} navigate={navigate} {...props} />;
+};
+
+class CompInfoLegacy extends React.Component {
 
   constructor(props, context) {
     super(props, context);
@@ -37,11 +39,11 @@ class CompInfo extends React.Component {
   }
 
   getCompId = () => {
-    return this.props.params.compId;
+    return this.props.compId;
   };
 
   getGame = () => {
-    return this.props.route.game;
+    return this.props.game;
   };
 
   isThisGame = (gameHref, compId) => {
@@ -102,22 +104,22 @@ class CompInfo extends React.Component {
   };
 
   onRegisterSuccess = (gameHref, compId, playerToken) => {
-    let game = this.props.route.game;
-    let pageCompId = this.props.params.compId;
+    let game = this.props.game;
+    let pageCompId = this.props.compId;
 
     if (gameHref === game.href && compId === pageCompId) {
       let { compInfo, compGames } = this.state;
       // TODO a game may not exist yet and it must be handled properly
       let gameId = compInfo.currentGame || compGames[compGames.length - 1];
 
-      this.context.router.push(Paths.gameStream(gameHref, gameId, { compId, playerToken }));
+      this.props.navigate(Paths.gameStream(gameHref, gameId, { compId, playerToken }));
       this.removeRegisterListeners();
     }
   };
 
   onRegisterError = (gameHref, compId) => {
-    let game = this.props.route.game;
-    let pageCompId = this.props.params.compId;
+    let game = this.props.game;
+    let pageCompId = this.props.compId;
 
     if (gameHref === game.href && compId === pageCompId) {
       this.setState({ registering: false });
@@ -132,14 +134,14 @@ class CompInfo extends React.Component {
 
   handleCompFormSubmit = (e) => {
     e.preventDefault();
-    let game = this.props.route.game;
-    let compId = this.props.params.compId;
+    let game = this.props.game;
+    let compId = this.props.compId;
     let { compInfo, compGames } = this.state;
     let gameId = compInfo.currentGame || compGames[compGames.length - 1];
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH: {
-        this.context.router.push(Paths.gameStream(game.href, gameId, { compId }));
+        this.props.navigate(Paths.gameStream(game.href, gameId, { compId }));
         break;
       }
       case JoinModes.REGISTER_AND_PLAY: {
@@ -151,7 +153,7 @@ class CompInfo extends React.Component {
       }
       case JoinModes.PLAY: {
         let playerToken = this.playerTokenInput.getValue();
-        this.context.router.push(Paths.gameStream(game.href, gameId, { compId, playerToken }));
+        this.props.navigate(Paths.gameStream(game.href, gameId, { compId, playerToken }));
         break;
       }
     }

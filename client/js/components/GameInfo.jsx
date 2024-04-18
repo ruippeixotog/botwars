@@ -1,7 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Row, Col, Button, Table } from "react-bootstrap";
 import { FormGroup, InputGroup, ControlLabel, Radio, FormControl } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 
 import GamesActions from "../actions/GamesActions";
 import GamesEvents from "../events/GamesEvents";
@@ -16,10 +16,13 @@ const JoinModes = Object.freeze({
   PLAY: "PLAY"
 });
 
-class GameInfo extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
+const GameInfo = props => {
+  const { gameId } = useParams();
+  const navigate = useNavigate();
+  return <GameInfoLegacy gameId={gameId} navigate={navigate} {...props} />;
+};
+
+class GameInfoLegacy extends React.Component {
 
   constructor(props, context) {
     super(props, context);
@@ -34,11 +37,11 @@ class GameInfo extends React.Component {
   }
 
   getGameId = () => {
-    return this.props.params.gameId;
+    return this.props.gameId;
   };
 
   getGame = () => {
-    return this.props.route.game;
+    return this.props.game;
   };
 
   isThisGame = (gameHref, gameId) => {
@@ -76,18 +79,18 @@ class GameInfo extends React.Component {
   };
 
   onRegisterSuccess = (gameHref, gameId, playerToken) => {
-    let game = this.props.route.game;
-    let pageGameId = this.props.params.gameId;
+    let game = this.props.game;
+    let pageGameId = this.props.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
-      this.context.router.push(Paths.gameStream(gameHref, gameId, { playerToken }));
+      this.props.navigate(Paths.gameStream(gameHref, gameId, { playerToken }));
       this.removeRegisterListeners();
     }
   };
 
   onRegisterError = (gameHref, gameId) => {
-    let game = this.props.route.game;
-    let pageGameId = this.props.params.gameId;
+    let game = this.props.game;
+    let pageGameId = this.props.gameId;
 
     if (gameHref === game.href && gameId === pageGameId) {
       this.setState({ registering: false });
@@ -102,12 +105,12 @@ class GameInfo extends React.Component {
 
   handleGameFormSubmit = (e) => {
     e.preventDefault();
-    let game = this.props.route.game;
-    let gameId = this.props.params.gameId;
+    let game = this.props.game;
+    let gameId = this.props.gameId;
 
     switch (this.state.joinMode) {
       case JoinModes.WATCH: {
-        this.context.router.push(Paths.gameStream(game.href, gameId));
+        this.props.navigate(Paths.gameStream(game.href, gameId));
         break;
       }
       case JoinModes.REGISTER_AND_PLAY: {
@@ -119,7 +122,7 @@ class GameInfo extends React.Component {
       }
       case JoinModes.PLAY: {
         let playerToken = this.playerTokenInput.getValue();
-        this.context.router.push(Paths.gameStream(game.href, gameId, { playerToken }));
+        this.props.navigate(Paths.gameStream(game.href, gameId, { playerToken }));
         break;
       }
     }

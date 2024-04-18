@@ -1,6 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Row, Col, Pagination, Pager } from "react-bootstrap";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import GameStatus from "../constants/GameStatus";
 import ConnStatus from "../constants/ConnStatus";
@@ -26,27 +26,39 @@ const initialState = {
   nextGameId: null
 };
 
-class GameStream extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
+const GameStream = props => {
+  const { gameId } = useParams();
+  const [searchParams, _] = useSearchParams();
+  const navigate = useNavigate();
+
+  return (
+    <GameStreamLegacy
+      gameId={gameId}
+      playerToken={searchParams.get("playerToken")}
+      compId={searchParams.get("compId")}
+      navigate={navigate} {...props}
+    />
+  );
+};
+
+class GameStreamLegacy extends React.Component {
 
   state = initialState;
 
   getGameId = () => {
-    return this.props.params.gameId;
+    return this.props.gameId;
   };
 
   getGame = () => {
-    return this.props.route.game;
+    return this.props.game;
   };
 
   getPlayerToken = () => {
-    return this.props.location.query.playerToken;
+    return this.props.playerToken;
   };
 
   getCompId = () => {
-    return this.props.location.query.compId;
+    return this.props.compId;
   };
 
   isThisGame = (gameHref, gameId) => {
