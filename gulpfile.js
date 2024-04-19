@@ -59,7 +59,7 @@ const webpackConfig = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|ts|jsx|tsx)$/,
         use: [{ loader: "babel-loader" }],
         exclude: /node_modules/
       },
@@ -75,7 +75,7 @@ const webpackConfig = {
     new webpack.EnvironmentPlugin(["NODE_ENV"])
   ],
   resolve: {
-    extensions: [".jsx", ".js"]
+    extensions: [".js", ".ts", ".jsx", ".tsx"]
   }
 };
 
