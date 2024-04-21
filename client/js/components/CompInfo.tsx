@@ -43,9 +43,9 @@ const CompInfo = (props: CompInfoProps): JSX.Element => {
 };
 
 class CompInfoLegacy extends React.Component<CompInfoLegacyProps, CompInfoLegacyState> {
-  _compPollTimeout: NodeJS.Timeout;
+  private _compPollTimeout: NodeJS.Timeout;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  playerTokenInput: any;
+  private playerTokenInput: any;
 
   constructor(props: CompInfoLegacyProps) {
     super(props);
