@@ -2,6 +2,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "noEmit": true,
     "strictNullChecks": true,

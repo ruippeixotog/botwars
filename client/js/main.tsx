@@ -17,15 +17,17 @@ import PageNotFound from "./components/PageNotFound";
 
 import config from "../../config.json";
 
-let games = _.map(config.games, (gameInfo, gameId) => {
-  let GameComponent = require("./components/games/" + gameInfo.clientComponent).default;
+const games = _.map(config.games, (gameInfo, gameId) => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const GameComponent = require("./components/games/" + gameInfo.clientComponent).default;
   return { name: gameInfo.name, href: `/${gameId}`, component: GameComponent };
 });
 
-let compTypes = _.mapValues(config.competitions, compInfo =>
+const compTypes = _.mapValues(config.competitions, compInfo =>
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("./components/competitions/" + compInfo.clientComponent).default);
 
-let gameRoutes = games.map(game =>
+const gameRoutes = games.map(game =>
   <Route path={game.href} element={<GameLayout game={game} />} key={game.href}>
     <Route index element={<Navigate to="games" replace />} />
     <Route path="games">
@@ -40,7 +42,7 @@ let gameRoutes = games.map(game =>
   </Route>
 );
 
-let router = (
+const router = (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App games={games} />}>
