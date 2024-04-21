@@ -73,7 +73,7 @@ class CompsIndexLegacy extends React.Component {
 
   handleCompOpen = (e, compId) => {
     e.preventDefault();
-    this.context.router.push(Paths.compInfo(this.getGame().href, compId));
+    this.props.navigate(Paths.compInfo(this.getGame().href, compId));
   };
 
   render() {
